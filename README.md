@@ -6,7 +6,7 @@ This library features a variety of blinken effects for the WS2811/WS2812/NeoPixe
 Features
 --------
 
-* 25 different effects. And counting.
+* 41 different effects. And counting.
 * Free of any delay()
 * Tested on Arduino Nano, Uno and ESP8266.
 * All effects with printable names - easy to use in user interfaces.
@@ -69,10 +69,26 @@ Effects
 * **Running Lights** - Running lights effect with smooth sine transition.
 * **Twinkle** - Blink several LEDs on, reset, repeat.
 * **Twinkle Random** - Blink several LEDs in random colors on, reset, repeat.
+* **Twinkle Fade** - Blink several LEDs on, fading out.
+* **Twinkle Fade Random** - Blink several LEDs in random colors on, fading out.
 * **Sparkle** - Blinks one LED at a time.
 * **Flash Sparkle** - Lights all LEDs in the selected color. Flashes single white pixels randomly.
 * **Hyper Sparkle** - Like flash sparkle. With more flash.
 * **Strobe** - Classic Strobe effect.
-* **Rainbow Strobe** - Classic Strobe effect. Cycling through the rainbow.
+* **Strobe Rainbow** - Classic Strobe effect. Cycling through the rainbow.
 * **Multi Strobe** - Strobe effect with different strobe count and pause, controled by speed setting.
-* **Rainbow Blink** - Classic Blink effect. Cycling through the rainbow.
+* **Blink Rainbow** - Classic Blink effect. Cycling through the rainbow.
+* **Chase White** - Color running on white.
+* **Chase Color** - White running on color.
+* **Chase Random** - White running followed by random color.
+* **Chase Rainbow** - White running on rainbow.
+* **Chase Flash** - White flashes running on color.
+* **Chase Flash Random** - White flashes running, followed by random color.
+* **Chase Rainbow White** - Rainbow running on white.
+* **Chase Blackout** - Black running on color.
+* **Chase Blackout Rainbow** - Black running on rainbow.
+* **Color Sweep Random** - Random color intruduced alternating from start and end of strip.
+* **Running Red Blue** - Alternating red/blue pixels running.
+* **Running Random** - Random colored pixels running.
+* **Larson Scanner** - K.I.T.T.
+* **Comet** - Fireing comets from one end.
