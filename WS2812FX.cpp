@@ -1063,9 +1063,9 @@ void WS2812FX::mode_comet(void) {
 
 
 /*
- * Droplets creating waves.
+ * Firework sparks.
  */
-void WS2812FX::mode_waves(void) {
+void WS2812FX::mode_fireworks(void) {
   uint32_t px_rgb = 0;
   byte px_r = 0;
   byte px_g = 0;
@@ -1129,9 +1129,9 @@ void WS2812FX::mode_waves(void) {
 
 
 /*
- * Random colored droplets creating waves.
+ * Random colored firework sparks.
  */
-void WS2812FX::mode_waves_random(void) {
+void WS2812FX::mode_fireworks_random(void) {
   _mode_color = color_wheel(random(256));
-  mode_waves();
+  mode_fireworks();
 }

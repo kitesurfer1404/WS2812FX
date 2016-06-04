@@ -108,8 +108,8 @@
 #define FX_MODE_RUNNING_RANDOM          38
 #define FX_MODE_LARSON_SCANNER          39
 #define FX_MODE_COMET                   40
-#define FX_MODE_WAVES                   41
-#define FX_MODE_WAVES_RANDOM            42
+#define FX_MODE_FIREWORKS               41
+#define FX_MODE_FIREWORKS_RANDOM        42
 
 
 class WS2812FX : public Adafruit_NeoPixel {
@@ -160,8 +160,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_RUNNING_RANDOM]        = &WS2812FX::mode_running_random;
       _mode[FX_MODE_LARSON_SCANNER]        = &WS2812FX::mode_larson_scanner;
       _mode[FX_MODE_COMET]                 = &WS2812FX::mode_comet;
-      _mode[FX_MODE_WAVES]                 = &WS2812FX::mode_waves;
-      _mode[FX_MODE_WAVES_RANDOM]          = &WS2812FX::mode_waves_random;
+      _mode[FX_MODE_FIREWORKS]             = &WS2812FX::mode_fireworks;
+      _mode[FX_MODE_FIREWORKS_RANDOM]      = &WS2812FX::mode_fireworks_random;
 
       _name[FX_MODE_STATIC]                = "Static";
       _name[FX_MODE_BLINK]                 = "Blink";
@@ -204,8 +204,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_RUNNING_RANDOM]        = "Running Random";
       _name[FX_MODE_LARSON_SCANNER]        = "Larson Scanner";
       _name[FX_MODE_COMET]                 = "Comet";
-      _name[FX_MODE_WAVES]                 = "Waves";
-      _name[FX_MODE_WAVES_RANDOM]          = "Waves Random";
+      _name[FX_MODE_FIREWORKS]             = "Fireworks";
+      _name[FX_MODE_FIREWORKS_RANDOM]      = "Fireworks Random";
 
       _mode_index = DEFAULT_MODE;
       _speed = DEFAULT_SPEED;
@@ -295,8 +295,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_running_random(void),
       mode_larson_scanner(void),
       mode_comet(void),
-      mode_waves(void),
-      mode_waves_random(void);
+      mode_fireworks(void),
+      mode_fireworks_random(void);
 
     boolean
       _running;

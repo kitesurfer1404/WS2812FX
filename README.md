@@ -92,5 +92,5 @@ Effects
 * **Running Random** - Random colored pixels running.
 * **Larson Scanner** - K.I.T.T.
 * **Comet** - Fireing comets from one end.
-* **Waves** - Droplets creating waves.
-* **Waves Random** - Random colored droplets creating waves.
+* **Fireworks** - Firework sparks.
+* **Fireworks Random** - Random colored firework sparks.
