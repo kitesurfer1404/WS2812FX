@@ -6,7 +6,7 @@
 
 
   FEATURES
-    * 25 blinken modes and counting
+    * A lot of blinken modes and counting
     * WS2812FX can be used as drop-in replacement for Adafruit Neopixel Library
 
   NOTES
@@ -14,9 +14,9 @@
       https://github.com/adafruit/Adafruit_NeoPixel
 
 
-  
+
   LICENSE
-  
+
   The MIT License (MIT)
 
   Copyright (c) 2016  Harm Aldick 
@@ -44,6 +44,7 @@
 
   2016-05-28   Initial beta release
   2016-06-03   Code cleanup, minor improvements, new modes
+  2016-06-04   2 new fx, fixed setColor (now also resets _mode_color)
 
 */
 
@@ -64,7 +65,7 @@
 #define BRIGHTNESS_MIN 0
 #define BRIGHTNESS_MAX 255
 
-#define MODE_COUNT 41
+#define MODE_COUNT 43
 
 #define FX_MODE_STATIC                   0
 #define FX_MODE_BLINK                    1
@@ -107,6 +108,8 @@
 #define FX_MODE_RUNNING_RANDOM          38
 #define FX_MODE_LARSON_SCANNER          39
 #define FX_MODE_COMET                   40
+#define FX_MODE_WAVES                   41
+#define FX_MODE_WAVES_RANDOM            42
 
 
 class WS2812FX : public Adafruit_NeoPixel {
@@ -157,6 +160,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_RUNNING_RANDOM]        = &WS2812FX::mode_running_random;
       _mode[FX_MODE_LARSON_SCANNER]        = &WS2812FX::mode_larson_scanner;
       _mode[FX_MODE_COMET]                 = &WS2812FX::mode_comet;
+      _mode[FX_MODE_WAVES]                 = &WS2812FX::mode_waves;
+      _mode[FX_MODE_WAVES_RANDOM]          = &WS2812FX::mode_waves_random;
 
       _name[FX_MODE_STATIC]                = "Static";
       _name[FX_MODE_BLINK]                 = "Blink";
@@ -199,6 +204,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_RUNNING_RANDOM]        = "Running Random";
       _name[FX_MODE_LARSON_SCANNER]        = "Larson Scanner";
       _name[FX_MODE_COMET]                 = "Comet";
+      _name[FX_MODE_WAVES]                 = "Waves";
+      _name[FX_MODE_WAVES_RANDOM]          = "Waves Random";
 
       _mode_index = DEFAULT_MODE;
       _speed = DEFAULT_SPEED;
@@ -287,7 +294,9 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_running_red_blue(void),
       mode_running_random(void),
       mode_larson_scanner(void),
-      mode_comet(void);
+      mode_comet(void),
+      mode_waves(void),
+      mode_waves_random(void);
 
     boolean
       _running;

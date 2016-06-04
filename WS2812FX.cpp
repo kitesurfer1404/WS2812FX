@@ -6,7 +6,7 @@
 
 
   FEATURES
-    * 25 blinken modes and counting
+    * A lot of blinken modes and counting
     * WS2812FX can be used as drop-in replacement for Adafruit Neopixel Library
 
   NOTES
@@ -14,9 +14,9 @@
       https://github.com/adafruit/Adafruit_NeoPixel
 
 
-  
+
   LICENSE
-  
+
   The MIT License (MIT)
 
   Copyright (c) 2016  Harm Aldick 
@@ -44,6 +44,7 @@
 
   2016-05-28   Initial beta release
   2016-06-03   Code cleanup, minor improvements, new modes
+  2016-06-04   2 new fx, fixed setColor (now also resets _mode_color)
 
 */
 
@@ -111,11 +112,17 @@ void WS2812FX::decreaseSpeed(uint8_t s) {
 }
 
 void WS2812FX::setColor(uint8_t r, uint8_t g, uint8_t b) {
-  _color = ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;
+  setColor(((uint32_t)r << 16) | ((uint32_t)g << 8) | b);
 }
 
 void WS2812FX::setColor(uint32_t c) {
   _color = c;
+  _counter_mode_call = 0;
+  _counter_mode_step = 0;
+  _mode_last_call_time = 0;
+  _mode_color = _color;
+  Adafruit_NeoPixel::setBrightness(_brightness);
+  strip_off();
 }
 
 void WS2812FX::setBrightness(uint8_t b) {
@@ -1052,4 +1059,79 @@ void WS2812FX::mode_comet(void) {
 
   _counter_mode_step = (_counter_mode_step + 1) % _led_count;
   _mode_delay = 10 + ((10 * (uint32_t)(SPEED_MAX - _speed)) / _led_count);
+}
+
+
+/*
+ * Droplets creating waves.
+ */
+void WS2812FX::mode_waves(void) {
+  uint32_t px_rgb = 0;
+  byte px_r = 0;
+  byte px_g = 0;
+  byte px_b = 0;
+
+  for(uint16_t i=0; i < _led_count; i++) {
+    px_rgb = Adafruit_NeoPixel::getPixelColor(i);
+
+    px_r = (px_rgb & 0x00FF0000) >> 16;
+    px_g = (px_rgb & 0x0000FF00) >>  8;
+    px_b = (px_rgb & 0x000000FF) >>  0;
+
+    // fade out (divide by 2)
+    px_r = px_r >> 1;
+    px_g = px_g >> 1;
+    px_b = px_b >> 1;
+
+    Adafruit_NeoPixel::setPixelColor(i, px_r, px_g, px_b);
+  }
+
+  // first LED has only one neighbour
+  px_r = (((Adafruit_NeoPixel::getPixelColor(1) & 0x00FF0000) >> 16) >> 1) + ((Adafruit_NeoPixel::getPixelColor(0) & 0x00FF0000) >> 16);
+  px_g = (((Adafruit_NeoPixel::getPixelColor(1) & 0x0000FF00) >>  8) >> 1) + ((Adafruit_NeoPixel::getPixelColor(0) & 0x0000FF00) >>  8);
+  px_b = (((Adafruit_NeoPixel::getPixelColor(1) & 0x000000FF) >>  0) >> 1) + ((Adafruit_NeoPixel::getPixelColor(0) & 0x000000FF) >>  0);
+  Adafruit_NeoPixel::setPixelColor(0, px_r, px_g, px_b);
+
+  // set brightness(i) = ((brightness(i-1)/2 + brightness(i+1)) / 2) + brightness(i)
+  for(uint16_t i=1; i < _led_count-1; i++) {
+    px_r = ((
+            (((Adafruit_NeoPixel::getPixelColor(i-1) & 0x00FF0000) >> 16) >> 1) +
+            (((Adafruit_NeoPixel::getPixelColor(i+1) & 0x00FF0000) >> 16) >> 0) ) >> 1) +
+            (((Adafruit_NeoPixel::getPixelColor(i  ) & 0x00FF0000) >> 16) >> 0);
+
+    px_g = ((
+            (((Adafruit_NeoPixel::getPixelColor(i-1) & 0x0000FF00) >> 8) >> 1) +
+            (((Adafruit_NeoPixel::getPixelColor(i+1) & 0x0000FF00) >> 8) >> 0) ) >> 1) +
+            (((Adafruit_NeoPixel::getPixelColor(i  ) & 0x0000FF00) >> 8) >> 0);
+
+    px_b = ((
+            (((Adafruit_NeoPixel::getPixelColor(i-1) & 0x000000FF) >> 0) >> 1) +
+            (((Adafruit_NeoPixel::getPixelColor(i+1) & 0x000000FF) >> 0) >> 0) ) >> 1) +
+            (((Adafruit_NeoPixel::getPixelColor(i  ) & 0x000000FF) >> 0) >> 0);
+
+    Adafruit_NeoPixel::setPixelColor(i, px_r, px_g, px_b);
+  }
+
+  // last LED has only one neighbour
+  px_r = (((Adafruit_NeoPixel::getPixelColor(_led_count-2) & 0x00FF0000) >> 16) >> 2) + ((Adafruit_NeoPixel::getPixelColor(_led_count-1) & 0x00FF0000) >> 16);
+  px_g = (((Adafruit_NeoPixel::getPixelColor(_led_count-2) & 0x0000FF00) >>  8) >> 2) + ((Adafruit_NeoPixel::getPixelColor(_led_count-1) & 0x0000FF00) >>  8);
+  px_b = (((Adafruit_NeoPixel::getPixelColor(_led_count-2) & 0x000000FF) >>  0) >> 2) + ((Adafruit_NeoPixel::getPixelColor(_led_count-1) & 0x000000FF) >>  0);
+  Adafruit_NeoPixel::setPixelColor(_led_count-1, px_r, px_g, px_b);
+
+  if(random(10) == 0) {
+    Adafruit_NeoPixel::setPixelColor(random(_led_count), _mode_color);
+  }
+
+  Adafruit_NeoPixel::show();
+
+  _mode_delay = 20 + ((20 * (uint32_t)(SPEED_MAX - _speed)) / _led_count);
+}
+
+
+/*
+ * Random colored droplets creating waves.
+ */
+void WS2812FX::mode_waves_random(void) {
+  _mode_color = color_wheel(random(256));
+  mode_waves();
 }

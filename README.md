@@ -6,7 +6,7 @@ This library features a variety of blinken effects for the WS2811/WS2812/NeoPixe
 Features
 --------
 
-* 41 different effects. And counting.
+* 43 different effects. And counting.
 * Free of any delay()
 * Tested on Arduino Nano, Uno and ESP8266.
 * All effects with printable names - easy to use in user interfaces.
@@ -92,3 +92,5 @@ Effects
 * **Running Random** - Random colored pixels running.
 * **Larson Scanner** - K.I.T.T.
 * **Comet** - Fireing comets from one end.
+* **Waves** - Droplets creating waves.
+* **Waves Random** - Random colored droplets creating waves.
