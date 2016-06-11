@@ -961,14 +961,33 @@ void WS2812FX::mode_color_sweep_random(void) {
 
 
 /*
+ * Alternating color/white pixels running.
+ */
+void WS2812FX::mode_running_color(void) {
+  for(uint16_t i=0; i < _led_count; i++) {
+    if((i + _counter_mode_step) % 4 < 2) {
+      Adafruit_NeoPixel::setPixelColor(i, _mode_color);
+    } else {
+      Adafruit_NeoPixel::setPixelColor(i, 255, 255, 255);
+    }
+  }
+  Adafruit_NeoPixel::show();
+
+  _counter_mode_step = (_counter_mode_step + 1) % 4;
+  _mode_delay = 10 + ((30 * (uint32_t)(SPEED_MAX - _speed)) / _led_count);
+}
+
+
+/*
  * Alternating red/blue pixels running.
  */
 void WS2812FX::mode_running_red_blue(void) {
-  for(uint16_t i=_counter_mode_step; i < _led_count; i+=4) {
-    Adafruit_NeoPixel::setPixelColor(i, 255, 0, 0);
-    Adafruit_NeoPixel::setPixelColor((i+1) % _led_count, 255, 0, 0);
-    Adafruit_NeoPixel::setPixelColor((i+2) % _led_count, 0, 0, 255);
-    Adafruit_NeoPixel::setPixelColor((i+3) % _led_count, 0, 0, 255);
+  for(uint16_t i=0; i < _led_count; i++) {
+    if((i + _counter_mode_step) % 4 < 2) {
+      Adafruit_NeoPixel::setPixelColor(i, 255, 0, 0);
+    } else {
+      Adafruit_NeoPixel::setPixelColor(i, 0, 0, 255);
+    }
   }
   Adafruit_NeoPixel::show();
 
@@ -1118,8 +1137,10 @@ void WS2812FX::mode_fireworks(void) {
   px_b = (((Adafruit_NeoPixel::getPixelColor(_led_count-2) & 0x000000FF) >>  0) >> 2) + ((Adafruit_NeoPixel::getPixelColor(_led_count-1) & 0x000000FF) >>  0);
   Adafruit_NeoPixel::setPixelColor(_led_count-1, px_r, px_g, px_b);
 
-  if(random(10) == 0) {
-    Adafruit_NeoPixel::setPixelColor(random(_led_count), _mode_color);
+  for(uint16_t i=0; i<_led_count/20; i++) {
+    if(random(10) == 0) {
+      Adafruit_NeoPixel::setPixelColor(random(_led_count), _mode_color);
+    }
   }
 
   Adafruit_NeoPixel::show();

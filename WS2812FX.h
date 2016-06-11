@@ -65,7 +65,7 @@
 #define BRIGHTNESS_MIN 0
 #define BRIGHTNESS_MAX 255
 
-#define MODE_COUNT 43
+#define MODE_COUNT 44
 
 #define FX_MODE_STATIC                   0
 #define FX_MODE_BLINK                    1
@@ -104,12 +104,13 @@
 #define FX_MODE_CHASE_BLACKOUT          34
 #define FX_MODE_CHASE_BLACKOUT_RAINBOW  35
 #define FX_MODE_COLOR_SWEEP_RANDOM      36
-#define FX_MODE_RUNNING_RED_BLUE        37
-#define FX_MODE_RUNNING_RANDOM          38
-#define FX_MODE_LARSON_SCANNER          39
-#define FX_MODE_COMET                   40
-#define FX_MODE_FIREWORKS               41
-#define FX_MODE_FIREWORKS_RANDOM        42
+#define FX_MODE_RUNNING_COLOR           37
+#define FX_MODE_RUNNING_RED_BLUE        38
+#define FX_MODE_RUNNING_RANDOM          39
+#define FX_MODE_LARSON_SCANNER          40
+#define FX_MODE_COMET                   41
+#define FX_MODE_FIREWORKS               42
+#define FX_MODE_FIREWORKS_RANDOM        43
 
 
 class WS2812FX : public Adafruit_NeoPixel {
@@ -156,6 +157,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_CHASE_BLACKOUT]        = &WS2812FX::mode_chase_blackout;
       _mode[FX_MODE_CHASE_BLACKOUT_RAINBOW]= &WS2812FX::mode_chase_blackout_rainbow;
       _mode[FX_MODE_COLOR_SWEEP_RANDOM]    = &WS2812FX::mode_color_sweep_random;
+      _mode[FX_MODE_RUNNING_COLOR]         = &WS2812FX::mode_running_color;
       _mode[FX_MODE_RUNNING_RED_BLUE]      = &WS2812FX::mode_running_red_blue;
       _mode[FX_MODE_RUNNING_RANDOM]        = &WS2812FX::mode_running_random;
       _mode[FX_MODE_LARSON_SCANNER]        = &WS2812FX::mode_larson_scanner;
@@ -200,6 +202,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_CHASE_BLACKOUT]        = "Chase Blackout";
       _name[FX_MODE_CHASE_BLACKOUT_RAINBOW]= "Chase Blackout Rainbow";
       _name[FX_MODE_COLOR_SWEEP_RANDOM]    = "Color Sweep Random";
+      _name[FX_MODE_RUNNING_COLOR]         = "Running Color";
       _name[FX_MODE_RUNNING_RED_BLUE]      = "Running Red Blue";
       _name[FX_MODE_RUNNING_RANDOM]        = "Running Random";
       _name[FX_MODE_LARSON_SCANNER]        = "Larson Scanner";
@@ -291,6 +294,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_chase_blackout(void),
       mode_chase_blackout_rainbow(void),
       mode_color_sweep_random(void),
+      mode_running_color(void),
       mode_running_red_blue(void),
       mode_running_random(void),
       mode_larson_scanner(void),

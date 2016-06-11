@@ -6,7 +6,7 @@ This library features a variety of blinken effects for the WS2811/WS2812/NeoPixe
 Features
 --------
 
-* 43 different effects. And counting.
+* 44 different effects. And counting.
 * Free of any delay()
 * Tested on Arduino Nano, Uno and ESP8266.
 * All effects with printable names - easy to use in user interfaces.
@@ -88,6 +88,7 @@ Effects
 * **Chase Blackout** - Black running on color.
 * **Chase Blackout Rainbow** - Black running on rainbow.
 * **Color Sweep Random** - Random color intruduced alternating from start and end of strip.
+* **Running Color** - Alternating color/white pixels running.
 * **Running Red Blue** - Alternating red/blue pixels running.
 * **Running Random** - Random colored pixels running.
 * **Larson Scanner** - K.I.T.T.
