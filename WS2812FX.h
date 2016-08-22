@@ -250,7 +250,7 @@ class WS2812FX : public Adafruit_NeoPixel {
     uint32_t
       getColor(void);
 
-    char*
+    const char*
       getModeName(uint8_t m);
 
   private:
@@ -325,7 +325,7 @@ class WS2812FX : public Adafruit_NeoPixel {
     unsigned long
       _mode_last_call_time;
 
-    char*
+    const char*
       _name[MODE_COUNT];
 
     mode_ptr
@@ -333,3 +333,4 @@ class WS2812FX : public Adafruit_NeoPixel {
 };
 
 #endif
+
