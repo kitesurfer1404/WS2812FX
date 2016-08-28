@@ -165,7 +165,7 @@ uint32_t WS2812FX::getColor(void) {
   return _color; 
 }
 
-char* WS2812FX::getModeName(uint8_t m) {
+const char* WS2812FX::getModeName(uint8_t m) {
   if(m < MODE_COUNT) {
     return _name[m];
   } else {
@@ -1156,3 +1156,4 @@ void WS2812FX::mode_fireworks_random(void) {
   _mode_color = color_wheel(random(256));
   mode_fireworks();
 }
+
