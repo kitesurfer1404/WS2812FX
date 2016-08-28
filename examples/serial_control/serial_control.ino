@@ -33,6 +33,12 @@ void setup() {
 void loop() {
   ws2812fx.service();
 
+  // On Atmega32U4 based boards (leonardo, micro) serialEvent is not called
+  // automatically when data arrive on the serial RX. We need to do it ourself
+  #if defined(__AVR_ATmega32U4__)
+  serialEvent();
+  #endif
+
   if(cmd_complete) {
     process_command();
   }
