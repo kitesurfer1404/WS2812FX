@@ -1,3 +1,5 @@
+![WS2812FX library](https://raw.githubusercontent.com/kitesurfer1404/WS2812FX/master/WS2812FX_logo.png)
+
 WS2812FX - More Blinken for your LEDs!
 ======================================
 
