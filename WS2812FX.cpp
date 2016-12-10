@@ -1157,3 +1157,20 @@ void WS2812FX::mode_fireworks_random(void) {
   mode_fireworks();
 }
 
+
+/*
+ * Alternating red/green pixels running.
+ */
+void WS2812FX::mode_merry_christmas(void) {
+  for(uint16_t i=0; i < _led_count; i++) {
+    if((i + _counter_mode_step) % 4 < 2) {
+      Adafruit_NeoPixel::setPixelColor(i, 255, 0, 0);
+    } else {
+      Adafruit_NeoPixel::setPixelColor(i, 0, 255, 0);
+    }
+  }
+  Adafruit_NeoPixel::show();
+
+  _counter_mode_step = (_counter_mode_step + 1) % 4;
+  _mode_delay = 50 + ((75 * (uint32_t)(SPEED_MAX - _speed)) / _led_count);
+}

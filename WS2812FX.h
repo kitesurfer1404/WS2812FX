@@ -65,7 +65,7 @@
 #define BRIGHTNESS_MIN 0
 #define BRIGHTNESS_MAX 255
 
-#define MODE_COUNT 44
+#define MODE_COUNT 45
 
 #define FX_MODE_STATIC                   0
 #define FX_MODE_BLINK                    1
@@ -111,6 +111,7 @@
 #define FX_MODE_COMET                   41
 #define FX_MODE_FIREWORKS               42
 #define FX_MODE_FIREWORKS_RANDOM        43
+#define FX_MODE_MERRY_CHRISTMAS         44
 
 
 class WS2812FX : public Adafruit_NeoPixel {
@@ -164,6 +165,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_COMET]                 = &WS2812FX::mode_comet;
       _mode[FX_MODE_FIREWORKS]             = &WS2812FX::mode_fireworks;
       _mode[FX_MODE_FIREWORKS_RANDOM]      = &WS2812FX::mode_fireworks_random;
+      _mode[FX_MODE_MERRY_CHRISTMAS]       = &WS2812FX::mode_merry_christmas;
 
       _name[FX_MODE_STATIC]                = "Static";
       _name[FX_MODE_BLINK]                 = "Blink";
@@ -209,6 +211,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_COMET]                 = "Comet";
       _name[FX_MODE_FIREWORKS]             = "Fireworks";
       _name[FX_MODE_FIREWORKS_RANDOM]      = "Fireworks Random";
+      _name[FX_MODE_MERRY_CHRISTMAS]       = "Merry Christmas";
 
       _mode_index = DEFAULT_MODE;
       _speed = DEFAULT_SPEED;
@@ -300,7 +303,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_larson_scanner(void),
       mode_comet(void),
       mode_fireworks(void),
-      mode_fireworks_random(void);
+      mode_fireworks_random(void),
+      mode_merry_christmas(void);
 
     boolean
       _running;
