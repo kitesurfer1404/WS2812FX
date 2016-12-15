@@ -105,3 +105,4 @@ Projects using WS2812FX
 -----------------------
 
 * [Smart Home project by renat2985](https://github.com/renat2985/rgb) using the ESP8266. Including a nice webinterface in the demo video!
+* [WiFi LED Star by kitesurfer1404](http://www.kitesurfer1404.de/tech/led-star/en)
