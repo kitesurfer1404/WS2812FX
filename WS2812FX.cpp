@@ -1137,7 +1137,7 @@ void WS2812FX::mode_fireworks(void) {
   px_b = (((Adafruit_NeoPixel::getPixelColor(_led_count-2) & 0x000000FF) >>  0) >> 2) + ((Adafruit_NeoPixel::getPixelColor(_led_count-1) & 0x000000FF) >>  0);
   Adafruit_NeoPixel::setPixelColor(_led_count-1, px_r, px_g, px_b);
 
-  for(uint16_t i=0; i<_led_count/20; i++) {
+  for(uint16_t i=0; i<max(1,_led_count/20); i++) {
     if(random(10) == 0) {
       Adafruit_NeoPixel::setPixelColor(random(_led_count), _mode_color);
     }
