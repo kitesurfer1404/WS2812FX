@@ -2,6 +2,7 @@ WS2812FX	KEYWORD1
 service	KEYWORD2
 start	KEYWORD2
 stop	KEYWORD2
+trigger	KEYWORD2
 setMode	KEYWORD2
 setSpeed	KEYWORD2
 increaseSpeed	KEYWORD2

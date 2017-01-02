@@ -60,13 +60,14 @@ void WS2812FX::init() {
 }
 
 void WS2812FX::service() {
-  if(_running) {
+  if(_running || _triggered) {
     unsigned long now = millis();
 
-    if(now - _mode_last_call_time > _mode_delay) {
+    if(now - _mode_last_call_time > _mode_delay || _triggered) {
       CALL_MODE(_mode_index);
       _counter_mode_call++;
       _mode_last_call_time = now;
+      _triggered = false;
     }
   }
 }
@@ -83,14 +84,19 @@ void WS2812FX::stop() {
   strip_off();
 }
 
+void WS2812FX::trigger() {
+  _triggered = true;
+}
+
 void WS2812FX::setMode(uint8_t m) {
   _counter_mode_call = 0;
   _counter_mode_step = 0;
   _mode_last_call_time = 0;
   _mode_index = constrain(m, 0, MODE_COUNT-1);
   _mode_color = _color;
+  //_triggered = true;
   Adafruit_NeoPixel::setBrightness(_brightness);
-  strip_off();
+  //strip_off();
 }
 
 void WS2812FX::setSpeed(uint8_t s) {
@@ -98,7 +104,8 @@ void WS2812FX::setSpeed(uint8_t s) {
   _counter_mode_step = 0;
   _mode_last_call_time = 0;
   _speed = constrain(s, SPEED_MIN, SPEED_MAX);
-  strip_off();
+  //_triggered = true;
+  //strip_off();
 }
 
 void WS2812FX::increaseSpeed(uint8_t s) {
@@ -121,8 +128,9 @@ void WS2812FX::setColor(uint32_t c) {
   _counter_mode_step = 0;
   _mode_last_call_time = 0;
   _mode_color = _color;
+  //_triggered = true;
   Adafruit_NeoPixel::setBrightness(_brightness);
-  strip_off();
+  //strip_off();
 }
 
 void WS2812FX::setBrightness(uint8_t b) {

@@ -239,7 +239,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       setColor(uint32_t c),
       setBrightness(uint8_t b),
       increaseBrightness(uint8_t s),
-      decreaseBrightness(uint8_t s);
+      decreaseBrightness(uint8_t s),
+      trigger(void);
 
     boolean 
       isRunning(void);
@@ -307,7 +308,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_merry_christmas(void);
 
     boolean
-      _running;
+      _running,
+      _triggered;
 
     uint8_t
       get_random_wheel_index(uint8_t),
