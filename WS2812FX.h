@@ -311,10 +311,10 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_comet(void),
       mode_fireworks(void),
       mode_fireworks_random(void),
-      mode_merry_christmas(void);
+      mode_merry_christmas(void),
       mode_fire_flicker(void),
       mode_fire_flicker_soft(void),
-      mode_fire_flicker_int(int),
+      mode_fire_flicker_int(int);
 
     boolean
       _running;
