@@ -13,7 +13,7 @@ Features
 * Tested on Arduino Nano, Uno, Micro and ESP8266.
 * All effects with printable names - easy to use in user interfaces.
 * FX, speed and brightness controllable on the fly.
-* Ready for sound-to-light
+* Ready for sound-to-light (see external trigger example)
 
 
 Download, Install and Example
