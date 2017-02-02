@@ -8,11 +8,12 @@ This library features a variety of blinken effects for the WS2811/WS2812/NeoPixe
 Features
 --------
 
-* 45 different effects. And counting.
+* 47 different effects. And counting.
 * Free of any delay()
 * Tested on Arduino Nano, Uno, Micro and ESP8266.
 * All effects with printable names - easy to use in user interfaces.
 * FX, speed and brightness controllable on the fly.
+* Ready for sound-to-light
 
 
 Download, Install and Example
@@ -98,7 +99,8 @@ Effects
 * **Fireworks** - Firework sparks.
 * **Fireworks Random** - Random colored firework sparks.
 * **Merry Christmas** - Alternating green/red pixels running.
-
+* **Fire Flicker** - Fire flickering effect. Like in harsh wind.
+* **Fire Flicker (soft)** - Fire flickering effect. Runs slower/softer.
 
 
 Projects using WS2812FX
