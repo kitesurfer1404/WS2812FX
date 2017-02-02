@@ -1187,3 +1187,38 @@ void WS2812FX::mode_merry_christmas(void) {
   _counter_mode_step = (_counter_mode_step + 1) % 4;
   _mode_delay = 100 + ((100 * (uint32_t)(SPEED_MAX - _speed)) / _led_count);
 }
+
+/*
+ * Random flickering.
+ */
+void WS2812FX::mode_fire_flicker(void) {
+   mode_fire_flicker_int(3);
+}
+
+/*
+ * Random flickering, less intesity.
+ */
+void WS2812FX::mode_fire_flicker_soft(void) {
+   mode_fire_flicker_int(6);
+}
+
+void WS2812FX::mode_fire_flicker_int(int rev_intensity)
+{
+    byte p_r = (_color & 0x00FF0000) >> 16;
+    byte p_g = (_color & 0x0000FF00) >>  8;
+    byte p_b = (_color & 0x000000FF) >>  0;
+    byte flicker_val = max(p_r,max(p_g, p_b))/rev_intensity;
+    for(uint16_t i=0; i < _led_count; i++)
+    {
+      int flicker = random(0,flicker_val);
+      int r1 = p_r-flicker;
+      int g1 = p_g-flicker;
+      int b1 = p_b-flicker;
+      if(g1<0) g1=0;
+      if(r1<0) r1=0;
+      if(b1<0) b1=0;
+      Adafruit_NeoPixel::setPixelColor(i,r1,g1, b1);
+    }
+    Adafruit_NeoPixel::show();
+    _mode_delay = 10 + ((500 * (uint32_t)(SPEED_MAX - _speed)) / SPEED_MAX);
+}
