@@ -99,6 +99,12 @@ void process_command() {
     uint32_t c = (uint32_t) strtol(&cmd.substring(2, cmd.length())[0], NULL, 16);
     ws2812fx.setColor(c); 
     Serial.print(F("Set color to: "));
+    Serial.print(F("0x"));
+    if(ws2812fx.getColor() < 0x100000) { Serial.print(F("0")); }
+    if(ws2812fx.getColor() < 0x010000) { Serial.print(F("0")); }
+    if(ws2812fx.getColor() < 0x001000) { Serial.print(F("0")); }
+    if(ws2812fx.getColor() < 0x000100) { Serial.print(F("0")); }
+    if(ws2812fx.getColor() < 0x000010) { Serial.print(F("0")); }
     Serial.println(ws2812fx.getColor(), HEX);
   }
 
