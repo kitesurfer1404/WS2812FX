@@ -45,6 +45,8 @@
   2016-05-28   Initial beta release
   2016-06-03   Code cleanup, minor improvements, new modes
   2016-06-04   2 new fx, fixed setColor (now also resets _mode_color)
+  2017-02-02   added external trigger functionality (e.g. for sound-to-light)
+  2017-02-02   removed "blackout" on mode, speed or color-change
 
 */
 
@@ -94,7 +96,6 @@ void WS2812FX::setMode(uint8_t m) {
   _mode_last_call_time = 0;
   _mode_index = constrain(m, 0, MODE_COUNT-1);
   _mode_color = _color;
-  //_triggered = true;
   Adafruit_NeoPixel::setBrightness(_brightness);
   //strip_off();
 }
@@ -104,7 +105,6 @@ void WS2812FX::setSpeed(uint8_t s) {
   _counter_mode_step = 0;
   _mode_last_call_time = 0;
   _speed = constrain(s, SPEED_MIN, SPEED_MAX);
-  //_triggered = true;
   //strip_off();
 }
 
@@ -128,7 +128,6 @@ void WS2812FX::setColor(uint32_t c) {
   _counter_mode_step = 0;
   _mode_last_call_time = 0;
   _mode_color = _color;
-  //_triggered = true;
   Adafruit_NeoPixel::setBrightness(_brightness);
   //strip_off();
 }

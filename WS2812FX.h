@@ -45,6 +45,7 @@
   2016-05-28   Initial beta release
   2016-06-03   Code cleanup, minor improvements, new modes
   2016-06-04   2 new fx, fixed setColor (now also resets _mode_color)
+  2017-02-02   added external trigger functionality (e.g. for sound-to-light)
 
 */
 
@@ -339,4 +340,3 @@ class WS2812FX : public Adafruit_NeoPixel {
 };
 
 #endif
-
