@@ -1,0 +1,24 @@
+{
+  "name": "WS2812FX",
+  "description": "WS2812 FX Library for Arduino and ESP8266",
+  "keywords": "ws2812, esp8266",
+  "authors": {
+    "name": "Harm Aldick",
+    "url": "https://github.com/kitesurfer1404/WS2812FX"
+  },
+  "version": "1.0.0",
+  "downloadUrl": "https://github.com/kitesurfer1404/WS2812FX/archive/master.zip",
+  "frameworks": "arduino",
+  "platforms": "espressif8266",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kitesurfer1404/WS2812FX.git"
+  },
+  "dependencies": [
+    {
+      "name": "Adafruit NeoPixel",
+      "version": "~1.0.6"
+    }
+  ]
+}
+
