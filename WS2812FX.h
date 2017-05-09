@@ -116,7 +116,7 @@
 #define FX_MODE_MERRY_CHRISTMAS         44
 #define FX_MODE_FIRE_FLICKER            45
 #define FX_MODE_FIRE_FLICKER_SOFT       46
-#define FX_MODE_STATIC                  47
+#define FX_MODE_STATIC_WHITE            47
 
 
 class WS2812FX : public Adafruit_NeoPixel {
