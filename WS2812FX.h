@@ -67,7 +67,7 @@
 #define BRIGHTNESS_MIN 0
 #define BRIGHTNESS_MAX 255
 
-#define MODE_COUNT 47
+#define MODE_COUNT 48
 
 #define FX_MODE_STATIC                   0
 #define FX_MODE_BLINK                    1
