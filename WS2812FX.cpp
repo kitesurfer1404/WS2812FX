@@ -47,6 +47,7 @@
   2016-06-04   2 new fx, fixed setColor (now also resets _mode_color)
   2017-02-02   added external trigger functionality (e.g. for sound-to-light)
   2017-02-02   removed "blackout" on mode, speed or color-change
+  2017-05-09   added static white fx for RGBW pixels
 
 */
 
@@ -1221,4 +1222,16 @@ void WS2812FX::mode_fire_flicker_int(int rev_intensity)
     }
     Adafruit_NeoPixel::show();
     _mode_delay = 10 + ((500 * (uint32_t)(SPEED_MAX - _speed)) / SPEED_MAX);
+}
+
+/*
+ * No blinking. Just plain old white static light (RGBW).
+ */
+void WS2812FX::mode_static_white(void) {
+  for(uint16_t i=0; i < _led_count; i++) {
+    Adafruit_NeoPixel::setPixelColor(i, 0, 0, 0, _brightness);
+  }
+  Adafruit_NeoPixel::show();
+
+  _mode_delay = 50;
 }

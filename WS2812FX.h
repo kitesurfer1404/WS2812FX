@@ -46,6 +46,7 @@
   2016-06-03   Code cleanup, minor improvements, new modes
   2016-06-04   2 new fx, fixed setColor (now also resets _mode_color)
   2017-02-02   added external trigger functionality (e.g. for sound-to-light)
+  2017-05-09   added static white fx for RGBW pixels
 
 */
 
@@ -66,7 +67,7 @@
 #define BRIGHTNESS_MIN 0
 #define BRIGHTNESS_MAX 255
 
-#define MODE_COUNT 47
+#define MODE_COUNT 48
 
 #define FX_MODE_STATIC                   0
 #define FX_MODE_BLINK                    1
@@ -115,6 +116,7 @@
 #define FX_MODE_MERRY_CHRISTMAS         44
 #define FX_MODE_FIRE_FLICKER            45
 #define FX_MODE_FIRE_FLICKER_SOFT       46
+#define FX_MODE_STATIC_WHITE            47
 
 
 class WS2812FX : public Adafruit_NeoPixel {
@@ -171,6 +173,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_MERRY_CHRISTMAS]       = &WS2812FX::mode_merry_christmas;
       _mode[FX_MODE_FIRE_FLICKER]          = &WS2812FX::mode_fire_flicker;
       _mode[FX_MODE_FIRE_FLICKER_SOFT]     = &WS2812FX::mode_fire_flicker_soft;
+      _mode[FX_MODE_STATIC_WHITE]          = &WS2812FX::mode_static_white;
 
       _name[FX_MODE_STATIC]                = "Static";
       _name[FX_MODE_BLINK]                 = "Blink";
@@ -219,6 +222,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_MERRY_CHRISTMAS]       = "Merry Christmas";
       _name[FX_MODE_FIRE_FLICKER]          = "Fire Flicker";
       _name[FX_MODE_FIRE_FLICKER_SOFT]     = "Fire Flicker (soft)";
+      _name[FX_MODE_STATIC_WHITE]          = "Static White (RGBW)";
       
 
       _mode_index = DEFAULT_MODE;
@@ -316,7 +320,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_merry_christmas(void),
       mode_fire_flicker(void),
       mode_fire_flicker_soft(void),
-      mode_fire_flicker_int(int);
+      mode_fire_flicker_int(int),
+      mode_static_white(void);
 
     boolean
       _running,
