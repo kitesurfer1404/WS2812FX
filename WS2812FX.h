@@ -179,7 +179,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_DUAL_COLOR_WIPE_IN_OUT]  = &WS2812FX::mode_dual_color_wipe_in_out;
       _mode[FX_MODE_DUAL_COLOR_WIPE_IN_IN]   = &WS2812FX::mode_dual_color_wipe_in_in;
       _mode[FX_MODE_DUAL_COLOR_WIPE_OUT_OUT] = &WS2812FX::mode_dual_color_wipe_out_out;
-      _mode[FX_MODE_DUAL_COLOR_WIPE_OUT_IN] = &WS2812FX::mode_dual_color_wipe_out_in;
+      _mode[FX_MODE_DUAL_COLOR_WIPE_OUT_IN]  = &WS2812FX::mode_dual_color_wipe_out_in;
 
       _name[FX_MODE_STATIC]                    = "Static";
       _name[FX_MODE_BLINK]                     = "Blink";
