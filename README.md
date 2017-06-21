@@ -8,7 +8,7 @@ This library features a variety of blinken effects for the WS2811/WS2812/NeoPixe
 Features
 --------
 
-* 47 different effects. And counting.
+* 51 different effects. And counting.
 * Free of any delay()
 * Tested on Arduino Nano, Uno, Micro and ESP8266.
 * All effects with printable names - easy to use in user interfaces.
