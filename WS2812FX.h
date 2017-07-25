@@ -1,24 +1,36 @@
 /*
   WS2812FX.h - Library for WS2812 LED effects.
+
   Harm Aldick - 2016
   www.aldick.org
+
+
   FEATURES
     * A lot of blinken modes and counting
     * WS2812FX can be used as drop-in replacement for Adafruit Neopixel Library
+
   NOTES
     * Uses the Adafruit Neopixel library. Get it here:
       https://github.com/adafruit/Adafruit_NeoPixel
+
+
+
   LICENSE
+
   The MIT License (MIT)
+
   Copyright (c) 2016  Harm Aldick
+
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
   in the Software without restriction, including without limitation the rights
   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
   copies of the Software, and to permit persons to whom the Software is
   furnished to do so, subject to the following conditions:
+
   The above copyright notice and this permission notice shall be included in
   all copies or substantial portions of the Software.
+
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,11 +38,15 @@
   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
+
+
   CHANGELOG
+
   2016-05-28   Initial beta release
   2016-06-03   Code cleanup, minor improvements, new modes
   2016-06-04   2 new fx, fixed setColor (now also resets _mode_color)
   2017-02-02   added external trigger functionality (e.g. for sound-to-light)
+
 */
 
 #ifndef WS2812FX_h
