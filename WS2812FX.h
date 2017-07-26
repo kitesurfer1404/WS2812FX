@@ -51,7 +51,7 @@
 #define BRIGHTNESS_MIN 0
 #define BRIGHTNESS_MAX 255
 
-#define MODE_COUNT 52
+#define MODE_COUNT 53
 
 #define FX_MODE_STATIC                   0
 #define FX_MODE_BLINK                    1
@@ -100,12 +100,12 @@
 #define FX_MODE_MERRY_CHRISTMAS         44
 #define FX_MODE_FIRE_FLICKER            45
 #define FX_MODE_FIRE_FLICKER_SOFT       46
-#define FX_MODE_DUAL_COLOR_WIPE_IN_OUT  47
-#define FX_MODE_DUAL_COLOR_WIPE_IN_IN   48
-#define FX_MODE_DUAL_COLOR_WIPE_OUT_OUT 49
-#define FX_MODE_DUAL_COLOR_WIPE_OUT_IN  50
-#define FX_MODE_CIRCUS_COMBUSTUS        51
-
+#define FX_MODE_FIRE_FLICKER_INTENSE    47
+#define FX_MODE_DUAL_COLOR_WIPE_IN_OUT  48
+#define FX_MODE_DUAL_COLOR_WIPE_IN_IN   49
+#define FX_MODE_DUAL_COLOR_WIPE_OUT_OUT 50
+#define FX_MODE_DUAL_COLOR_WIPE_OUT_IN  51
+#define FX_MODE_CIRCUS_COMBUSTUS        52
 
 
 class WS2812FX : public Adafruit_NeoPixel {
@@ -162,6 +162,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_MERRY_CHRISTMAS]         = &WS2812FX::mode_merry_christmas;
       _mode[FX_MODE_FIRE_FLICKER]            = &WS2812FX::mode_fire_flicker;
       _mode[FX_MODE_FIRE_FLICKER_SOFT]       = &WS2812FX::mode_fire_flicker_soft;
+      _mode[FX_MODE_FIRE_FLICKER_INTENSE]    = &WS2812FX::mode_fire_flicker_intense;
       _mode[FX_MODE_DUAL_COLOR_WIPE_IN_OUT]  = &WS2812FX::mode_dual_color_wipe_in_out;
       _mode[FX_MODE_DUAL_COLOR_WIPE_IN_IN]   = &WS2812FX::mode_dual_color_wipe_in_in;
       _mode[FX_MODE_DUAL_COLOR_WIPE_OUT_OUT] = &WS2812FX::mode_dual_color_wipe_out_out;
@@ -215,6 +216,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_MERRY_CHRISTMAS]           = "Merry Christmas";
       _name[FX_MODE_FIRE_FLICKER]              = "Fire Flicker";
       _name[FX_MODE_FIRE_FLICKER_SOFT]         = "Fire Flicker (soft)";
+      _name[FX_MODE_FIRE_FLICKER_INTENSE]      = "Fire Flicker (intense)";
       _name[FX_MODE_DUAL_COLOR_WIPE_IN_OUT]    = "Dual Color Wipe In to Out";
       _name[FX_MODE_DUAL_COLOR_WIPE_IN_IN]     = "Dual Color Wipe In to In";
       _name[FX_MODE_DUAL_COLOR_WIPE_OUT_OUT]   = "Dual Color Wipe Out to Out";
@@ -322,6 +324,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_merry_christmas(void),
       mode_fire_flicker(void),
       mode_fire_flicker_soft(void),
+      mode_fire_flicker_intense(void),
       mode_fire_flicker_int(int),
       mode_dual_color_wipe_in_out(void),
       mode_dual_color_wipe_in_in(void),

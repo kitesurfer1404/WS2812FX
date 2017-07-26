@@ -1230,6 +1230,10 @@ void WS2812FX::mode_fire_flicker_soft(void) {
    mode_fire_flicker_int(6);
 }
 
+void WS2812FX::mode_fire_flicker_intense(void) {
+   mode_fire_flicker_int(1.7);
+}
+
 void WS2812FX::mode_fire_flicker_int(int rev_intensity)
 {
     byte p_r = (_color & 0x00FF0000) >> 16;
