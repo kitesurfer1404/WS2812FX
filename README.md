@@ -101,7 +101,11 @@ Effects
 * **Merry Christmas** - Alternating green/red pixels running.
 * **Fire Flicker** - Fire flickering effect. Like in harsh wind.
 * **Fire Flicker (soft)** - Fire flickering effect. Runs slower/softer.
-
+* **Dual Color Wipe In/Out** - Light from edges in to middle, then turn off in reverse.
+* **Dual Color Wipe In/In** - Light from edges in to middle, then turn off in same order.
+* **Dual Color Wipe Out/Out** - Light from middle to edges, then turn off in same order.
+* **Dual Color Wipe Out/In** - Light from middle to edges, then turn off in reverse.
+* **Circus Combustus** - Alternating white/red/black pixels running.
 
 Projects using WS2812FX
 -----------------------

@@ -1250,3 +1250,192 @@ void WS2812FX::mode_fire_flicker_int(int rev_intensity)
     Adafruit_NeoPixel::show();
     _mode_delay = 10 + ((500 * (uint32_t)(SPEED_MAX - _speed)) / SPEED_MAX);
 }
+
+/*
+ * Lights all LEDs after each other up starting from the outer edges and
+ * finishing in the middle. Then turns them in reverse order off. Repeat.
+ */
+void WS2812FX::mode_dual_color_wipe_in_out(void) {
+  int end = _led_count - _counter_mode_step - 1;
+  bool odd = (_led_count % 2);
+  int mid = odd ? ((_led_count / 2) + 1) : (_led_count / 2);
+  if (_counter_mode_step < mid) {
+    Adafruit_NeoPixel::setPixelColor(_counter_mode_step, _color);
+    Adafruit_NeoPixel::setPixelColor(end, _color);
+  }
+  else {
+    if (odd) {
+      // If odd, we need to 'double count' the center LED (once to turn it on,
+      // once to turn it off). So trail one behind after the middle LED.
+      Adafruit_NeoPixel::setPixelColor(_counter_mode_step - 1, 0);
+      Adafruit_NeoPixel::setPixelColor(end + 1, 0);
+    } else {
+      Adafruit_NeoPixel::setPixelColor(_counter_mode_step, 0);
+      Adafruit_NeoPixel::setPixelColor(end, 0);
+    }
+  }
+
+  _counter_mode_step++;
+  if (odd) {
+    if (_counter_mode_step > _led_count) {
+      _counter_mode_step = 0;
+    }
+  } else {
+    if (_counter_mode_step >= _led_count) {
+      _counter_mode_step = 0;
+    }
+  }
+
+  Adafruit_NeoPixel::show();
+
+  _mode_delay = 5 + ((50 * (uint32_t)(SPEED_MAX - _speed)) / _led_count);
+}
+
+/*
+ * Lights all LEDs after each other up starting from the outer edges and
+ * finishing in the middle. Then turns them in that order off. Repeat.
+ */
+void WS2812FX::mode_dual_color_wipe_in_in(void) {
+  bool odd = (_led_count % 2);
+  int mid = _led_count / 2;
+  if (odd) {
+    if (_counter_mode_step <= mid) {
+      Adafruit_NeoPixel::setPixelColor(_counter_mode_step, _color);
+      Adafruit_NeoPixel::setPixelColor(_led_count - _counter_mode_step - 1, _color);
+    } else {
+      int i = _counter_mode_step - mid;
+      Adafruit_NeoPixel::setPixelColor(i - 1, 0);
+      Adafruit_NeoPixel::setPixelColor(_led_count - i, 0);
+    }
+  } else {
+    if (_counter_mode_step < mid) {
+      Adafruit_NeoPixel::setPixelColor(_counter_mode_step, _color);
+      Adafruit_NeoPixel::setPixelColor(_led_count - _counter_mode_step - 1, _color);
+    } else {
+      int i = _counter_mode_step - mid;
+      Adafruit_NeoPixel::setPixelColor(i, 0);
+      Adafruit_NeoPixel::setPixelColor(_led_count - i - 1, 0);
+    }
+  }
+
+  _counter_mode_step++;
+  if (odd) {
+    if (_counter_mode_step > _led_count) {
+      _counter_mode_step = 0;
+    }
+  } else {
+    if (_counter_mode_step >= _led_count) {
+      _counter_mode_step = 0;
+    }
+  }
+
+  Adafruit_NeoPixel::show();
+
+  _mode_delay = 5 + ((50 * (uint32_t)(SPEED_MAX - _speed)) / _led_count);
+}
+
+/*
+ * Lights all LEDs after each other up starting from the middle and
+ * finishing at the edges. Then turns them in that order off. Repeat.
+ */
+void WS2812FX::mode_dual_color_wipe_out_out(void) {
+  int end = _led_count - _counter_mode_step - 1;
+  bool odd = (_led_count % 2);
+  int mid = _led_count / 2;
+
+  if (odd) {
+    if (_counter_mode_step <= mid) {
+      Adafruit_NeoPixel::setPixelColor(mid + _counter_mode_step, _color);
+      Adafruit_NeoPixel::setPixelColor(mid - _counter_mode_step, _color);
+    } else {
+      Adafruit_NeoPixel::setPixelColor(_counter_mode_step - 1, 0);
+      Adafruit_NeoPixel::setPixelColor(end + 1, 0);
+    }
+  } else {
+    if (_counter_mode_step < mid) {
+      Adafruit_NeoPixel::setPixelColor(mid - _counter_mode_step - 1, _color);
+      Adafruit_NeoPixel::setPixelColor(mid + _counter_mode_step, _color);
+    } else {
+      Adafruit_NeoPixel::setPixelColor(_counter_mode_step, 0);
+      Adafruit_NeoPixel::setPixelColor(end, 0);
+    }
+  }
+
+  _counter_mode_step++;
+  if (odd) {
+    if (_counter_mode_step > _led_count) {
+      _counter_mode_step = 0;
+    }
+  } else {
+    if (_counter_mode_step >= _led_count) {
+      _counter_mode_step = 0;
+    }
+  }
+
+  Adafruit_NeoPixel::show();
+
+  _mode_delay = 5 + ((50 * (uint32_t)(SPEED_MAX - _speed)) / _led_count);
+}
+
+/*
+ * Lights all LEDs after each other up starting from the middle and
+ * finishing at the edges. Then turns them in reverse order off. Repeat.
+ */
+void WS2812FX::mode_dual_color_wipe_out_in(void) {
+  bool odd = (_led_count % 2);
+  int mid = _led_count / 2;
+
+  if (odd) {
+    if (_counter_mode_step <= mid) {
+      Adafruit_NeoPixel::setPixelColor(mid + _counter_mode_step, _color);
+      Adafruit_NeoPixel::setPixelColor(mid - _counter_mode_step, _color);
+    } else {
+      int i = _counter_mode_step - mid;
+      Adafruit_NeoPixel::setPixelColor(i - 1, 0);
+      Adafruit_NeoPixel::setPixelColor(_led_count - i, 0);
+    }
+  } else {
+    if (_counter_mode_step < mid) {
+      Adafruit_NeoPixel::setPixelColor(mid - _counter_mode_step - 1, _color);
+      Adafruit_NeoPixel::setPixelColor(mid + _counter_mode_step, _color);
+    } else {
+      int i = _counter_mode_step - mid;
+      Adafruit_NeoPixel::setPixelColor(i, 0);
+      Adafruit_NeoPixel::setPixelColor(_led_count - i - 1, 0);
+    }
+  }
+
+  _counter_mode_step++;
+  if (odd) {
+    if (_counter_mode_step > _led_count) {
+      _counter_mode_step = 0;
+    }
+  } else {
+    if (_counter_mode_step >= _led_count) {
+      _counter_mode_step = 0;
+    }
+  }
+
+  Adafruit_NeoPixel::show();
+
+  _mode_delay = 5 + ((50 * (uint32_t)(SPEED_MAX - _speed)) / _led_count);
+}
+
+/*
+ * Alternating red/green pixels running.
+ */
+void WS2812FX::mode_circus_combustus(void) {
+  for(uint16_t i=0; i < _led_count; i++) {
+    if((i + _counter_mode_step) % 6 < 2) {
+      Adafruit_NeoPixel::setPixelColor(i, 255, 0, 0);
+    } else if((i + _counter_mode_step) % 6 < 4){
+      Adafruit_NeoPixel::setPixelColor(i, 255, 255, 255);
+    } else {
+      Adafruit_NeoPixel::setPixelColor(i, 0, 0, 0);
+    }
+  }
+  Adafruit_NeoPixel::show();
+
+  _counter_mode_step = (_counter_mode_step + 1) % 6;
+  _mode_delay = 100 + ((100 * (uint32_t)(SPEED_MAX - _speed)) / _led_count);
+}
