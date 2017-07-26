@@ -10,7 +10,7 @@
     * WS2812FX can be used as drop-in replacement for Adafruit Neopixel Library
 
   NOTES
-    * Uses the Adafruit Neopixel library. Get it here: 
+    * Uses the Adafruit Neopixel library. Get it here:
       https://github.com/adafruit/Adafruit_NeoPixel
 
 
@@ -19,7 +19,7 @@
 
   The MIT License (MIT)
 
-  Copyright (c) 2016  Harm Aldick 
+  Copyright (c) 2016  Harm Aldick
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -148,8 +148,32 @@ void WS2812FX::decreaseBrightness(uint8_t s) {
   setBrightness(s);
 }
 
+void WS2812FX::setLength(uint16_t b) {
+  if (b < 1) b = 1;
+
+  // Decrease numLEDs to maximum available memory
+  do {
+      Adafruit_NeoPixel::updateLength(b);
+      b--;
+  } while(!Adafruit_NeoPixel::numLEDs && b > 1);
+
+  _led_count = Adafruit_NeoPixel::numLEDs;
+}
+
+void WS2812FX::increaseLength(uint16_t s) {
+  s = _led_count + s;
+  setLength(s);
+}
+
+void WS2812FX::decreaseLength(uint16_t s) {
+  if (s > _led_count) s = 1;
+  s = _led_count - s;
+  strip_off();
+  setLength(s);
+}
+
 boolean WS2812FX::isRunning() {
-  return _running; 
+  return _running;
 }
 
 uint8_t WS2812FX::getMode(void) {
@@ -164,12 +188,16 @@ uint8_t WS2812FX::getBrightness(void) {
   return _brightness;
 }
 
+uint8_t WS2812FX::getLength(void) {
+  return _led_count;
+}
+
 uint8_t WS2812FX::getModeCount(void) {
   return MODE_COUNT;
 }
 
 uint32_t WS2812FX::getColor(void) {
-  return _color; 
+  return _color;
 }
 
 const char* WS2812FX::getModeName(uint8_t m) {
@@ -310,7 +338,7 @@ void WS2812FX::mode_random_color(void) {
   for(uint16_t i=0; i < _led_count; i++) {
     Adafruit_NeoPixel::setPixelColor(i, color_wheel(_mode_color));
   }
-  
+
   Adafruit_NeoPixel::show();
   _mode_delay = 100 + ((5000 * (uint32_t)(SPEED_MAX - _speed)) / SPEED_MAX);
 }
@@ -371,7 +399,7 @@ void WS2812FX::mode_breath(void) {
   if(breath_brightness == breath_brightness_steps[_counter_mode_step]) {
     _counter_mode_step = (_counter_mode_step + 1) % (sizeof(breath_brightness_steps)/sizeof(uint8_t));
   }
-  
+
   for(uint16_t i=0; i < _led_count; i++) {
     Adafruit_NeoPixel::setPixelColor(i, _color);           // set all LEDs to selected color
   }

@@ -1,6 +1,6 @@
 /*
   WS2812FX.h - Library for WS2812 LED effects.
-  
+
   Harm Aldick - 2016
   www.aldick.org
 
@@ -10,7 +10,7 @@
     * WS2812FX can be used as drop-in replacement for Adafruit Neopixel Library
 
   NOTES
-    * Uses the Adafruit Neopixel library. Get it here: 
+    * Uses the Adafruit Neopixel library. Get it here:
       https://github.com/adafruit/Adafruit_NeoPixel
 
 
@@ -19,7 +19,7 @@
 
   The MIT License (MIT)
 
-  Copyright (c) 2016  Harm Aldick 
+  Copyright (c) 2016  Harm Aldick
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -219,7 +219,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_MERRY_CHRISTMAS]       = "Merry Christmas";
       _name[FX_MODE_FIRE_FLICKER]          = "Fire Flicker";
       _name[FX_MODE_FIRE_FLICKER_SOFT]     = "Fire Flicker (soft)";
-      
+
 
       _mode_index = DEFAULT_MODE;
       _speed = DEFAULT_SPEED;
@@ -248,18 +248,23 @@ class WS2812FX : public Adafruit_NeoPixel {
       setBrightness(uint8_t b),
       increaseBrightness(uint8_t s),
       decreaseBrightness(uint8_t s),
+      setLength(uint16_t b),
+      increaseLength(uint16_t s),
+      decreaseLength(uint16_t s),
       trigger(void);
 
-    boolean 
+    boolean
       isRunning(void);
 
     uint8_t
       getMode(void),
       getSpeed(void),
       getBrightness(void),
-      getModeCount(void);
+      getModeCount(void),
+      getLength(void);
 
     uint32_t
+      color_wheel(uint8_t),
       getColor(void);
 
     const char*
@@ -332,7 +337,6 @@ class WS2812FX : public Adafruit_NeoPixel {
       _led_count;
 
     uint32_t
-      color_wheel(uint8_t),
       _color,
       _counter_mode_call,
       _counter_mode_step,
