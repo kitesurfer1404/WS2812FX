@@ -1422,7 +1422,7 @@ void WS2812FX::mode_dual_color_wipe_out_in(void) {
 }
 
 /*
- * Alternating red/green pixels running.
+ * Alternating white/red/black pixels running.
  */
 void WS2812FX::mode_circus_combustus(void) {
   for(uint16_t i=0; i < _led_count; i++) {
