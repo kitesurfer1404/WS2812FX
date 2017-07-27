@@ -168,7 +168,12 @@ void WS2812FX::increaseLength(uint16_t s) {
 void WS2812FX::decreaseLength(uint16_t s) {
   if (s > _led_count) s = 1;
   s = _led_count - s;
-  strip_off();
+
+  for(uint16_t i=s; i < _led_count; i++) {
+    Adafruit_NeoPixel::setPixelColor(i, 0);
+  }
+  Adafruit_NeoPixel::show();
+
   setLength(s);
 }
 
@@ -188,7 +193,7 @@ uint8_t WS2812FX::getBrightness(void) {
   return _brightness;
 }
 
-uint8_t WS2812FX::getLength(void) {
+uint16_t WS2812FX::getLength(void) {
   return _led_count;
 }
 
@@ -200,11 +205,11 @@ uint32_t WS2812FX::getColor(void) {
   return _color;
 }
 
-const char* WS2812FX::getModeName(uint8_t m) {
+const __FlashStringHelper* WS2812FX::getModeName(uint8_t m) {
   if(m < MODE_COUNT) {
     return _name[m];
   } else {
-    return "";
+    return F("");
   }
 }
 
