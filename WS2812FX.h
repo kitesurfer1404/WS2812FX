@@ -11,7 +11,13 @@
       https://github.com/adafruit/Adafruit_NeoPixel
   LICENSE
   The MIT License (MIT)
+<<<<<<< HEAD
   Copyright (c) 2016  Harm Aldick
+=======
+
+  Copyright (c) 2016  Harm Aldick
+
+>>>>>>> 3cfbeb120406f232c1c4b5e25851df514067a5bb
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
   in the Software without restriction, including without limitation the rights
@@ -115,6 +121,7 @@ class WS2812FX : public Adafruit_NeoPixel {
   public:
 
     WS2812FX(uint16_t n, uint8_t p, neoPixelType t) : Adafruit_NeoPixel(n, p, t) {
+<<<<<<< HEAD
       _mode[FX_MODE_STATIC]                  = &WS2812FX::mode_static;
       _mode[FX_MODE_BLINK]                   = &WS2812FX::mode_blink;
       _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_breath;
@@ -222,6 +229,103 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_DUAL_COLOR_WIPE_OUT_OUT]   = F("Dual Color Wipe Out to Out");
       _name[FX_MODE_DUAL_COLOR_WIPE_OUT_IN]    = F("Dual Color Wipe Out to In");
       _name[FX_MODE_CIRCUS_COMBUSTUS]          = F("Circus Combustus");
+=======
+      _mode[FX_MODE_STATIC]                = &WS2812FX::mode_static;
+      _mode[FX_MODE_BLINK]                 = &WS2812FX::mode_blink;
+      _mode[FX_MODE_BREATH]                = &WS2812FX::mode_breath;
+      _mode[FX_MODE_COLOR_WIPE]            = &WS2812FX::mode_color_wipe;
+      _mode[FX_MODE_COLOR_WIPE_RANDOM]     = &WS2812FX::mode_color_wipe_random;
+      _mode[FX_MODE_RANDOM_COLOR]          = &WS2812FX::mode_random_color;
+      _mode[FX_MODE_SINGLE_DYNAMIC]        = &WS2812FX::mode_single_dynamic;
+      _mode[FX_MODE_MULTI_DYNAMIC]         = &WS2812FX::mode_multi_dynamic;
+      _mode[FX_MODE_RAINBOW]               = &WS2812FX::mode_rainbow;
+      _mode[FX_MODE_RAINBOW_CYCLE]         = &WS2812FX::mode_rainbow_cycle;
+      _mode[FX_MODE_SCAN]                  = &WS2812FX::mode_scan;
+      _mode[FX_MODE_DUAL_SCAN]             = &WS2812FX::mode_dual_scan;
+      _mode[FX_MODE_FADE]                  = &WS2812FX::mode_fade;
+      _mode[FX_MODE_THEATER_CHASE]         = &WS2812FX::mode_theater_chase;
+      _mode[FX_MODE_THEATER_CHASE_RAINBOW] = &WS2812FX::mode_theater_chase_rainbow;
+      _mode[FX_MODE_RUNNING_LIGHTS]        = &WS2812FX::mode_running_lights;
+      _mode[FX_MODE_TWINKLE]               = &WS2812FX::mode_twinkle;
+      _mode[FX_MODE_TWINKLE_RANDOM]        = &WS2812FX::mode_twinkle_random;
+      _mode[FX_MODE_TWINKLE_FADE]          = &WS2812FX::mode_twinkle_fade;
+      _mode[FX_MODE_TWINKLE_FADE_RANDOM]   = &WS2812FX::mode_twinkle_fade_random;
+      _mode[FX_MODE_SPARKLE]               = &WS2812FX::mode_sparkle;
+      _mode[FX_MODE_FLASH_SPARKLE]         = &WS2812FX::mode_flash_sparkle;
+      _mode[FX_MODE_HYPER_SPARKLE]         = &WS2812FX::mode_hyper_sparkle;
+      _mode[FX_MODE_STROBE]                = &WS2812FX::mode_strobe;
+      _mode[FX_MODE_STROBE_RAINBOW]        = &WS2812FX::mode_strobe_rainbow;
+      _mode[FX_MODE_MULTI_STROBE]          = &WS2812FX::mode_multi_strobe;
+      _mode[FX_MODE_BLINK_RAINBOW]         = &WS2812FX::mode_blink_rainbow;
+      _mode[FX_MODE_CHASE_WHITE]           = &WS2812FX::mode_chase_white;
+      _mode[FX_MODE_CHASE_COLOR]           = &WS2812FX::mode_chase_color;
+      _mode[FX_MODE_CHASE_RANDOM]          = &WS2812FX::mode_chase_random;
+      _mode[FX_MODE_CHASE_RAINBOW]         = &WS2812FX::mode_chase_rainbow;
+      _mode[FX_MODE_CHASE_FLASH]           = &WS2812FX::mode_chase_flash;
+      _mode[FX_MODE_CHASE_FLASH_RANDOM]    = &WS2812FX::mode_chase_flash_random;
+      _mode[FX_MODE_CHASE_RAINBOW_WHITE]   = &WS2812FX::mode_chase_rainbow_white;
+      _mode[FX_MODE_CHASE_BLACKOUT]        = &WS2812FX::mode_chase_blackout;
+      _mode[FX_MODE_CHASE_BLACKOUT_RAINBOW]= &WS2812FX::mode_chase_blackout_rainbow;
+      _mode[FX_MODE_COLOR_SWEEP_RANDOM]    = &WS2812FX::mode_color_sweep_random;
+      _mode[FX_MODE_RUNNING_COLOR]         = &WS2812FX::mode_running_color;
+      _mode[FX_MODE_RUNNING_RED_BLUE]      = &WS2812FX::mode_running_red_blue;
+      _mode[FX_MODE_RUNNING_RANDOM]        = &WS2812FX::mode_running_random;
+      _mode[FX_MODE_LARSON_SCANNER]        = &WS2812FX::mode_larson_scanner;
+      _mode[FX_MODE_COMET]                 = &WS2812FX::mode_comet;
+      _mode[FX_MODE_FIREWORKS]             = &WS2812FX::mode_fireworks;
+      _mode[FX_MODE_FIREWORKS_RANDOM]      = &WS2812FX::mode_fireworks_random;
+      _mode[FX_MODE_MERRY_CHRISTMAS]       = &WS2812FX::mode_merry_christmas;
+      _mode[FX_MODE_FIRE_FLICKER]          = &WS2812FX::mode_fire_flicker;
+      _mode[FX_MODE_FIRE_FLICKER_SOFT]     = &WS2812FX::mode_fire_flicker_soft;
+
+      _name[FX_MODE_STATIC]                = F("Static");
+      _name[FX_MODE_BLINK]                 = F("Blink");
+      _name[FX_MODE_BREATH]                = F("Breath");
+      _name[FX_MODE_COLOR_WIPE]            = F("Color Wipe");
+      _name[FX_MODE_COLOR_WIPE_RANDOM]     = F("Color Wipe Random");
+      _name[FX_MODE_RANDOM_COLOR]          = F("Random Color");
+      _name[FX_MODE_SINGLE_DYNAMIC]        = F("Single Dynamic");
+      _name[FX_MODE_MULTI_DYNAMIC]         = F("Multi Dynamic");
+      _name[FX_MODE_RAINBOW]               = F("Rainbow");
+      _name[FX_MODE_RAINBOW_CYCLE]         = F("Rainbow Cycle");
+      _name[FX_MODE_SCAN]                  = F("Scan");
+      _name[FX_MODE_DUAL_SCAN]             = F("Dual Scan");
+      _name[FX_MODE_FADE]                  = F("Fade");
+      _name[FX_MODE_THEATER_CHASE]         = F("Theater Chase");
+      _name[FX_MODE_THEATER_CHASE_RAINBOW] = F("Theater Chase Rainbow");
+      _name[FX_MODE_RUNNING_LIGHTS]        = F("Running Lights");
+      _name[FX_MODE_TWINKLE]               = F("Twinkle");
+      _name[FX_MODE_TWINKLE_RANDOM]        = F("Twinkle Random");
+      _name[FX_MODE_TWINKLE_FADE]          = F("Twinkle Fade");
+      _name[FX_MODE_TWINKLE_FADE_RANDOM]   = F("Twinkle Fade Random");
+      _name[FX_MODE_SPARKLE]               = F("Sparkle");
+      _name[FX_MODE_FLASH_SPARKLE]         = F("Flash Sparkle");
+      _name[FX_MODE_HYPER_SPARKLE]         = F("Hyper Sparkle");
+      _name[FX_MODE_STROBE]                = F("Strobe");
+      _name[FX_MODE_STROBE_RAINBOW]        = F("Strobe Rainbow");
+      _name[FX_MODE_MULTI_STROBE]          = F("Multi Strobe");
+      _name[FX_MODE_BLINK_RAINBOW]         = F("Blink Rainbow");
+      _name[FX_MODE_CHASE_WHITE]           = F("Chase White");
+      _name[FX_MODE_CHASE_COLOR]           = F("Chase Color");
+      _name[FX_MODE_CHASE_RANDOM]          = F("Chase Random");
+      _name[FX_MODE_CHASE_RAINBOW]         = F("Chase Rainbow");
+      _name[FX_MODE_CHASE_FLASH]           = F("Chase Flash");
+      _name[FX_MODE_CHASE_FLASH_RANDOM]    = F("Chase Flash Random");
+      _name[FX_MODE_CHASE_RAINBOW_WHITE]   = F("Chase Rainbow White");
+      _name[FX_MODE_CHASE_BLACKOUT]        = F("Chase Blackout");
+      _name[FX_MODE_CHASE_BLACKOUT_RAINBOW]= F("Chase Blackout Rainbow");
+      _name[FX_MODE_COLOR_SWEEP_RANDOM]    = F("Color Sweep Random");
+      _name[FX_MODE_RUNNING_COLOR]         = F("Running Color");
+      _name[FX_MODE_RUNNING_RED_BLUE]      = F("Running Red Blue");
+      _name[FX_MODE_RUNNING_RANDOM]        = F("Running Random");
+      _name[FX_MODE_LARSON_SCANNER]        = F("Larson Scanner");
+      _name[FX_MODE_COMET]                 = F("Comet");
+      _name[FX_MODE_FIREWORKS]             = F("Fireworks");
+      _name[FX_MODE_FIREWORKS_RANDOM]      = F("Fireworks Random");
+      _name[FX_MODE_MERRY_CHRISTMAS]       = F("Merry Christmas");
+      _name[FX_MODE_FIRE_FLICKER]          = F("Fire Flicker");
+      _name[FX_MODE_FIRE_FLICKER_SOFT]     = F("Fire Flicker (soft)");
+>>>>>>> 3cfbeb120406f232c1c4b5e25851df514067a5bb
 
 
       _mode_index = DEFAULT_MODE;
