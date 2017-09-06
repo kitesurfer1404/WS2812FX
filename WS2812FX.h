@@ -1,6 +1,6 @@
 /*
   WS2812FX.h - Library for WS2812 LED effects.
-  
+
   Harm Aldick - 2016
   www.aldick.org
 
@@ -10,7 +10,7 @@
     * WS2812FX can be used as drop-in replacement for Adafruit Neopixel Library
 
   NOTES
-    * Uses the Adafruit Neopixel library. Get it here: 
+    * Uses the Adafruit Neopixel library. Get it here:
       https://github.com/adafruit/Adafruit_NeoPixel
 
 
@@ -19,7 +19,7 @@
 
   The MIT License (MIT)
 
-  Copyright (c) 2016  Harm Aldick 
+  Copyright (c) 2016  Harm Aldick
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -172,54 +172,54 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_FIRE_FLICKER]          = &WS2812FX::mode_fire_flicker;
       _mode[FX_MODE_FIRE_FLICKER_SOFT]     = &WS2812FX::mode_fire_flicker_soft;
 
-      _name[FX_MODE_STATIC]                = "Static";
-      _name[FX_MODE_BLINK]                 = "Blink";
-      _name[FX_MODE_BREATH]                = "Breath";
-      _name[FX_MODE_COLOR_WIPE]            = "Color Wipe";
-      _name[FX_MODE_COLOR_WIPE_RANDOM]     = "Color Wipe Random";
-      _name[FX_MODE_RANDOM_COLOR]          = "Random Color";
-      _name[FX_MODE_SINGLE_DYNAMIC]        = "Single Dynamic";
-      _name[FX_MODE_MULTI_DYNAMIC]         = "Multi Dynamic";
-      _name[FX_MODE_RAINBOW]               = "Rainbow";
-      _name[FX_MODE_RAINBOW_CYCLE]         = "Rainbow Cycle";
-      _name[FX_MODE_SCAN]                  = "Scan";
-      _name[FX_MODE_DUAL_SCAN]             = "Dual Scan";
-      _name[FX_MODE_FADE]                  = "Fade";
-      _name[FX_MODE_THEATER_CHASE]         = "Theater Chase";
-      _name[FX_MODE_THEATER_CHASE_RAINBOW] = "Theater Chase Rainbow";
-      _name[FX_MODE_RUNNING_LIGHTS]        = "Running Lights";
-      _name[FX_MODE_TWINKLE]               = "Twinkle";
-      _name[FX_MODE_TWINKLE_RANDOM]        = "Twinkle Random";
-      _name[FX_MODE_TWINKLE_FADE]          = "Twinkle Fade";
-      _name[FX_MODE_TWINKLE_FADE_RANDOM]   = "Twinkle Fade Random";
-      _name[FX_MODE_SPARKLE]               = "Sparkle";
-      _name[FX_MODE_FLASH_SPARKLE]         = "Flash Sparkle";
-      _name[FX_MODE_HYPER_SPARKLE]         = "Hyper Sparkle";
-      _name[FX_MODE_STROBE]                = "Strobe";
-      _name[FX_MODE_STROBE_RAINBOW]        = "Strobe Rainbow";
-      _name[FX_MODE_MULTI_STROBE]          = "Multi Strobe";
-      _name[FX_MODE_BLINK_RAINBOW]         = "Blink Rainbow";
-      _name[FX_MODE_CHASE_WHITE]           = "Chase White";
-      _name[FX_MODE_CHASE_COLOR]           = "Chase Color";
-      _name[FX_MODE_CHASE_RANDOM]          = "Chase Random";
-      _name[FX_MODE_CHASE_RAINBOW]         = "Chase Rainbow";
-      _name[FX_MODE_CHASE_FLASH]           = "Chase Flash";
-      _name[FX_MODE_CHASE_FLASH_RANDOM]    = "Chase Flash Random";
-      _name[FX_MODE_CHASE_RAINBOW_WHITE]   = "Chase Rainbow White";
-      _name[FX_MODE_CHASE_BLACKOUT]        = "Chase Blackout";
-      _name[FX_MODE_CHASE_BLACKOUT_RAINBOW]= "Chase Blackout Rainbow";
-      _name[FX_MODE_COLOR_SWEEP_RANDOM]    = "Color Sweep Random";
-      _name[FX_MODE_RUNNING_COLOR]         = "Running Color";
-      _name[FX_MODE_RUNNING_RED_BLUE]      = "Running Red Blue";
-      _name[FX_MODE_RUNNING_RANDOM]        = "Running Random";
-      _name[FX_MODE_LARSON_SCANNER]        = "Larson Scanner";
-      _name[FX_MODE_COMET]                 = "Comet";
-      _name[FX_MODE_FIREWORKS]             = "Fireworks";
-      _name[FX_MODE_FIREWORKS_RANDOM]      = "Fireworks Random";
-      _name[FX_MODE_MERRY_CHRISTMAS]       = "Merry Christmas";
-      _name[FX_MODE_FIRE_FLICKER]          = "Fire Flicker";
-      _name[FX_MODE_FIRE_FLICKER_SOFT]     = "Fire Flicker (soft)";
-      
+      _name[FX_MODE_STATIC]                = F("Static");
+      _name[FX_MODE_BLINK]                 = F("Blink");
+      _name[FX_MODE_BREATH]                = F("Breath");
+      _name[FX_MODE_COLOR_WIPE]            = F("Color Wipe");
+      _name[FX_MODE_COLOR_WIPE_RANDOM]     = F("Color Wipe Random");
+      _name[FX_MODE_RANDOM_COLOR]          = F("Random Color");
+      _name[FX_MODE_SINGLE_DYNAMIC]        = F("Single Dynamic");
+      _name[FX_MODE_MULTI_DYNAMIC]         = F("Multi Dynamic");
+      _name[FX_MODE_RAINBOW]               = F("Rainbow");
+      _name[FX_MODE_RAINBOW_CYCLE]         = F("Rainbow Cycle");
+      _name[FX_MODE_SCAN]                  = F("Scan");
+      _name[FX_MODE_DUAL_SCAN]             = F("Dual Scan");
+      _name[FX_MODE_FADE]                  = F("Fade");
+      _name[FX_MODE_THEATER_CHASE]         = F("Theater Chase");
+      _name[FX_MODE_THEATER_CHASE_RAINBOW] = F("Theater Chase Rainbow");
+      _name[FX_MODE_RUNNING_LIGHTS]        = F("Running Lights");
+      _name[FX_MODE_TWINKLE]               = F("Twinkle");
+      _name[FX_MODE_TWINKLE_RANDOM]        = F("Twinkle Random");
+      _name[FX_MODE_TWINKLE_FADE]          = F("Twinkle Fade");
+      _name[FX_MODE_TWINKLE_FADE_RANDOM]   = F("Twinkle Fade Random");
+      _name[FX_MODE_SPARKLE]               = F("Sparkle");
+      _name[FX_MODE_FLASH_SPARKLE]         = F("Flash Sparkle");
+      _name[FX_MODE_HYPER_SPARKLE]         = F("Hyper Sparkle");
+      _name[FX_MODE_STROBE]                = F("Strobe");
+      _name[FX_MODE_STROBE_RAINBOW]        = F("Strobe Rainbow");
+      _name[FX_MODE_MULTI_STROBE]          = F("Multi Strobe");
+      _name[FX_MODE_BLINK_RAINBOW]         = F("Blink Rainbow");
+      _name[FX_MODE_CHASE_WHITE]           = F("Chase White");
+      _name[FX_MODE_CHASE_COLOR]           = F("Chase Color");
+      _name[FX_MODE_CHASE_RANDOM]          = F("Chase Random");
+      _name[FX_MODE_CHASE_RAINBOW]         = F("Chase Rainbow");
+      _name[FX_MODE_CHASE_FLASH]           = F("Chase Flash");
+      _name[FX_MODE_CHASE_FLASH_RANDOM]    = F("Chase Flash Random");
+      _name[FX_MODE_CHASE_RAINBOW_WHITE]   = F("Chase Rainbow White");
+      _name[FX_MODE_CHASE_BLACKOUT]        = F("Chase Blackout");
+      _name[FX_MODE_CHASE_BLACKOUT_RAINBOW]= F("Chase Blackout Rainbow");
+      _name[FX_MODE_COLOR_SWEEP_RANDOM]    = F("Color Sweep Random");
+      _name[FX_MODE_RUNNING_COLOR]         = F("Running Color");
+      _name[FX_MODE_RUNNING_RED_BLUE]      = F("Running Red Blue");
+      _name[FX_MODE_RUNNING_RANDOM]        = F("Running Random");
+      _name[FX_MODE_LARSON_SCANNER]        = F("Larson Scanner");
+      _name[FX_MODE_COMET]                 = F("Comet");
+      _name[FX_MODE_FIREWORKS]             = F("Fireworks");
+      _name[FX_MODE_FIREWORKS_RANDOM]      = F("Fireworks Random");
+      _name[FX_MODE_MERRY_CHRISTMAS]       = F("Merry Christmas");
+      _name[FX_MODE_FIRE_FLICKER]          = F("Fire Flicker");
+      _name[FX_MODE_FIRE_FLICKER_SOFT]     = F("Fire Flicker (soft)");
+
 
       _mode_index = DEFAULT_MODE;
       _speed = DEFAULT_SPEED;
@@ -250,7 +250,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       decreaseBrightness(uint8_t s),
       trigger(void);
 
-    boolean 
+    boolean
       isRunning(void);
 
     uint8_t
@@ -262,7 +262,7 @@ class WS2812FX : public Adafruit_NeoPixel {
     uint32_t
       getColor(void);
 
-    const char*
+    const __FlashStringHelper*
       getModeName(uint8_t m);
 
   private:
@@ -342,7 +342,7 @@ class WS2812FX : public Adafruit_NeoPixel {
     unsigned long
       _mode_last_call_time;
 
-    const char*
+    const __FlashStringHelper*
       _name[MODE_COUNT];
 
     mode_ptr

@@ -10,7 +10,7 @@
     * WS2812FX can be used as drop-in replacement for Adafruit Neopixel Library
 
   NOTES
-    * Uses the Adafruit Neopixel library. Get it here: 
+    * Uses the Adafruit Neopixel library. Get it here:
       https://github.com/adafruit/Adafruit_NeoPixel
 
 
@@ -19,7 +19,7 @@
 
   The MIT License (MIT)
 
-  Copyright (c) 2016  Harm Aldick 
+  Copyright (c) 2016  Harm Aldick
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -149,7 +149,7 @@ void WS2812FX::decreaseBrightness(uint8_t s) {
 }
 
 boolean WS2812FX::isRunning() {
-  return _running; 
+  return _running;
 }
 
 uint8_t WS2812FX::getMode(void) {
@@ -169,14 +169,14 @@ uint8_t WS2812FX::getModeCount(void) {
 }
 
 uint32_t WS2812FX::getColor(void) {
-  return _color; 
+  return _color;
 }
 
-const char* WS2812FX::getModeName(uint8_t m) {
+const __FlashStringHelper* WS2812FX::getModeName(uint8_t m) {
   if(m < MODE_COUNT) {
     return _name[m];
   } else {
-    return "";
+    return F("");
   }
 }
 
@@ -310,7 +310,7 @@ void WS2812FX::mode_random_color(void) {
   for(uint16_t i=0; i < _led_count; i++) {
     Adafruit_NeoPixel::setPixelColor(i, color_wheel(_mode_color));
   }
-  
+
   Adafruit_NeoPixel::show();
   _mode_delay = 100 + ((5000 * (uint32_t)(SPEED_MAX - _speed)) / SPEED_MAX);
 }
@@ -371,7 +371,7 @@ void WS2812FX::mode_breath(void) {
   if(breath_brightness == breath_brightness_steps[_counter_mode_step]) {
     _counter_mode_step = (_counter_mode_step + 1) % (sizeof(breath_brightness_steps)/sizeof(uint8_t));
   }
-  
+
   for(uint16_t i=0; i < _led_count; i++) {
     Adafruit_NeoPixel::setPixelColor(i, _color);           // set all LEDs to selected color
   }
