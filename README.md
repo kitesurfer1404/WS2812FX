@@ -107,6 +107,7 @@ Effects
 * **Dual Color Wipe Out/Out** - Light from middle to edges, then turn off in same order.
 * **Dual Color Wipe Out/In** - Light from middle to edges, then turn off in reverse.
 * **Circus Combustus** - Alternating white/red/black pixels running.
+* **Halloween** - Alternating orange/purple pixels running.
 
 Projects using WS2812FX
 -----------------------
