@@ -51,7 +51,7 @@
 #define BRIGHTNESS_MIN 0
 #define BRIGHTNESS_MAX 255
 
-#define MODE_COUNT 53
+#define MODE_COUNT 54
 
 #define FX_MODE_STATIC                   0
 #define FX_MODE_BLINK                    1
@@ -106,6 +106,7 @@
 #define FX_MODE_DUAL_COLOR_WIPE_OUT_OUT 50
 #define FX_MODE_DUAL_COLOR_WIPE_OUT_IN  51
 #define FX_MODE_CIRCUS_COMBUSTUS        52
+#define FX_MODE_HALLOWEEN               53
 
 
 class WS2812FX : public Adafruit_NeoPixel {
@@ -168,6 +169,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_DUAL_COLOR_WIPE_OUT_OUT] = &WS2812FX::mode_dual_color_wipe_out_out;
       _mode[FX_MODE_DUAL_COLOR_WIPE_OUT_IN]  = &WS2812FX::mode_dual_color_wipe_out_in;
       _mode[FX_MODE_CIRCUS_COMBUSTUS]        = &WS2812FX::mode_circus_combustus;
+      _mode[FX_MODE_HALLOWEEN]               = &WS2812FX::mode_halloween;
 
       _name[FX_MODE_STATIC]                    = F("Static");
       _name[FX_MODE_BLINK]                     = F("Blink");
@@ -222,6 +224,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_DUAL_COLOR_WIPE_OUT_OUT]   = F("Dual Color Wipe Out to Out");
       _name[FX_MODE_DUAL_COLOR_WIPE_OUT_IN]    = F("Dual Color Wipe Out to In");
       _name[FX_MODE_CIRCUS_COMBUSTUS]          = F("Circus Combustus");
+      _name[FX_MODE_HALLOWEEN]                 = F("Halloween");
 
 
       _mode_index = DEFAULT_MODE;
@@ -332,7 +335,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_dual_color_wipe_in_in(void),
       mode_dual_color_wipe_out_out(void),
       mode_dual_color_wipe_out_in(void),
-      mode_circus_combustus(void);
+      mode_circus_combustus(void),
+      mode_halloween(void);
 
     boolean
       _running,
