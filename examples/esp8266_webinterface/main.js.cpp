@@ -1,4 +1,5 @@
-const char main_js[] PROGMEM = R"=====(
+#include <pgmspace.h>
+char main_js[] PROGMEM = R"=====(
 window.addEventListener('load', setup);
 window.addEventListener('resize', drawColorbar);
 
@@ -117,3 +118,4 @@ function setup(){
   can.addEventListener('click', Click, false);
 }
 )=====";
+

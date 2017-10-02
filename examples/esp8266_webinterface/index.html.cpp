@@ -1,4 +1,5 @@
-const char index_html[] PROGMEM = R"=====(
+#include <pgmspace.h>
+char index_html[] PROGMEM = R"=====(
 <!DOCTYPE html>
 <html lang='en'>
 <head>
@@ -88,3 +89,4 @@ const char index_html[] PROGMEM = R"=====(
 </body>
 </html>
 )=====";
+
