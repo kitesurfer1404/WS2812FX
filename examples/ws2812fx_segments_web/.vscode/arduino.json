@@ -1,0 +1,7 @@
+{
+    "board": "esp8266:esp8266:nodemcuv2",
+    "configuration": "CpuFrequency=80,UploadSpeed=115200,FlashSize=4M1M",
+    "port": "COM6",
+    "output": "../build",
+    "sketch": "ws2812fx_segments_web.ino"
+}
