@@ -352,11 +352,11 @@ uint16_t WS2812FX::color_wipe(uint32_t color1, uint32_t color2) {
  * that order off. Repeat.
  */
 uint16_t WS2812FX::mode_color_wipe(void) {
-  return color_wipe(SEGMENT.color[0], 0);
+  return color_wipe(SEGMENT.colors[0], 0);
 }
 
 uint16_t WS2812FX::mode_color_wipe_inverse(void) {
-  return color_wipe(0, SEGMENT.color[0]);
+  return color_wipe(0, SEGMENT.colors[0]);
 }
 
 /*
