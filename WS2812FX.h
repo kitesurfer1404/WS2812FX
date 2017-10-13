@@ -52,6 +52,7 @@
 #define BRIGHTNESS_MAX 255
       
 #define MAX_NUM_SEGMENTS 10
+#define NUM_COLORS 3 /* number of colors per segment */
 #define SEGMENT          _segments[_segment_index]
 #define SEGMENT_RUNTIME  _segment_runtimes[_segment_index]
 #define SEGMENT_LENGTH   (SEGMENT.stop - SEGMENT.start + 1)
@@ -122,14 +123,15 @@ class WS2812FX : public Adafruit_NeoPixel {
   typedef uint16_t (WS2812FX::*mode_ptr)(void);
   
   // segment parameters
-  typedef struct segment {
-    uint8_t  mode;
-    uint32_t color[3];
-    uint16_t speed;
-    uint16_t start;
-    uint16_t stop;
-    bool     reverse;
-  } segment;
+  public:
+    typedef struct segment {
+      uint8_t  mode;
+      uint32_t colors[NUM_COLORS];
+      uint16_t speed;
+      uint16_t start;
+      uint16_t stop;
+      bool     reverse;
+    } segment;
 
   // segment runtime parameters
   typedef struct segment_runtime {
@@ -274,7 +276,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       RESET_RUNTIME;
       _num_segments = 1;
       _segments[0].mode = DEFAULT_MODE;
-      _segments[0].color[0] = DEFAULT_COLOR;
+      _segments[0].colors[0] = DEFAULT_COLOR;
       _segments[0].start = 0;
       _segments[0].stop = n - 1;
       _segments[0].speed = DEFAULT_SPEED;
@@ -298,8 +300,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       increaseLength(uint16_t s),
       decreaseLength(uint16_t s),
       trigger(void),
-      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color,   uint16_t speed, bool reverse),
-      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t colors[], uint8_t num_colors, uint16_t speed, bool reverse);
+      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color,    uint16_t speed, bool reverse),
+      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t colors[], uint16_t speed, bool reverse);
 
     boolean
       isRunning(void);
@@ -307,7 +309,8 @@ class WS2812FX : public Adafruit_NeoPixel {
     uint8_t
       getMode(void),
       getBrightness(void),
-      getModeCount(void);
+      getModeCount(void),
+      getNumSegments(void);
 
     uint16_t
       getSpeed(void),
@@ -319,6 +322,9 @@ class WS2812FX : public Adafruit_NeoPixel {
 
     const __FlashStringHelper*
       getModeName(uint8_t m);
+
+    WS2812FX::segment*
+      getSegments(void);
 
   private:
     void
