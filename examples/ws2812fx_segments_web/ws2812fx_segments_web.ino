@@ -45,11 +45,11 @@
 
 extern const char index_html[];
 
-#define LED_PIN   D1  // digital pin used to drive the LED strip (esp8266)
+#define LED_PIN   D1 // digital pin used to drive the LED strip (esp8266)
 #define LED_COUNT 30 // number of LEDs on the strip
 
-#define WIFI_SSID "moose.net"     // WiFi network
-#define WIFI_PASSWORD "mooselord" // WiFi network password
+#define WIFI_SSID "xxxxxxxx"     // WiFi network
+#define WIFI_PASSWORD "xxxxxxxx" // WiFi network password
 
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 ESP8266WebServer server(80);
