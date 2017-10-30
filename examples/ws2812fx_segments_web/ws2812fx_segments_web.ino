@@ -38,14 +38,15 @@
   
 */
 
-#include <ArduinoJson.h>
 #include <WS2812FX.h>
 #include <ESP8266WebServer.h>
+#include <ArduinoJson.h>
+#include <ArduinoOTA.h>
 
 extern const char index_html[];
 
-#define LED_PIN   D1  // digital pin used to drive the LED strip
-#define LED_COUNT 150 // number of LEDs on the strip
+#define LED_PIN   D1  // digital pin used to drive the LED strip (esp8266)
+#define LED_COUNT 30 // number of LEDs on the strip
 
 #define WIFI_SSID "moose.net"     // WiFi network
 #define WIFI_PASSWORD "mooselord" // WiFi network password
@@ -60,6 +61,7 @@ void setup() {
   // init WiFi
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   WiFi.mode(WIFI_STA);
+
   Serial.print("Connecting to " WIFI_SSID);
   while(WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -67,6 +69,35 @@ void setup() {
   }
   Serial.print("\nServer IP is ");
   Serial.println(WiFi.localIP());
+
+  /* init OTA */
+  // Port defaults to 8266
+  // ArduinoOTA.setPort(8266);
+
+  // Hostname defaults to esp8266-[ChipID]
+  // ArduinoOTA.setHostname("myesp8266");
+
+  // No authentication by default
+  // ArduinoOTA.setPassword((const char *)"123");
+
+  ArduinoOTA.onStart([]() {
+    Serial.println("OTA start");
+  });
+  ArduinoOTA.onEnd([]() {
+    Serial.println("\nOTA end");
+  });
+  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+  });
+  ArduinoOTA.onError([](ota_error_t error) {
+    Serial.printf("Error[%u]: ", error);
+    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+    else if (error == OTA_END_ERROR) Serial.println("End Failed");
+  });
+  ArduinoOTA.begin();
 
   /* init web server */
   // return the index.html file
@@ -115,6 +146,8 @@ void setup() {
     if (root.success()) {
       ws2812fx.stop();
       ws2812fx.setLength(root["numPixels"]);
+      ws2812fx.stop(); // reset strip again in case length was increased
+      ws2812fx.setNumSegments(1); // reset number of segments
       JsonArray& segments = root["segments"];
       for (int i = 0; i< segments.size(); i++){
         JsonObject& seg = segments[i];
@@ -152,13 +185,14 @@ void setup() {
 
   // init LED strip with some default segments
   ws2812fx.init();
-  // parameters:  index,       start,          stop,         mode,    color, speed, reverse
-  ws2812fx.setSegment(0,           0, LED_COUNT/2-1, FX_MODE_SCAN, 0xFF0000,   245, false); // segment 0 is first half of strip
-  ws2812fx.setSegment(1, LED_COUNT/2, LED_COUNT-1,   FX_MODE_SCAN, 0x00FF00,   250, true);  // segment 1 is second half of strip
+  ws2812fx.setBrightness(127);
+  // parameters:  index, start,        stop,         mode,                              colors, speed, reverse
+  ws2812fx.setSegment(0,     0, LED_COUNT-1, FX_MODE_SCAN, (const uint32_t[]) {0xff0000, 0, 0},   240, false);
   ws2812fx.start();
 }
 
 void loop() {
   ws2812fx.service();
   server.handleClient();
+  ArduinoOTA.handle();
 }

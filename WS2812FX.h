@@ -50,9 +50,9 @@
 
 #define BRIGHTNESS_MIN 0
 #define BRIGHTNESS_MAX 255
-      
+
 #define MAX_NUM_SEGMENTS 10
-#define NUM_COLORS 3 /* number of colors per segment */
+#define NUM_COLORS 3     /* number of colors per segment */
 #define SEGMENT          _segments[_segment_index]
 #define SEGMENT_RUNTIME  _segment_runtimes[_segment_index]
 #define SEGMENT_LENGTH   (SEGMENT.stop - SEGMENT.start + 1)
@@ -300,8 +300,9 @@ class WS2812FX : public Adafruit_NeoPixel {
       increaseLength(uint16_t s),
       decreaseLength(uint16_t s),
       trigger(void),
-      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color,    uint16_t speed, bool reverse),
-      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t colors[], uint16_t speed, bool reverse);
+      setNumSegments(uint8_t n),
+      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color,   uint16_t speed, bool reverse),
+      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse);
 
     boolean
       isRunning(void);

@@ -119,7 +119,7 @@ char index_html[] PROGMEM = R"=====(
 
     function initSliders() {
       noUiSlider.create(document.getElementById('rangeSlider'), {
-        start: [0, 511],
+        start: [0, 99],
         connect: [false, true, false],
         range: {
           'min': 0,
@@ -128,7 +128,7 @@ char index_html[] PROGMEM = R"=====(
         format: wNumb({
           decimals: 0,
           encoder: function (a) {
-            return Math.trunc(a);
+            return Math.round(a);
           }
         })
       });
@@ -141,12 +141,12 @@ char index_html[] PROGMEM = R"=====(
         connect: [true, false],
         range: {
           'min': 1,
-          'max': 900
+          'max': 600
         },
         format: wNumb({
           decimals: 0,
           encoder: function (a) {
-            return Math.trunc(a);
+            return Math.round(a);
           }
         })
       });
@@ -170,7 +170,7 @@ char index_html[] PROGMEM = R"=====(
         format: wNumb({
           decimals: 0,
           encoder: function (a) {
-            return Math.trunc(a);
+            return Math.round(a);
           }
         })
       });
@@ -328,16 +328,15 @@ char index_html[] PROGMEM = R"=====(
       code += 'WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);\n\n';
       code += 'void setup() {\n';
       $.each(segments, function( index, segment ) {
-// ws2812fx.setSegment(0,  0,  9, FX_MODE_SCAN, [0xFF0000,0,0], 3, 245, false);
+// ws2812fx.setSegment(0, 0, 9, 53, (const uint32_t[]) {0xff0000, 0, 0}, 240, false);
         code += '  ws2812fx.setSegment('+
           index + ', ' +
           segment.start + ', ' +
           segment.stop + ', ' +
-          segment.mode + ', [' +
+          segment.mode + ', (const uint32_t[]) {' +
           segment.colors[0].replace('#','0x') + ', ' +
           segment.colors[1].replace('#','0x') + ', ' +
-          segment.colors[2].replace('#','0x') + '], ' +
-          segment.colors.length + ', ' +
+          segment.colors[2].replace('#','0x') + '}, ' +
           segment.speed + ', ' +
           segment.reverse +
           ');\n';
