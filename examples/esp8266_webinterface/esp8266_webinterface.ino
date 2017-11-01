@@ -42,8 +42,8 @@
 #include <ESP8266WebServer.h>
 #include <WS2812FX.h>
 
-#include "index.html.h"
-#include "main.js.h"
+extern const char index_html[];
+extern const char main_js[];
 
 #define WIFI_SSID "YOURSSID"
 #define WIFI_PASSWORD "YOURPASSWORD"

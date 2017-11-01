@@ -51,7 +51,14 @@
 #define BRIGHTNESS_MIN 0
 #define BRIGHTNESS_MAX 255
 
-#define MODE_COUNT 54
+#define MAX_NUM_SEGMENTS 10
+#define NUM_COLORS 3     /* number of colors per segment */
+#define SEGMENT          _segments[_segment_index]
+#define SEGMENT_RUNTIME  _segment_runtimes[_segment_index]
+#define SEGMENT_LENGTH   (SEGMENT.stop - SEGMENT.start + 1)
+#define RESET_RUNTIME    memset(_segment_runtimes, 0, sizeof(_segment_runtimes))
+
+#define MODE_COUNT 57
 
 #define FX_MODE_STATIC                   0
 #define FX_MODE_BLINK                    1
@@ -107,11 +114,32 @@
 #define FX_MODE_DUAL_COLOR_WIPE_OUT_IN  51
 #define FX_MODE_CIRCUS_COMBUSTUS        52
 #define FX_MODE_HALLOWEEN               53
-
+#define FX_MODE_COLOR_WIPE_INVERSE      54
+#define FX_MODE_BICOLOR_CHASE           55
+#define FX_MODE_TRICOLOR_CHASE          56
 
 class WS2812FX : public Adafruit_NeoPixel {
 
-  typedef void (WS2812FX::*mode_ptr)(void);
+  typedef uint16_t (WS2812FX::*mode_ptr)(void);
+  
+  // segment parameters
+  public:
+    typedef struct segment {
+      uint8_t  mode;
+      uint32_t colors[NUM_COLORS];
+      uint16_t speed;
+      uint16_t start;
+      uint16_t stop;
+      bool     reverse;
+    } segment;
+
+  // segment runtime parameters
+  typedef struct segment_runtime {
+    uint32_t counter_mode_step;
+    uint32_t counter_mode_call;
+    unsigned long next_time;
+    uint8_t aux_param;
+  } segment_runtime;
 
   public:
 
@@ -120,6 +148,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_BLINK]                   = &WS2812FX::mode_blink;
       _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_breath;
       _mode[FX_MODE_COLOR_WIPE]              = &WS2812FX::mode_color_wipe;
+      _mode[FX_MODE_COLOR_WIPE_INVERSE]      = &WS2812FX::mode_color_wipe_inverse;
       _mode[FX_MODE_COLOR_WIPE_RANDOM]       = &WS2812FX::mode_color_wipe_random;
       _mode[FX_MODE_RANDOM_COLOR]            = &WS2812FX::mode_random_color;
       _mode[FX_MODE_SINGLE_DYNAMIC]          = &WS2812FX::mode_single_dynamic;
@@ -161,6 +190,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_FIREWORKS]               = &WS2812FX::mode_fireworks;
       _mode[FX_MODE_FIREWORKS_RANDOM]        = &WS2812FX::mode_fireworks_random;
       _mode[FX_MODE_MERRY_CHRISTMAS]         = &WS2812FX::mode_merry_christmas;
+      _mode[FX_MODE_HALLOWEEN]               = &WS2812FX::mode_halloween;
       _mode[FX_MODE_FIRE_FLICKER]            = &WS2812FX::mode_fire_flicker;
       _mode[FX_MODE_FIRE_FLICKER_SOFT]       = &WS2812FX::mode_fire_flicker_soft;
       _mode[FX_MODE_FIRE_FLICKER_INTENSE]    = &WS2812FX::mode_fire_flicker_intense;
@@ -169,12 +199,15 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_DUAL_COLOR_WIPE_OUT_OUT] = &WS2812FX::mode_dual_color_wipe_out_out;
       _mode[FX_MODE_DUAL_COLOR_WIPE_OUT_IN]  = &WS2812FX::mode_dual_color_wipe_out_in;
       _mode[FX_MODE_CIRCUS_COMBUSTUS]        = &WS2812FX::mode_circus_combustus;
-      _mode[FX_MODE_HALLOWEEN]               = &WS2812FX::mode_halloween;
+      _mode[FX_MODE_BICOLOR_CHASE]           = &WS2812FX::mode_bicolor_chase;
+      _mode[FX_MODE_TRICOLOR_CHASE]          = &WS2812FX::mode_tricolor_chase;
+
 
       _name[FX_MODE_STATIC]                    = F("Static");
       _name[FX_MODE_BLINK]                     = F("Blink");
       _name[FX_MODE_BREATH]                    = F("Breath");
       _name[FX_MODE_COLOR_WIPE]                = F("Color Wipe");
+      _name[FX_MODE_COLOR_WIPE_INVERSE]        = F("Color Wipe Inverse");
       _name[FX_MODE_COLOR_WIPE_RANDOM]         = F("Color Wipe Random");
       _name[FX_MODE_RANDOM_COLOR]              = F("Random Color");
       _name[FX_MODE_SINGLE_DYNAMIC]            = F("Single Dynamic");
@@ -216,6 +249,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_FIREWORKS]                 = F("Fireworks");
       _name[FX_MODE_FIREWORKS_RANDOM]          = F("Fireworks Random");
       _name[FX_MODE_MERRY_CHRISTMAS]           = F("Merry Christmas");
+      _name[FX_MODE_HALLOWEEN]                 = F("Halloween");
       _name[FX_MODE_FIRE_FLICKER]              = F("Fire Flicker");
       _name[FX_MODE_FIRE_FLICKER_SOFT]         = F("Fire Flicker (soft)");
       _name[FX_MODE_FIRE_FLICKER_INTENSE]      = F("Fire Flicker (intense)");
@@ -224,20 +258,28 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_DUAL_COLOR_WIPE_OUT_OUT]   = F("Dual Color Wipe Out to Out");
       _name[FX_MODE_DUAL_COLOR_WIPE_OUT_IN]    = F("Dual Color Wipe Out to In");
       _name[FX_MODE_CIRCUS_COMBUSTUS]          = F("Circus Combustus");
-      _name[FX_MODE_HALLOWEEN]                 = F("Halloween");
+      _name[FX_MODE_BICOLOR_CHASE]             = F("Bicolor Chase");
+      _name[FX_MODE_TRICOLOR_CHASE]            = F("Tricolor Chase");
 
 
-      _mode_index = DEFAULT_MODE;
-      _speed = DEFAULT_SPEED;
+//      _mode_index = DEFAULT_MODE;
+//      _speed = DEFAULT_SPEED;
       _brightness = DEFAULT_BRIGHTNESS;
       _running = false;
-      _led_count = n;
-      _mode_last_call_time = 0;
-      _mode_delay = 0;
-      _color = DEFAULT_COLOR;
-      _mode_color = DEFAULT_COLOR;
-      _counter_mode_call = 0;
-      _counter_mode_step = 0;
+//      _led_count = n;
+//      _mode_last_call_time = 0;
+//      _mode_delay = 50;
+//      _color = DEFAULT_COLOR;
+//      _mode_color = DEFAULT_COLOR;
+//      _counter_mode_call = 0;
+//      _counter_mode_step = 0;
+      RESET_RUNTIME;
+      _num_segments = 1;
+      _segments[0].mode = DEFAULT_MODE;
+      _segments[0].colors[0] = DEFAULT_COLOR;
+      _segments[0].start = 0;
+      _segments[0].stop = n - 1;
+      _segments[0].speed = DEFAULT_SPEED;
     }
 
     void
@@ -246,7 +288,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       start(void),
       stop(void),
       setMode(uint8_t m),
-      setSpeed(uint8_t s),
+      setSpeed(uint16_t s),
       increaseSpeed(uint8_t s),
       decreaseSpeed(uint8_t s),
       setColor(uint8_t r, uint8_t g, uint8_t b),
@@ -257,18 +299,22 @@ class WS2812FX : public Adafruit_NeoPixel {
       setLength(uint16_t b),
       increaseLength(uint16_t s),
       decreaseLength(uint16_t s),
-      trigger(void);
+      trigger(void),
+      setNumSegments(uint8_t n),
+      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color,   uint16_t speed, bool reverse),
+      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse);
 
     boolean
       isRunning(void);
 
     uint8_t
       getMode(void),
-      getSpeed(void),
       getBrightness(void),
-      getModeCount(void);
+      getModeCount(void),
+      getNumSegments(void);
 
     uint16_t
+      getSpeed(void),
       getLength(void);
 
     uint32_t
@@ -278,13 +324,19 @@ class WS2812FX : public Adafruit_NeoPixel {
     const __FlashStringHelper*
       getModeName(uint8_t m);
 
-  private:
+    WS2812FX::segment*
+      getSegments(void);
 
+  private:
     void
-      strip_off(void),
+      strip_off(void);
+
+    uint16_t
       mode_static(void),
       mode_blink(void),
+      color_wipe(uint32_t, uint32_t),
       mode_color_wipe(void),
+      mode_color_wipe_inverse(void),
       mode_color_wipe_random(void),
       mode_random_color(void),
       mode_single_dynamic(void),
@@ -298,8 +350,10 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_rainbow(void),
       mode_rainbow_cycle(void),
       mode_running_lights(void),
+      twinkle(uint32_t),
       mode_twinkle(void),
       mode_twinkle_random(void),
+      twinkle_fade(uint32_t),
       mode_twinkle_fade(void),
       mode_twinkle_fade_random(void),
       mode_sparkle(void),
@@ -309,6 +363,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_strobe_rainbow(void),
       mode_multi_strobe(void),
       mode_blink_rainbow(void),
+      chase(uint32_t, uint32_t, uint32_t),
       mode_chase_white(void),
       mode_chase_color(void),
       mode_chase_random(void),
@@ -319,24 +374,30 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_chase_blackout(void),
       mode_chase_blackout_rainbow(void),
       mode_color_sweep_random(void),
+      running(uint32_t, uint32_t),
       mode_running_color(void),
       mode_running_red_blue(void),
       mode_running_random(void),
       mode_larson_scanner(void),
       mode_comet(void),
+      fireworks(uint32_t),
       mode_fireworks(void),
       mode_fireworks_random(void),
       mode_merry_christmas(void),
+      mode_halloween(void),
       mode_fire_flicker(void),
       mode_fire_flicker_soft(void),
       mode_fire_flicker_intense(void),
-      mode_fire_flicker_int(int),
+      fire_flicker(int),
       mode_dual_color_wipe_in_out(void),
       mode_dual_color_wipe_in_in(void),
       mode_dual_color_wipe_out_out(void),
       mode_dual_color_wipe_out_in(void),
       mode_circus_combustus(void),
-      mode_halloween(void);
+      tricolor_chase(uint32_t, uint32_t, uint32_t),
+      mode_bicolor_chase(void),
+      mode_tricolor_chase(void);
+
 
     boolean
       _running,
@@ -344,28 +405,36 @@ class WS2812FX : public Adafruit_NeoPixel {
 
     uint8_t
       get_random_wheel_index(uint8_t),
-      _mode_index,
-      _speed,
+//      _mode_index,
+//      _speed,
       _brightness;
 
-    uint16_t
-      _led_count;
+//    uint16_t
+//      _led_count;
 
-    uint32_t
-      _color,
-      _counter_mode_call,
-      _counter_mode_step,
-      _mode_color,
-      _mode_delay;
+//    uint32_t
+//      _color,
+//      _counter_mode_call,
+//      _counter_mode_step,
+//      _mode_color,
+//      _mode_delay;
 
-    unsigned long
-      _mode_last_call_time;
+//    unsigned long
+//      _mode_last_call_time;
 
     const __FlashStringHelper*
       _name[MODE_COUNT];
 
     mode_ptr
       _mode[MODE_COUNT];
+
+    uint8_t _segment_index = 0;
+    uint8_t _num_segments = 1;
+    segment _segments[MAX_NUM_SEGMENTS] = { // must explicitly set array size
+      // mode, color[], speed, start, stop, reverse
+      { FX_MODE_STATIC, {DEFAULT_COLOR}, DEFAULT_SPEED, 0, 9, false}
+    };
+    segment_runtime _segment_runtimes[MAX_NUM_SEGMENTS];
 };
 
 #endif
