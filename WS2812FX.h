@@ -69,7 +69,7 @@
 #define PURPLE  0x400080
 #define ORANGE  0xFF3000
 
-#define MODE_COUNT 60
+#define MODE_COUNT 56
 
 #define FX_MODE_STATIC                   0
 #define FX_MODE_BLINK                    1
@@ -122,15 +122,11 @@
 #define FX_MODE_FIRE_FLICKER            48
 #define FX_MODE_FIRE_FLICKER_SOFT       49
 #define FX_MODE_FIRE_FLICKER_INTENSE    50
-#define FX_MODE_DUAL_COLOR_WIPE_IN_OUT  51
-#define FX_MODE_DUAL_COLOR_WIPE_IN_IN   52
-#define FX_MODE_DUAL_COLOR_WIPE_OUT_OUT 53
-#define FX_MODE_DUAL_COLOR_WIPE_OUT_IN  54
-#define FX_MODE_CIRCUS_COMBUSTUS        55
-#define FX_MODE_HALLOWEEN               56
-#define FX_MODE_BICOLOR_CHASE           57
-#define FX_MODE_TRICOLOR_CHASE          58
-#define FX_MODE_ICU                     59
+#define FX_MODE_CIRCUS_COMBUSTUS        51
+#define FX_MODE_HALLOWEEN               52
+#define FX_MODE_BICOLOR_CHASE           53
+#define FX_MODE_TRICOLOR_CHASE          54
+#define FX_MODE_ICU                     55
 
 class WS2812FX : public Adafruit_NeoPixel {
 
@@ -210,10 +206,6 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_FIRE_FLICKER]            = &WS2812FX::mode_fire_flicker;
       _mode[FX_MODE_FIRE_FLICKER_SOFT]       = &WS2812FX::mode_fire_flicker_soft;
       _mode[FX_MODE_FIRE_FLICKER_INTENSE]    = &WS2812FX::mode_fire_flicker_intense;
-      _mode[FX_MODE_DUAL_COLOR_WIPE_IN_OUT]  = &WS2812FX::mode_dual_color_wipe_in_out;
-      _mode[FX_MODE_DUAL_COLOR_WIPE_IN_IN]   = &WS2812FX::mode_dual_color_wipe_in_in;
-      _mode[FX_MODE_DUAL_COLOR_WIPE_OUT_OUT] = &WS2812FX::mode_dual_color_wipe_out_out;
-      _mode[FX_MODE_DUAL_COLOR_WIPE_OUT_IN]  = &WS2812FX::mode_dual_color_wipe_out_in;
       _mode[FX_MODE_CIRCUS_COMBUSTUS]        = &WS2812FX::mode_circus_combustus;
       _mode[FX_MODE_BICOLOR_CHASE]           = &WS2812FX::mode_bicolor_chase;
       _mode[FX_MODE_TRICOLOR_CHASE]          = &WS2812FX::mode_tricolor_chase;
@@ -271,10 +263,6 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_FIRE_FLICKER]              = F("Fire Flicker");
       _name[FX_MODE_FIRE_FLICKER_SOFT]         = F("Fire Flicker (soft)");
       _name[FX_MODE_FIRE_FLICKER_INTENSE]      = F("Fire Flicker (intense)");
-      _name[FX_MODE_DUAL_COLOR_WIPE_IN_OUT]    = F("Dual Color Wipe In to Out");
-      _name[FX_MODE_DUAL_COLOR_WIPE_IN_IN]     = F("Dual Color Wipe In to In");
-      _name[FX_MODE_DUAL_COLOR_WIPE_OUT_OUT]   = F("Dual Color Wipe Out to Out");
-      _name[FX_MODE_DUAL_COLOR_WIPE_OUT_IN]    = F("Dual Color Wipe Out to In");
       _name[FX_MODE_CIRCUS_COMBUSTUS]          = F("Circus Combustus");
       _name[FX_MODE_BICOLOR_CHASE]             = F("Bicolor Chase");
       _name[FX_MODE_TRICOLOR_CHASE]            = F("Tricolor Chase");
@@ -401,10 +389,6 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_fire_flicker_soft(void),
       mode_fire_flicker_intense(void),
       fire_flicker(int),
-      mode_dual_color_wipe_in_out(void),
-      mode_dual_color_wipe_in_in(void),
-      mode_dual_color_wipe_out_out(void),
-      mode_dual_color_wipe_out_in(void),
       mode_circus_combustus(void),
       tricolor_chase(uint32_t, uint32_t, uint32_t),
       mode_bicolor_chase(void),
