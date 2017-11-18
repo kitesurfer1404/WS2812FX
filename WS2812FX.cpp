@@ -328,18 +328,24 @@ uint16_t WS2812FX::mode_blink(void) {
 
 /*
  * Color wipe function
+ * LEDs are turned on (color1) in sequence, then turned off (color2) in sequence.
+ * if (bool rev == true) then LEDs are turned off in reverse order
  */
-uint16_t WS2812FX::color_wipe(uint32_t color1, uint32_t color2) {
-  uint32_t led_offset = SEGMENT_RUNTIME.counter_mode_step;
-  uint32_t color = color1;
-  if(SEGMENT_RUNTIME.counter_mode_step >= SEGMENT_LENGTH) {
-    led_offset = SEGMENT_RUNTIME.counter_mode_step - SEGMENT_LENGTH;
-    color = color2;
-  }
-  if(SEGMENT.reverse) {
-    Adafruit_NeoPixel::setPixelColor(SEGMENT.stop - led_offset, color);
+uint16_t WS2812FX::color_wipe(uint32_t color1, uint32_t color2, bool rev) {
+  if(SEGMENT_RUNTIME.counter_mode_step < SEGMENT_LENGTH) {
+    uint32_t led_offset = SEGMENT_RUNTIME.counter_mode_step;
+    if(SEGMENT.reverse) {
+      Adafruit_NeoPixel::setPixelColor(SEGMENT.stop - led_offset, color1);
+    } else {
+      Adafruit_NeoPixel::setPixelColor(SEGMENT.start + led_offset, color1);
+    }
   } else {
-    Adafruit_NeoPixel::setPixelColor(SEGMENT.start + led_offset, color);
+    uint32_t led_offset = SEGMENT_RUNTIME.counter_mode_step - SEGMENT_LENGTH;
+    if((SEGMENT.reverse && !rev) || (!SEGMENT.reverse && rev)) {
+      Adafruit_NeoPixel::setPixelColor(SEGMENT.stop - led_offset, color2);
+    } else {
+      Adafruit_NeoPixel::setPixelColor(SEGMENT.start + led_offset, color2);
+    }
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % (SEGMENT_LENGTH * 2);
@@ -347,16 +353,24 @@ uint16_t WS2812FX::color_wipe(uint32_t color1, uint32_t color2) {
 }
 
 /*
- * Lights all LEDs after each other up. Then turns them in
- * that order off. Repeat.
+ * Lights all LEDs one after another.
  */
 uint16_t WS2812FX::mode_color_wipe(void) {
-  return color_wipe(SEGMENT.colors[0], SEGMENT.colors[1]);
+  return color_wipe(SEGMENT.colors[0], SEGMENT.colors[1], false);
 }
 
-uint16_t WS2812FX::mode_color_wipe_inverse(void) {
-  return color_wipe(SEGMENT.colors[1], SEGMENT.colors[0]);
+uint16_t WS2812FX::mode_color_wipe_inv(void) {
+  return color_wipe(SEGMENT.colors[1], SEGMENT.colors[0], false);
 }
+
+uint16_t WS2812FX::mode_color_wipe_rev(void) {
+  return color_wipe(SEGMENT.colors[0], SEGMENT.colors[1], true);
+}
+
+uint16_t WS2812FX::mode_color_wipe_rev_inv(void) {
+  return color_wipe(SEGMENT.colors[1], SEGMENT.colors[0], true);
+}
+
 
 /*
  * Turns all LEDs after each other to a random color.
@@ -1308,28 +1322,6 @@ uint16_t WS2812FX::mode_halloween(void) {
 
 
 /*
- * Random flickering.
- */
-uint16_t WS2812FX::mode_fire_flicker(void) {
-  return fire_flicker(3);
-}
-
-/*
-* Random flickering, less intesity.
-*/
-uint16_t WS2812FX::mode_fire_flicker_soft(void) {
-  return fire_flicker(6);
-}
-
-/*
-* Random flickering, more intesity.
-*/
-uint16_t WS2812FX::mode_fire_flicker_intense(void) {
-  return fire_flicker(1.7);
-}
-
-
-/*
  * Fire flicker function
  */
 uint16_t WS2812FX::fire_flicker(int rev_intensity) {
@@ -1350,6 +1342,27 @@ uint16_t WS2812FX::fire_flicker(int rev_intensity) {
   return (SEGMENT.speed);
 }
 
+
+/*
+ * Random flickering.
+ */
+uint16_t WS2812FX::mode_fire_flicker(void) {
+  return fire_flicker(3);
+}
+
+/*
+* Random flickering, less intesity.
+*/
+uint16_t WS2812FX::mode_fire_flicker_soft(void) {
+  return fire_flicker(6);
+}
+
+/*
+* Random flickering, more intesity.
+*/
+uint16_t WS2812FX::mode_fire_flicker_intense(void) {
+  return fire_flicker(1.7);
+}
 
 /*
  * Lights all LEDs after each other up starting from the outer edges and

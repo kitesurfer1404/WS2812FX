@@ -69,66 +69,68 @@
 #define PURPLE  0x400080
 #define ORANGE  0xFF3000
 
-#define MODE_COUNT 58
+#define MODE_COUNT 60
 
 #define FX_MODE_STATIC                   0
 #define FX_MODE_BLINK                    1
 #define FX_MODE_BREATH                   2
 #define FX_MODE_COLOR_WIPE               3
-#define FX_MODE_COLOR_WIPE_RANDOM        4
-#define FX_MODE_RANDOM_COLOR             5
-#define FX_MODE_SINGLE_DYNAMIC           6
-#define FX_MODE_MULTI_DYNAMIC            7
-#define FX_MODE_RAINBOW                  8
-#define FX_MODE_RAINBOW_CYCLE            9
-#define FX_MODE_SCAN                    10
-#define FX_MODE_DUAL_SCAN               11
-#define FX_MODE_FADE                    12
-#define FX_MODE_THEATER_CHASE           13
-#define FX_MODE_THEATER_CHASE_RAINBOW   14
-#define FX_MODE_RUNNING_LIGHTS          15
-#define FX_MODE_TWINKLE                 16
-#define FX_MODE_TWINKLE_RANDOM          17
-#define FX_MODE_TWINKLE_FADE            18
-#define FX_MODE_TWINKLE_FADE_RANDOM     19
-#define FX_MODE_SPARKLE                 20
-#define FX_MODE_FLASH_SPARKLE           21
-#define FX_MODE_HYPER_SPARKLE           22
-#define FX_MODE_STROBE                  23
-#define FX_MODE_STROBE_RAINBOW          24
-#define FX_MODE_MULTI_STROBE            25
-#define FX_MODE_BLINK_RAINBOW           26
-#define FX_MODE_CHASE_WHITE             27
-#define FX_MODE_CHASE_COLOR             28
-#define FX_MODE_CHASE_RANDOM            29
-#define FX_MODE_CHASE_RAINBOW           30
-#define FX_MODE_CHASE_FLASH             31
-#define FX_MODE_CHASE_FLASH_RANDOM      32
-#define FX_MODE_CHASE_RAINBOW_WHITE     33
-#define FX_MODE_CHASE_BLACKOUT          34
-#define FX_MODE_CHASE_BLACKOUT_RAINBOW  35
-#define FX_MODE_COLOR_SWEEP_RANDOM      36
-#define FX_MODE_RUNNING_COLOR           37
-#define FX_MODE_RUNNING_RED_BLUE        38
-#define FX_MODE_RUNNING_RANDOM          39
-#define FX_MODE_LARSON_SCANNER          40
-#define FX_MODE_COMET                   41
-#define FX_MODE_FIREWORKS               42
-#define FX_MODE_FIREWORKS_RANDOM        43
-#define FX_MODE_MERRY_CHRISTMAS         44
-#define FX_MODE_FIRE_FLICKER            45
-#define FX_MODE_FIRE_FLICKER_SOFT       46
-#define FX_MODE_FIRE_FLICKER_INTENSE    47
-#define FX_MODE_DUAL_COLOR_WIPE_IN_OUT  48
-#define FX_MODE_DUAL_COLOR_WIPE_IN_IN   49
-#define FX_MODE_DUAL_COLOR_WIPE_OUT_OUT 50
-#define FX_MODE_DUAL_COLOR_WIPE_OUT_IN  51
-#define FX_MODE_CIRCUS_COMBUSTUS        52
-#define FX_MODE_HALLOWEEN               53
-#define FX_MODE_COLOR_WIPE_INVERSE      54
-#define FX_MODE_BICOLOR_CHASE           55
-#define FX_MODE_TRICOLOR_CHASE          56
-#define FX_MODE_ICU                     57
+#define FX_MODE_COLOR_WIPE_INV           4 
+#define FX_MODE_COLOR_WIPE_REV           5
+#define FX_MODE_COLOR_WIPE_REV_INV       6
+#define FX_MODE_COLOR_WIPE_RANDOM        7
+#define FX_MODE_RANDOM_COLOR             8
+#define FX_MODE_SINGLE_DYNAMIC           9
+#define FX_MODE_MULTI_DYNAMIC           10
+#define FX_MODE_RAINBOW                 11
+#define FX_MODE_RAINBOW_CYCLE           12
+#define FX_MODE_SCAN                    13
+#define FX_MODE_DUAL_SCAN               14
+#define FX_MODE_FADE                    15
+#define FX_MODE_THEATER_CHASE           16
+#define FX_MODE_THEATER_CHASE_RAINBOW   17
+#define FX_MODE_RUNNING_LIGHTS          18
+#define FX_MODE_TWINKLE                 19
+#define FX_MODE_TWINKLE_RANDOM          20
+#define FX_MODE_TWINKLE_FADE            21
+#define FX_MODE_TWINKLE_FADE_RANDOM     22
+#define FX_MODE_SPARKLE                 23
+#define FX_MODE_FLASH_SPARKLE           24
+#define FX_MODE_HYPER_SPARKLE           25
+#define FX_MODE_STROBE                  26
+#define FX_MODE_STROBE_RAINBOW          27
+#define FX_MODE_MULTI_STROBE            28
+#define FX_MODE_BLINK_RAINBOW           29
+#define FX_MODE_CHASE_WHITE             30
+#define FX_MODE_CHASE_COLOR             31
+#define FX_MODE_CHASE_RANDOM            32
+#define FX_MODE_CHASE_RAINBOW           33
+#define FX_MODE_CHASE_FLASH             34
+#define FX_MODE_CHASE_FLASH_RANDOM      35
+#define FX_MODE_CHASE_RAINBOW_WHITE     36
+#define FX_MODE_CHASE_BLACKOUT          37
+#define FX_MODE_CHASE_BLACKOUT_RAINBOW  38
+#define FX_MODE_COLOR_SWEEP_RANDOM      39
+#define FX_MODE_RUNNING_COLOR           40
+#define FX_MODE_RUNNING_RED_BLUE        41
+#define FX_MODE_RUNNING_RANDOM          42
+#define FX_MODE_LARSON_SCANNER          43
+#define FX_MODE_COMET                   44
+#define FX_MODE_FIREWORKS               45
+#define FX_MODE_FIREWORKS_RANDOM        46
+#define FX_MODE_MERRY_CHRISTMAS         47
+#define FX_MODE_FIRE_FLICKER            48
+#define FX_MODE_FIRE_FLICKER_SOFT       49
+#define FX_MODE_FIRE_FLICKER_INTENSE    50
+#define FX_MODE_DUAL_COLOR_WIPE_IN_OUT  51
+#define FX_MODE_DUAL_COLOR_WIPE_IN_IN   52
+#define FX_MODE_DUAL_COLOR_WIPE_OUT_OUT 53
+#define FX_MODE_DUAL_COLOR_WIPE_OUT_IN  54
+#define FX_MODE_CIRCUS_COMBUSTUS        55
+#define FX_MODE_HALLOWEEN               56
+#define FX_MODE_BICOLOR_CHASE           57
+#define FX_MODE_TRICOLOR_CHASE          58
+#define FX_MODE_ICU                     59
 
 class WS2812FX : public Adafruit_NeoPixel {
 
@@ -160,7 +162,9 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_BLINK]                   = &WS2812FX::mode_blink;
       _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_breath;
       _mode[FX_MODE_COLOR_WIPE]              = &WS2812FX::mode_color_wipe;
-      _mode[FX_MODE_COLOR_WIPE_INVERSE]      = &WS2812FX::mode_color_wipe_inverse;
+      _mode[FX_MODE_COLOR_WIPE_INV]          = &WS2812FX::mode_color_wipe_inv;
+      _mode[FX_MODE_COLOR_WIPE_REV]          = &WS2812FX::mode_color_wipe_rev;
+      _mode[FX_MODE_COLOR_WIPE_REV_INV]      = &WS2812FX::mode_color_wipe_rev_inv;
       _mode[FX_MODE_COLOR_WIPE_RANDOM]       = &WS2812FX::mode_color_wipe_random;
       _mode[FX_MODE_RANDOM_COLOR]            = &WS2812FX::mode_random_color;
       _mode[FX_MODE_SINGLE_DYNAMIC]          = &WS2812FX::mode_single_dynamic;
@@ -219,7 +223,9 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_BLINK]                     = F("Blink");
       _name[FX_MODE_BREATH]                    = F("Breath");
       _name[FX_MODE_COLOR_WIPE]                = F("Color Wipe");
-      _name[FX_MODE_COLOR_WIPE_INVERSE]        = F("Color Wipe Inverse");
+      _name[FX_MODE_COLOR_WIPE_INV ]           = F("Color Wipe Inverse");
+      _name[FX_MODE_COLOR_WIPE_REV]            = F("Color Wipe Reverse");
+      _name[FX_MODE_COLOR_WIPE_REV_INV]        = F("Color Wipe Reverse Inverse");
       _name[FX_MODE_COLOR_WIPE_RANDOM]         = F("Color Wipe Random");
       _name[FX_MODE_RANDOM_COLOR]              = F("Random Color");
       _name[FX_MODE_SINGLE_DYNAMIC]            = F("Single Dynamic");
@@ -338,9 +344,11 @@ class WS2812FX : public Adafruit_NeoPixel {
     uint16_t
       mode_static(void),
       mode_blink(void),
-      color_wipe(uint32_t, uint32_t),
+      color_wipe(uint32_t, uint32_t, bool),
       mode_color_wipe(void),
-      mode_color_wipe_inverse(void),
+      mode_color_wipe_inv(void),
+      mode_color_wipe_rev(void),
+      mode_color_wipe_rev_inv(void),
       mode_color_wipe_random(void),
       mode_random_color(void),
       mode_single_dynamic(void),
