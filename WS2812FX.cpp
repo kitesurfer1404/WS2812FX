@@ -50,10 +50,7 @@
   2017-09-26   implemented segment and reverse features
 */
 
-#include "Arduino.h"
 #include "WS2812FX.h"
-
-//#define CALL_MODE(n) (this->*_mode[n])();
 
 void WS2812FX::init() {
   RESET_RUNTIME;
@@ -76,9 +73,9 @@ void WS2812FX::service() {
       }
     }
     if(doShow) {
-		delay(1); // for ESP32 (see https://forums.adafruit.com/viewtopic.php?f=47&t=117327)
-		Adafruit_NeoPixel::show();
-	}
+      delay(1); // for ESP32 (see https://forums.adafruit.com/viewtopic.php?f=47&t=117327)
+      Adafruit_NeoPixel::show();
+    }
     _triggered = false;
   }
 }
@@ -101,13 +98,11 @@ void WS2812FX::setMode(uint8_t m) {
   RESET_RUNTIME;
   _segments[0].mode = constrain(m, 0, MODE_COUNT - 1);
   setBrightness(_brightness);
-  //strip_off();
 }
 
 void WS2812FX::setSpeed(uint16_t s) {
   RESET_RUNTIME;
   _segments[0].speed = constrain(s, SPEED_MIN, SPEED_MAX);
-  //strip_off();
 }
 
 void WS2812FX::increaseSpeed(uint8_t s) {
@@ -128,7 +123,6 @@ void WS2812FX::setColor(uint32_t c) {
   RESET_RUNTIME;
   _segments[0].colors[0] = c;
   setBrightness(_brightness);
-  //strip_off();
 }
 
 void WS2812FX::setBrightness(uint8_t b) {
@@ -674,24 +668,22 @@ uint16_t WS2812FX::mode_twinkle_random(void) {
 
 
 /*
+ * fade out function
+ * fades out the current segment by dividing each pixel's intensity by 2
+ */
+void WS2812FX::fade_out() {
+  for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
+    uint32_t px_rgb = Adafruit_NeoPixel::getPixelColor(i);
+    px_rgb = (px_rgb >> 1) & 0x007F7F7F;
+    Adafruit_NeoPixel::setPixelColor(i, px_rgb);
+  }
+}
+
+/*
  * twinkle_fade function
  */
 uint16_t WS2812FX::twinkle_fade(uint32_t color) {
-
-  for(uint16_t i=0; i < SEGMENT_LENGTH; i++) {
-    uint32_t px_rgb = Adafruit_NeoPixel::getPixelColor(SEGMENT.start + i);
-
-    byte px_r = (px_rgb & 0x00FF0000) >> 16;
-    byte px_g = (px_rgb & 0x0000FF00) >>  8;
-    byte px_b = (px_rgb & 0x000000FF) >>  0;
-
-    // fade out (divide by 2)
-    px_r = px_r >> 1;
-    px_g = px_g >> 1;
-    px_b = px_b >> 1;
-
-    Adafruit_NeoPixel::setPixelColor(SEGMENT.start + i, px_r, px_g, px_b);
-  }
+  fade_out();
 
   if(random(3) == 0) {
     Adafruit_NeoPixel::setPixelColor(SEGMENT.start + random(SEGMENT_LENGTH), color);
@@ -1016,6 +1008,7 @@ uint16_t WS2812FX::mode_chase_flash_random(void) {
  * color1 = background color
  * color2 and color3 = colors of two adjacent leds
  */
+
 uint16_t WS2812FX::chase(uint32_t color1, uint32_t color2, uint32_t color3) {
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
     Adafruit_NeoPixel::setPixelColor(i, color1);
@@ -1037,16 +1030,23 @@ uint16_t WS2812FX::chase(uint32_t color1, uint32_t color2, uint32_t color3) {
 
 
 /*
+ * Bicolor chase mode
+ */
+uint16_t WS2812FX::mode_bicolor_chase(void) {
+  return chase(SEGMENT.colors[0], SEGMENT.colors[1], SEGMENT.colors[2]);
+}
+
+
+/*
  * Rainbow running on white.
  */
 uint16_t WS2812FX::mode_chase_rainbow_white(void) {
-  uint32_t color1 = 0xFFFFFF;
   uint16_t n = SEGMENT_RUNTIME.counter_mode_step;
   uint16_t m = (SEGMENT_RUNTIME.counter_mode_step + 1) % SEGMENT_LENGTH;
   uint32_t color2 = color_wheel(((n * 256 / SEGMENT_LENGTH) + (SEGMENT_RUNTIME.counter_mode_call & 0xFF)) & 0xFF);
   uint32_t color3 = color_wheel(((m * 256 / SEGMENT_LENGTH) + (SEGMENT_RUNTIME.counter_mode_call & 0xFF)) & 0xFF);
 
-  return chase(color1, color2, color3);
+  return chase(WHITE, color2, color3);
 }
 
 
@@ -1054,7 +1054,7 @@ uint16_t WS2812FX::mode_chase_rainbow_white(void) {
  * Black running on _color.
  */
 uint16_t WS2812FX::mode_chase_blackout(void) {
-  return chase(SEGMENT.colors[0], 0, 0);
+  return chase(SEGMENT.colors[0], BLACK, BLACK);
 }
 
 
@@ -1136,7 +1136,7 @@ uint16_t WS2812FX::running(uint32_t color1, uint32_t color2) {
  * Alternating color/white pixels running.
  */
 uint16_t WS2812FX::mode_running_color(void) {
-  return running(SEGMENT.colors[0], 0xFFFFFF);
+  return running(SEGMENT.colors[0], WHITE);
 }
 
 
@@ -1144,7 +1144,7 @@ uint16_t WS2812FX::mode_running_color(void) {
  * Alternating red/blue pixels running.
  */
 uint16_t WS2812FX::mode_running_red_blue(void) {
-  return running(0xFF0000, 0x0000FF);
+  return running(RED, BLUE);
 }
 
 
@@ -1178,20 +1178,7 @@ uint16_t WS2812FX::mode_running_random(void) {
  * K.I.T.T.
  */
 uint16_t WS2812FX::mode_larson_scanner(void) {
-
-  for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
-    uint32_t px_rgb = Adafruit_NeoPixel::getPixelColor(i);
-
-    byte px_r = (px_rgb & 0xFF0000) >> 16;
-    byte px_g = (px_rgb & 0x00FF00) >>  8;
-    byte px_b = (px_rgb & 0x0000FF);
-
-    px_r = px_r >> 1; // fade out (divide by 2)
-    px_g = px_g >> 1;
-    px_b = px_b >> 1;
-
-    Adafruit_NeoPixel::setPixelColor(i, px_r, px_g, px_b);
-  }
+  fade_out();
 
   if(SEGMENT_RUNTIME.counter_mode_step < SEGMENT_LENGTH) {
     if(SEGMENT.reverse) {
@@ -1216,21 +1203,7 @@ uint16_t WS2812FX::mode_larson_scanner(void) {
  * Firing comets from one end.
  */
 uint16_t WS2812FX::mode_comet(void) {
-
-  for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
-    uint32_t px_rgb = Adafruit_NeoPixel::getPixelColor(i);
-
-    byte px_r = (px_rgb & 0xFF0000) >> 16;
-    byte px_g = (px_rgb & 0x00FF00) >>  8;
-    byte px_b = (px_rgb & 0x0000FF);
-
-    // fade out (divide by 2)
-    px_r = px_r >> 1;
-    px_g = px_g >> 1;
-    px_b = px_b >> 1;
-
-    Adafruit_NeoPixel::setPixelColor(i, px_r, px_g, px_b);
-  }
+  fade_out();
 
   if(SEGMENT.reverse) {
     Adafruit_NeoPixel::setPixelColor(SEGMENT.stop - SEGMENT_RUNTIME.counter_mode_step, SEGMENT.colors[0]);
@@ -1247,25 +1220,12 @@ uint16_t WS2812FX::mode_comet(void) {
  * Fireworks function.
  */
 uint16_t WS2812FX::fireworks(uint32_t color) {
+  fade_out();
+
   uint32_t px_rgb = 0;
   byte px_r = 0;
   byte px_g = 0;
   byte px_b = 0;
-
-  for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
-    px_rgb = Adafruit_NeoPixel::getPixelColor(i);
-
-    px_r = (px_rgb & 0x00FF0000) >> 16;
-    px_g = (px_rgb & 0x0000FF00) >>  8;
-    px_b = (px_rgb & 0x000000FF);
-
-    // fade out (divide by 2)
-    px_r = px_r >> 1;
-    px_g = px_g >> 1;
-    px_b = px_b >> 1;
-
-    Adafruit_NeoPixel::setPixelColor(i, px_r, px_g, px_b);
-  }
 
   // first LED has only one neighbour
   px_r = (((Adafruit_NeoPixel::getPixelColor(SEGMENT.start+1) & 0xFF0000) >> 16) >> 1) + ((Adafruit_NeoPixel::getPixelColor(SEGMENT.start) & 0xFF0000) >> 16);
@@ -1336,14 +1296,14 @@ uint16_t WS2812FX::mode_fireworks_random(void) {
  * Alternating red/green pixels running.
  */
 uint16_t WS2812FX::mode_merry_christmas(void) {
-  return running(0xFF0000, 0x00FF00);
+  return running(RED, GREEN);
 }
 
 /*
  * Alternating orange/purple pixels running.
  */
 uint16_t WS2812FX::mode_halloween(void) {
-  return running(0xFF0082, 0xFF3200);
+  return running(PURPLE, ORANGE);
 }
 
 
@@ -1550,14 +1510,6 @@ uint16_t WS2812FX::mode_dual_color_wipe_out_in(void) {
 
 
 /*
- * Alternating white/red/black pixels running.
- */
-uint16_t WS2812FX::mode_circus_combustus(void) {
-  return tricolor_chase(0xFF0000, 0xFFFFFF, 0);
-}
-
-
-/*
  * Tricolor chase function
  */
 uint16_t WS2812FX::tricolor_chase(uint32_t color1, uint32_t color2, uint32_t color3) {
@@ -1587,19 +1539,20 @@ uint16_t WS2812FX::tricolor_chase(uint32_t color1, uint32_t color2, uint32_t col
   return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
-/*
- * Bicolor chase mode
- */
- uint16_t WS2812FX::mode_bicolor_chase(void) {
-  return chase(SEGMENT.colors[0], SEGMENT.colors[1], SEGMENT.colors[2]);
-}
-
 
 /*
  * Tricolor chase mode
  */
- uint16_t WS2812FX::mode_tricolor_chase(void) {
+uint16_t WS2812FX::mode_tricolor_chase(void) {
   return tricolor_chase(SEGMENT.colors[0], SEGMENT.colors[1], SEGMENT.colors[2]);
+}
+
+
+/*
+ * Alternating white/red/black pixels running.
+ */
+uint16_t WS2812FX::mode_circus_combustus(void) {
+  return tricolor_chase(RED, WHITE, BLACK);
 }
 
 /*

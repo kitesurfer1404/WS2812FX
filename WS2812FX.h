@@ -57,6 +57,18 @@
 #define SEGMENT_LENGTH   (SEGMENT.stop - SEGMENT.start + 1)
 #define RESET_RUNTIME    memset(_segment_runtimes, 0, sizeof(_segment_runtimes))
 
+// some common colors
+#define RED     0xFF0000
+#define GREEN   0x00FF00
+#define BLUE    0x0000FF
+#define WHITE   0xFFFFFF
+#define BLACK   0x000000
+#define YELLOW  0xFFFF00
+#define CYAN    0x00FFFF
+#define MAGENTA 0xFF00FF
+#define PURPLE  0x400080
+#define ORANGE  0xFF3000
+
 #define MODE_COUNT 58
 
 #define FX_MODE_STATIC                   0
@@ -320,7 +332,8 @@ class WS2812FX : public Adafruit_NeoPixel {
 
   private:
     void
-      strip_off(void);
+      strip_off(void),
+      fade_out(void);
 
     uint16_t
       mode_static(void),
