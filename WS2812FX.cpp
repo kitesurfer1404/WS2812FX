@@ -315,7 +315,7 @@ uint16_t WS2812FX::mode_static(void) {
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
     Adafruit_NeoPixel::setPixelColor(i, SEGMENT.colors[0]);
   }
-  return 200;
+  return 500;
 }
 
 
@@ -328,8 +328,7 @@ uint16_t WS2812FX::mode_blink(void) {
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
     Adafruit_NeoPixel::setPixelColor(i, color);
   }
-//return (SEGMENT.speed / 2);
-  return 100 + ((1986 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed / 2);
 }
 
 
@@ -350,8 +349,7 @@ uint16_t WS2812FX::color_wipe(uint32_t color1, uint32_t color2) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % (SEGMENT_LENGTH * 2);
-//return (SEGMENT.speed / (SEGMENT_LENGTH * 2));
-  return 5 + ((50 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / (SEGMENT_LENGTH * 2));
 }
 
 /*
@@ -359,11 +357,11 @@ uint16_t WS2812FX::color_wipe(uint32_t color1, uint32_t color2) {
  * that order off. Repeat.
  */
 uint16_t WS2812FX::mode_color_wipe(void) {
-  return color_wipe(SEGMENT.colors[0], 0);
+  return color_wipe(SEGMENT.colors[0], SEGMENT.colors[1]);
 }
 
 uint16_t WS2812FX::mode_color_wipe_inverse(void) {
-  return color_wipe(0, SEGMENT.colors[0]);
+  return color_wipe(SEGMENT.colors[1], SEGMENT.colors[0]);
 }
 
 /*
@@ -382,8 +380,7 @@ uint16_t WS2812FX::mode_color_wipe_random(void) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % SEGMENT_LENGTH;
-//return (SEGMENT.speed / SEGMENT_LENGTH);
-  return 5 + ((50 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -397,8 +394,7 @@ uint16_t WS2812FX::mode_random_color(void) {
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
     Adafruit_NeoPixel::setPixelColor(i, color_wheel(SEGMENT_RUNTIME.aux_param));
   }
-//return (SEGMENT.speed);
-  return 100 + ((5000 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed);
 }
 
 
@@ -414,8 +410,7 @@ uint16_t WS2812FX::mode_single_dynamic(void) {
   }
 
   Adafruit_NeoPixel::setPixelColor(SEGMENT.start+random(SEGMENT_LENGTH), color_wheel(random(256)));
-//return (SEGMENT.speed);
-  return 10 + ((5000 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed);
 }
 
 
@@ -427,8 +422,7 @@ uint16_t WS2812FX::mode_multi_dynamic(void) {
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
     Adafruit_NeoPixel::setPixelColor(i, color_wheel(random(256)));
   }
-//return (SEGMENT.speed);
-  return 100 + ((5000 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed);
 }
 
 
@@ -467,7 +461,6 @@ uint16_t WS2812FX::mode_breath(void) {
   }
 
   SEGMENT_RUNTIME.aux_param = breath_brightness;
-//return (SEGMENT.speed / 550); // another magic number :)
   return breath_delay_steps[SEGMENT_RUNTIME.counter_mode_step];
 }
 
@@ -488,8 +481,7 @@ uint16_t WS2812FX::mode_fade(void) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % 64;
-//return (SEGMENT.speed / 64);
-  return 5 + ((15 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed / 64);
 }
 
 
@@ -515,8 +507,7 @@ uint16_t WS2812FX::mode_scan(void) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step++;
-//return (SEGMENT.speed / ((SEGMENT_LENGTH - 1) * 2));
-  return 10 + ((30 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / (SEGMENT_LENGTH * 2));
 }
 
 
@@ -539,8 +530,7 @@ uint16_t WS2812FX::mode_dual_scan(void) {
   Adafruit_NeoPixel::setPixelColor(SEGMENT.start + SEGMENT_LENGTH - led_offset - 1, SEGMENT.colors[0]);
 
   SEGMENT_RUNTIME.counter_mode_step++;
-//return (SEGMENT.speed / ((SEGMENT_LENGTH - 1) * 2));
-  return 10 + ((30 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / (SEGMENT_LENGTH * 2));
 }
 
 
@@ -554,8 +544,7 @@ uint16_t WS2812FX::mode_rainbow(void) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % 256;
-//return (SEGMENT.speed / 256);
-  return 1 + ((50 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed / 256);
 }
 
 
@@ -564,13 +553,12 @@ uint16_t WS2812FX::mode_rainbow(void) {
  */
 uint16_t WS2812FX::mode_rainbow_cycle(void) {
   for(uint16_t i=0; i < SEGMENT_LENGTH; i++) {
-    uint32_t color = color_wheel(((i * 256 / SEGMENT_LENGTH) + SEGMENT_RUNTIME.counter_mode_step) % 256);
+	uint32_t color = color_wheel(((i * 256 / SEGMENT_LENGTH) + SEGMENT_RUNTIME.counter_mode_step) % 256);
     Adafruit_NeoPixel::setPixelColor(SEGMENT.start + i, color);
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % 256;
-//return (SEGMENT.speed / 256);
-  return 1 + ((50 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed / 256);
 }
 
 
@@ -596,8 +584,7 @@ uint16_t WS2812FX::mode_theater_chase(void) {
     }
   }
 
-//return (SEGMENT.speed / 3);
-  return 50 + ((500 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -624,8 +611,7 @@ uint16_t WS2812FX::mode_theater_chase_rainbow(void) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % 256;
-//return (SEGMENT.speed / 3);
-  return 50 + ((500 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -645,8 +631,7 @@ uint16_t WS2812FX::mode_running_lights(void) {
       Adafruit_NeoPixel::setPixelColor(SEGMENT.stop - i, (((uint32_t)(r * s)) / 255), (((uint32_t)(g * s)) / 255), (((uint32_t)(b * s)) / 255));
     }
   }
-//return (SEGMENT.speed / (SEGMENT_LENGTH / 2));
-  return 35 + ((350 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -666,8 +651,7 @@ uint16_t WS2812FX::twinkle(uint32_t color) {
   Adafruit_NeoPixel::setPixelColor(SEGMENT.start + random(SEGMENT_LENGTH), color);
 
   SEGMENT_RUNTIME.counter_mode_step--;
-//return (SEGMENT.speed);
-  return 50 + ((1986 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed);
 }
 
 /*
@@ -695,7 +679,7 @@ uint16_t WS2812FX::mode_twinkle_random(void) {
 uint16_t WS2812FX::twinkle_fade(uint32_t color) {
 
   for(uint16_t i=0; i < SEGMENT_LENGTH; i++) {
-    uint32_t px_rgb = Adafruit_NeoPixel::getPixelColor(SEGMENT.start+i);
+    uint32_t px_rgb = Adafruit_NeoPixel::getPixelColor(SEGMENT.start + i);
 
     byte px_r = (px_rgb & 0x00FF0000) >> 16;
     byte px_g = (px_rgb & 0x0000FF00) >>  8;
@@ -712,8 +696,7 @@ uint16_t WS2812FX::twinkle_fade(uint32_t color) {
   if(random(3) == 0) {
     Adafruit_NeoPixel::setPixelColor(SEGMENT.start + random(SEGMENT_LENGTH), color);
   }
-//return (SEGMENT.speed / 8);
-  return 100 + ((100 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed / 8);
 }
 
 
@@ -744,8 +727,7 @@ uint16_t WS2812FX::mode_sparkle(void) {
     Adafruit_NeoPixel::setPixelColor(i, 0);
   }
   Adafruit_NeoPixel::setPixelColor(SEGMENT.start + random(SEGMENT_LENGTH), SEGMENT.colors[0]);
-//return (SEGMENT.speed);
-  return 10 + ((200 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed);
 }
 
 
@@ -758,8 +740,7 @@ uint16_t WS2812FX::mode_flash_sparkle(void) {
     Adafruit_NeoPixel::setPixelColor(i, SEGMENT.colors[0]);
   }
 
-//uint16_t delay = SEGMENT.speed;
-  uint16_t delay = 20 + ((200 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  uint16_t delay = SEGMENT.speed;
   if(random(10) < 2) {
     Adafruit_NeoPixel::setPixelColor(SEGMENT.start + random(SEGMENT_LENGTH), 255, 255, 255);
     delay = 20;
@@ -777,8 +758,7 @@ uint16_t WS2812FX::mode_hyper_sparkle(void) {
     Adafruit_NeoPixel::setPixelColor(i, SEGMENT.colors[0]);
   }
 
-//uint16_t delay = SEGMENT.speed;
-  uint16_t delay = 15 + ((120 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  uint16_t delay = SEGMENT.speed;
   if(random(10) < 4) {
     for(uint16_t i=0; i < max(1, SEGMENT_LENGTH/3); i++) {
       Adafruit_NeoPixel::setPixelColor(SEGMENT.start + random(SEGMENT_LENGTH), 255, 255, 255);
@@ -793,8 +773,7 @@ uint16_t WS2812FX::mode_hyper_sparkle(void) {
  * Classic Strobe effect.
  */
 uint16_t WS2812FX::mode_strobe(void) {
-//uint16_t delay = SEGMENT.speed - 20;
-  uint16_t delay = 50 + ((1986 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  uint16_t delay = SEGMENT.speed - 20;
   if(SEGMENT_RUNTIME.counter_mode_call % 2 == 0) {
     for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
       Adafruit_NeoPixel::setPixelColor(i, SEGMENT.colors[0]);
@@ -817,8 +796,7 @@ uint16_t WS2812FX::mode_multi_strobe(void) {
     Adafruit_NeoPixel::setPixelColor(i, 0);
   }
 
-//uint16_t delay = SEGMENT.speed / (2 * ((SEGMENT.speed / 10) + 1));
-  uint16_t delay = 100 + ((9 - (SEGMENT.speed % 10)) * 125);
+  uint16_t delay = SEGMENT.speed / (2 * ((SEGMENT.speed / 10) + 1));
   if(SEGMENT_RUNTIME.counter_mode_step < (2 * ((SEGMENT.speed / 10) + 1))) {
     if(SEGMENT_RUNTIME.counter_mode_step % 2 == 0) {
       for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
@@ -838,8 +816,7 @@ uint16_t WS2812FX::mode_multi_strobe(void) {
  * Classic Strobe effect. Cycling through the rainbow.
  */
 uint16_t WS2812FX::mode_strobe_rainbow(void) {
-//uint16_t delay = SEGMENT.speed - 20;
-  uint16_t delay = 50 + ((1986 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  uint16_t delay = SEGMENT.speed - 20;
   if(SEGMENT_RUNTIME.counter_mode_call % 2 == 0) {
     for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
       Adafruit_NeoPixel::setPixelColor(i, color_wheel(SEGMENT_RUNTIME.counter_mode_call % 256));
@@ -867,8 +844,7 @@ uint16_t WS2812FX::mode_blink_rainbow(void) {
       Adafruit_NeoPixel::setPixelColor(i, 0);
     }
   }
-//return (SEGMENT.speed / 2);
-  return 100 + ((1986 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed / 2);
 }
 
 
@@ -891,8 +867,7 @@ uint16_t WS2812FX::mode_chase_white(void) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % SEGMENT_LENGTH;
-//return (SEGMENT.speed / SEGMENT_LENGTH);
-  return 10 + ((30 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -915,8 +890,7 @@ uint16_t WS2812FX::mode_chase_color(void) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % SEGMENT_LENGTH;
-//return (SEGMENT.speed / SEGMENT_LENGTH);
-  return 10 + ((30 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -939,8 +913,7 @@ uint16_t WS2812FX::mode_chase_random(void) {
   Adafruit_NeoPixel::setPixelColor(SEGMENT.start + m, 255, 255, 255);
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % SEGMENT_LENGTH;
-//return (SEGMENT.speed / SEGMENT_LENGTH);
-  return 10 + ((30 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -965,8 +938,7 @@ uint16_t WS2812FX::mode_chase_rainbow(void) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % SEGMENT_LENGTH;
-//return (SEGMENT.speed / SEGMENT_LENGTH);
-  return 10 + ((30 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -981,8 +953,7 @@ uint16_t WS2812FX::mode_chase_flash(void) {
     Adafruit_NeoPixel::setPixelColor(i, SEGMENT.colors[0]);
   }
 
-//uint16_t delay = (SEGMENT.speed / SEGMENT_LENGTH);
-  uint16_t delay = 10 + ((30 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  uint16_t delay = (SEGMENT.speed / SEGMENT_LENGTH);
   if(flash_step < (flash_count * 2)) {
     if(flash_step % 2 == 0) {
       uint16_t n = SEGMENT_RUNTIME.counter_mode_step;
@@ -1016,8 +987,7 @@ uint16_t WS2812FX::mode_chase_flash_random(void) {
     Adafruit_NeoPixel::setPixelColor(SEGMENT.start + i, color_wheel(SEGMENT_RUNTIME.aux_param));
   }
 
-//uint16_t delay = (SEGMENT.speed / SEGMENT_LENGTH);
-  uint16_t delay = 1 + ((10 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  uint16_t delay = (SEGMENT.speed / SEGMENT_LENGTH);
   if(flash_step < (flash_count * 2)) {
     uint16_t n = SEGMENT_RUNTIME.counter_mode_step;
     uint16_t m = (SEGMENT_RUNTIME.counter_mode_step + 1) % SEGMENT_LENGTH;
@@ -1062,8 +1032,7 @@ uint16_t WS2812FX::chase(uint32_t color1, uint32_t color2, uint32_t color3) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % SEGMENT_LENGTH;
-//return (SEGMENT.speed / SEGMENT_LENGTH);
-  return 10 + ((30 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -1108,8 +1077,7 @@ uint16_t WS2812FX::mode_chase_blackout_rainbow(void) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % SEGMENT_LENGTH;
-//return (SEGMENT.speed / SEGMENT_LENGTH);
-  return 10 + ((30 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -1136,8 +1104,7 @@ uint16_t WS2812FX::mode_color_sweep_random(void) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % (SEGMENT_LENGTH * 2);
-//return (SEGMENT.speed / (SEGMENT_LENGTH * 2));
-  return 5 + ((50 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / (SEGMENT_LENGTH * 2));
 }
 
 
@@ -1162,8 +1129,7 @@ uint16_t WS2812FX::running(uint32_t color1, uint32_t color2) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % 4;
-//return (SEGMENT.speed / 4);
-  return 10 + ((30 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 /*
@@ -1204,8 +1170,7 @@ uint16_t WS2812FX::mode_running_random(void) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % 2;
-//return (SEGMENT.speed / SEGMENT_LENGTH);
-  return 50 + ((50 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -1243,8 +1208,7 @@ uint16_t WS2812FX::mode_larson_scanner(void) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % ((SEGMENT_LENGTH * 2) - 2);
-//return (SEGMENT.speed / (SEGMENT_LENGTH * 2));
-  return 10 + ((10 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / (SEGMENT_LENGTH * 2));
 }
 
 
@@ -1275,8 +1239,7 @@ uint16_t WS2812FX::mode_comet(void) {
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % SEGMENT_LENGTH;
-//return (SEGMENT.speed / SEGMENT_LENGTH);
-  return 10 + ((10 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -1347,8 +1310,7 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
       Adafruit_NeoPixel::setPixelColor(SEGMENT.start + random(SEGMENT_LENGTH), color);
     }
   }
-//return (SEGMENT.speed / 8);
-  return 20 + ((20 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -1425,10 +1387,8 @@ uint16_t WS2812FX::fire_flicker(int rev_intensity) {
     if(b1<0) b1 = 0;
     Adafruit_NeoPixel::setPixelColor(i, r1, g1, b1);
   }
-//return (SEGMENT.speed);
-  return 10 + ((500 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SPEED_MAX);
+  return (SEGMENT.speed);
 }
-
 
 
 /*
@@ -1464,8 +1424,7 @@ uint16_t WS2812FX::mode_dual_color_wipe_in_out(void) {
       SEGMENT_RUNTIME.counter_mode_step = 0;
     }
   }
-//return (SEGMENT.speed / SEGMENT_LENGTH);
-  return 5 + ((50 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 /*
@@ -1505,8 +1464,7 @@ uint16_t WS2812FX::mode_dual_color_wipe_in_in(void) {
       SEGMENT_RUNTIME.counter_mode_step = 0;
     }
   }
-//return (SEGMENT.speed / SEGMENT_LENGTH);
-  return 5 + ((50 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 /*
@@ -1546,8 +1504,7 @@ uint16_t WS2812FX::mode_dual_color_wipe_out_out(void) {
       SEGMENT_RUNTIME.counter_mode_step = 0;
     }
   }
-//return (SEGMENT.speed / SEGMENT_LENGTH);
-  return 5 + ((50 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 /*
@@ -1588,8 +1545,7 @@ uint16_t WS2812FX::mode_dual_color_wipe_out_in(void) {
       SEGMENT_RUNTIME.counter_mode_step = 0;
     }
   }
-//return (SEGMENT.speed / SEGMENT_LENGTH);
-  return 5 + ((50 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 
@@ -1628,8 +1584,7 @@ uint16_t WS2812FX::tricolor_chase(uint32_t color1, uint32_t color2, uint32_t col
   }
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % 6;
-//return (SEGMENT.speed / 6);
-  return 100 + ((100 * (uint32_t)(SPEED_MAX - SEGMENT.speed)) / SEGMENT_LENGTH);
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
 /*
@@ -1645,4 +1600,40 @@ uint16_t WS2812FX::tricolor_chase(uint32_t color1, uint32_t color2, uint32_t col
  */
  uint16_t WS2812FX::mode_tricolor_chase(void) {
   return tricolor_chase(SEGMENT.colors[0], SEGMENT.colors[1], SEGMENT.colors[2]);
+}
+
+/*
+ * ICU mode
+ */
+uint16_t WS2812FX::mode_icu() {
+  uint16_t dest = SEGMENT_RUNTIME.counter_mode_step & 0xFFFF;
+ 
+  Adafruit_NeoPixel::setPixelColor(SEGMENT.start + dest, SEGMENT.colors[0]);
+  Adafruit_NeoPixel::setPixelColor(SEGMENT.start + dest + SEGMENT_LENGTH/2, SEGMENT.colors[0]);
+
+  if(SEGMENT_RUNTIME.aux_param == dest) { // pause between eye movements
+    if(random(6) == 0) { // blink once in a while
+      Adafruit_NeoPixel::setPixelColor(SEGMENT.start + dest, 0);
+      Adafruit_NeoPixel::setPixelColor(SEGMENT.start + dest + SEGMENT_LENGTH/2, 0);
+      return 200;
+    }
+    SEGMENT_RUNTIME.aux_param = random(SEGMENT_LENGTH/2);
+    return 1000 + random(2000);
+  }
+
+  Adafruit_NeoPixel::setPixelColor(SEGMENT.start + dest, 0);
+  Adafruit_NeoPixel::setPixelColor(SEGMENT.start + dest + SEGMENT_LENGTH/2, 0);
+
+  if(SEGMENT_RUNTIME.aux_param > SEGMENT_RUNTIME.counter_mode_step) {
+    SEGMENT_RUNTIME.counter_mode_step++;
+    dest++;
+  } else if (SEGMENT_RUNTIME.aux_param < SEGMENT_RUNTIME.counter_mode_step) {
+    SEGMENT_RUNTIME.counter_mode_step--;
+    dest--;
+  }
+
+  Adafruit_NeoPixel::setPixelColor(SEGMENT.start + dest, SEGMENT.colors[0]);
+  Adafruit_NeoPixel::setPixelColor(SEGMENT.start + dest + SEGMENT_LENGTH/2, SEGMENT.colors[0]);
+
+  return (SEGMENT.speed / SEGMENT_LENGTH);
 }

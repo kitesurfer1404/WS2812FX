@@ -37,7 +37,6 @@
 #ifndef WS2812FX_h
 #define WS2812FX_h
 
-#include "Arduino.h"
 #include <Adafruit_NeoPixel.h>
 
 #define DEFAULT_BRIGHTNESS 50
@@ -45,8 +44,8 @@
 #define DEFAULT_SPEED 150
 #define DEFAULT_COLOR 0xFF0000
 
-#define SPEED_MIN 0
-#define SPEED_MAX 255
+#define SPEED_MIN 20
+#define SPEED_MAX 65535
 
 #define BRIGHTNESS_MIN 0
 #define BRIGHTNESS_MAX 255
@@ -58,7 +57,7 @@
 #define SEGMENT_LENGTH   (SEGMENT.stop - SEGMENT.start + 1)
 #define RESET_RUNTIME    memset(_segment_runtimes, 0, sizeof(_segment_runtimes))
 
-#define MODE_COUNT 57
+#define MODE_COUNT 58
 
 #define FX_MODE_STATIC                   0
 #define FX_MODE_BLINK                    1
@@ -117,6 +116,7 @@
 #define FX_MODE_COLOR_WIPE_INVERSE      54
 #define FX_MODE_BICOLOR_CHASE           55
 #define FX_MODE_TRICOLOR_CHASE          56
+#define FX_MODE_ICU                     57
 
 class WS2812FX : public Adafruit_NeoPixel {
 
@@ -138,7 +138,7 @@ class WS2812FX : public Adafruit_NeoPixel {
     uint32_t counter_mode_step;
     uint32_t counter_mode_call;
     unsigned long next_time;
-    uint8_t aux_param;
+    uint16_t aux_param;
   } segment_runtime;
 
   public:
@@ -201,7 +201,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_CIRCUS_COMBUSTUS]        = &WS2812FX::mode_circus_combustus;
       _mode[FX_MODE_BICOLOR_CHASE]           = &WS2812FX::mode_bicolor_chase;
       _mode[FX_MODE_TRICOLOR_CHASE]          = &WS2812FX::mode_tricolor_chase;
-
+      _mode[FX_MODE_ICU]                     = &WS2812FX::mode_icu;
 
       _name[FX_MODE_STATIC]                    = F("Static");
       _name[FX_MODE_BLINK]                     = F("Blink");
@@ -260,26 +260,17 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_CIRCUS_COMBUSTUS]          = F("Circus Combustus");
       _name[FX_MODE_BICOLOR_CHASE]             = F("Bicolor Chase");
       _name[FX_MODE_TRICOLOR_CHASE]            = F("Tricolor Chase");
+      _name[FX_MODE_ICU]                       = F("ICU");
 
-
-//      _mode_index = DEFAULT_MODE;
-//      _speed = DEFAULT_SPEED;
       _brightness = DEFAULT_BRIGHTNESS;
       _running = false;
-//      _led_count = n;
-//      _mode_last_call_time = 0;
-//      _mode_delay = 50;
-//      _color = DEFAULT_COLOR;
-//      _mode_color = DEFAULT_COLOR;
-//      _counter_mode_call = 0;
-//      _counter_mode_step = 0;
-      RESET_RUNTIME;
       _num_segments = 1;
       _segments[0].mode = DEFAULT_MODE;
       _segments[0].colors[0] = DEFAULT_COLOR;
       _segments[0].start = 0;
       _segments[0].stop = n - 1;
       _segments[0].speed = DEFAULT_SPEED;
+      RESET_RUNTIME;
     }
 
     void
@@ -396,8 +387,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_circus_combustus(void),
       tricolor_chase(uint32_t, uint32_t, uint32_t),
       mode_bicolor_chase(void),
-      mode_tricolor_chase(void);
-
+      mode_tricolor_chase(void),
+      mode_icu(void);
 
     boolean
       _running,
@@ -405,22 +396,7 @@ class WS2812FX : public Adafruit_NeoPixel {
 
     uint8_t
       get_random_wheel_index(uint8_t),
-//      _mode_index,
-//      _speed,
       _brightness;
-
-//    uint16_t
-//      _led_count;
-
-//    uint32_t
-//      _color,
-//      _counter_mode_call,
-//      _counter_mode_step,
-//      _mode_color,
-//      _mode_delay;
-
-//    unsigned long
-//      _mode_last_call_time;
 
     const __FlashStringHelper*
       _name[MODE_COUNT];
