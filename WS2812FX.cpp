@@ -68,7 +68,7 @@ void WS2812FX::service() {
       if(now > SEGMENT_RUNTIME.next_time || _triggered) {
         doShow = true;
         uint16_t delay = (this->*_mode[SEGMENT.mode])();
-        SEGMENT_RUNTIME.next_time = now + max(delay, 20);
+        SEGMENT_RUNTIME.next_time = now + max(delay, SPEED_MIN);
         SEGMENT_RUNTIME.counter_mode_call++;
       }
     }
