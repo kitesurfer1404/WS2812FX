@@ -1014,7 +1014,7 @@ uint16_t WS2812FX::mode_chase_flash_random(void) {
  */
 uint16_t WS2812FX::running(uint32_t color1, uint32_t color2) {
   for(uint16_t i=0; i < SEGMENT_LENGTH; i++) {
-    if((i + SEGMENT_RUNTIME.counter_mode_step) < 2) {
+    if((i + SEGMENT_RUNTIME.counter_mode_step) % 4 < 2) {
       if(SEGMENT.reverse) {
         Adafruit_NeoPixel::setPixelColor(SEGMENT.start + i, color1);
       } else {
