@@ -350,7 +350,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_fade(void),
       mode_scan(void),
       mode_dual_scan(void),
-      theater_chase(uint32_t),
+      theater_chase(uint32_t, uint32_t),
       mode_theater_chase(void),
       mode_theater_chase_rainbow(void),
       mode_rainbow(void),
