@@ -71,6 +71,9 @@ Effects
 * **Blink** - Normal blinking. 50% on/off time.
 * **Breath** - Does the "standby-breathing" of well known i-Devices. Fixed Speed.
 * **Color Wipe** - Lights all LEDs after each other up. Then turns them in that order off. Repeat.
+* **Color Wipe Inverse** - Same as Color Wipe, except swaps on/off colors.
+* **Color Wipe Reverse** - Lights all LEDs after each other up. Then turns them in reverse order off. Repeat.
+* **Color Wipe Reverse Inverse** - Same as Color Wipe Reverse, except swaps on/off colors.
 * **Color Wipe Random** - Turns all LEDs after each other to a random color. Then starts over with another color.
 * **Random Color** - Lights all LEDs in one random color up. Then switches them to the next random color.
 * **Single Dynamic** - Lights every LED in a random color. Changes one random LED after the other to another random color.
@@ -115,12 +118,11 @@ Effects
 * **Fire Flicker** - Fire flickering effect. Like in harsh wind.
 * **Fire Flicker (soft)** - Fire flickering effect. Runs slower/softer.
 * **Fire Flicker (intense)** - Fire flickering effect. More range of color.
-* **Dual Color Wipe In/Out** - Light from edges in to middle, then turn off in reverse.
-* **Dual Color Wipe In/In** - Light from edges in to middle, then turn off in same order.
-* **Dual Color Wipe Out/Out** - Light from middle to edges, then turn off in same order.
-* **Dual Color Wipe Out/In** - Light from middle to edges, then turn off in reverse.
 * **Circus Combustus** - Alternating white/red/black pixels running.
 * **Halloween** - Alternating orange/purple pixels running.
+* **Bicolor Chase** - Two LEDs running on a background color (set three colors).
+* **Tricolor Chase** - Alternating three color pixels running (set three colors).
+* **ICU** - Two eyes looking around.
 
 Projects using WS2812FX
 -----------------------
