@@ -50,6 +50,19 @@ void loop() {
 }
 ```
 
+More complex effects can be created by dividing your string of LEDs into segments (up to ten) and programming each segment independently. Use the **setSegment()** function to program each segment's mode, color, speed and direction (normal or reverse):
+  * setSegment(segment index, start LED, stop LED, mode, color, speed, reverse);
+
+Note, some effects make use of more then one color (up to three) and are programmed by specifying an array of colors:
+  * setSegment(segment index, start LED, stop LED, mode, colors[], speed, reverse);
+
+```cpp
+// divide the string of LEDs into two independent segments
+uint32_t colors[] = {RED, GREEN};
+ws2812fx.setSegment(0, 0,           (LED_COUNT/2)-1, FX_MODE_BLINK, colors, 1000, false);
+ws2812fx.setSegment(1, LED_COUNT/2, LED_COUNT-1,     FX_MODE_BLINK, (const uint32_t[]) {ORANGE, PURPLE}, 1000, false);
+```
+
 
 Effects
 -------
