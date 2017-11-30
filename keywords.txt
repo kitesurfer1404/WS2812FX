@@ -15,9 +15,13 @@ increaseSpeed	KEYWORD2
 decreaseSpeed	KEYWORD2
 setColor	KEYWORD2
 setBrightness	KEYWORD2
+setLength	KEYWORD2
+getLength	KEYWORD2
 setSegment	KEYWORD2
 increaseBrightness	KEYWORD2
 decreaseBrightness	KEYWORD2
+increaseLength	KEYWORD2
+decreaseLength	KEYWORD2
 isRunning	KEYWORD2
 getMode	KEYWORD2
 getSpeed	KEYWORD2
@@ -26,7 +30,9 @@ getModeCount	KEYWORD2
 getModeName	KEYWORD2
 getColor	KEYWORD2
 getNumSegments	KEYWORD2
+setNumSegments	KEYWORD2
 getSegments	KEYWORD2
+color_wheel	KEYWORD2
 FX_MODE_STATIC	KEYWORD2
 FX_MODE_BLINK	KEYWORD2
 FX_MODE_BREATH	KEYWORD2
