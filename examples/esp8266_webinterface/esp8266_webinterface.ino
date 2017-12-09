@@ -67,11 +67,11 @@ extern const char main_js[];
 
 #define DEFAULT_COLOR 0xFF5900
 #define DEFAULT_BRIGHTNESS 255
-#define DEFAULT_SPEED 200
+#define DEFAULT_SPEED 1000
 #define DEFAULT_MODE FX_MODE_STATIC
 
 #define BRIGHTNESS_STEP 15              // in/decrease brightness by this amount per click
-#define SPEED_STEP 10                   // in/decrease brightness by this amount per click
+#define SPEED_STEP 100                  // in/decrease brightness by this amount per click
 
 unsigned long last_wifi_check_time = 0;
 String modes = "";

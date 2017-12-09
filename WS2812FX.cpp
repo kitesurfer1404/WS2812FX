@@ -107,13 +107,13 @@ void WS2812FX::setSpeed(uint16_t s) {
 }
 
 void WS2812FX::increaseSpeed(uint8_t s) {
-  s = constrain(SEGMENT.speed + s, SPEED_MIN, SPEED_MAX);
-  setSpeed(s);
+  uint16_t newSpeed = constrain(SEGMENT.speed + s, SPEED_MIN, SPEED_MAX);
+  setSpeed(newSpeed);
 }
 
 void WS2812FX::decreaseSpeed(uint8_t s) {
-  s = constrain(SEGMENT.speed - s, SPEED_MIN, SPEED_MAX);
-  setSpeed(s);
+  uint16_t newSpeed = constrain(SEGMENT.speed - s, SPEED_MIN, SPEED_MAX);
+  setSpeed(newSpeed);
 }
 
 void WS2812FX::setColor(uint8_t r, uint8_t g, uint8_t b) {
