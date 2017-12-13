@@ -227,9 +227,9 @@ void srv_handle_set() {
 
     if(server.argName(i) == "s") {
       if(server.arg(i)[0] == '-') {
-        ws2812fx.decreaseSpeed(SPEED_STEP);
+        ws2812fx.setSpeed(ws2812fx.getSpeed() * 0.9);
       } else {
-        ws2812fx.increaseSpeed(SPEED_STEP);
+        ws2812fx.setSpeed(ws2812fx.getSpeed() * 1.1);
       }
     }
   }
