@@ -58,16 +58,17 @@
 #define RESET_RUNTIME    memset(_segment_runtimes, 0, sizeof(_segment_runtimes))
 
 // some common colors
-#define RED     0xFF0000
-#define GREEN   0x00FF00
-#define BLUE    0x0000FF
-#define WHITE   0xFFFFFF
-#define BLACK   0x000000
-#define YELLOW  0xFFFF00
-#define CYAN    0x00FFFF
-#define MAGENTA 0xFF00FF
-#define PURPLE  0x400080
-#define ORANGE  0xFF3000
+#define RED        0xFF0000
+#define GREEN      0x00FF00
+#define BLUE       0x0000FF
+#define WHITE      0xFFFFFF
+#define BLACK      0x000000
+#define YELLOW     0xFFFF00
+#define CYAN       0x00FFFF
+#define MAGENTA    0xFF00FF
+#define PURPLE     0x400080
+#define ORANGE     0xFF3000
+#define ULTRAWHITE 0xFFFFFFFF
 
 #define MODE_COUNT 56
 
@@ -299,7 +300,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       trigger(void),
       setNumSegments(uint8_t n),
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color,   uint16_t speed, bool reverse),
-      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse);
+      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse),
+      resetSegments();
 
     boolean
       isRunning(void);
@@ -415,7 +417,7 @@ class WS2812FX : public Adafruit_NeoPixel {
     uint8_t _num_segments = 1;
     segment _segments[MAX_NUM_SEGMENTS] = { // must explicitly set array size
       // mode, color[], speed, start, stop, reverse
-      { FX_MODE_STATIC, {DEFAULT_COLOR}, DEFAULT_SPEED, 0, 9, false}
+      { FX_MODE_STATIC, {DEFAULT_COLOR}, DEFAULT_SPEED, 0, 7, false}
     };
     segment_runtime _segment_runtimes[MAX_NUM_SEGMENTS];
 };
