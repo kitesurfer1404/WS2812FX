@@ -18,6 +18,7 @@ setBrightness	KEYWORD2
 setLength	KEYWORD2
 getLength	KEYWORD2
 setSegment	KEYWORD2
+resetSegments	KEYWORD2
 increaseBrightness	KEYWORD2
 decreaseBrightness	KEYWORD2
 increaseLength	KEYWORD2
