@@ -1,3 +1,4 @@
+#define REDUCED_MODES // sketch is too big for Arduino w/32k flash, so invoke reduced modes
 #include <WS2812FX.h>
 
 #define LED_COUNT 13
@@ -21,7 +22,7 @@ void setup() {
   Serial.begin(115200);
   ws2812fx.init();
   ws2812fx.setBrightness(30);
-  ws2812fx.setSpeed(200);
+  ws2812fx.setSpeed(1000);
   ws2812fx.setColor(0x007BFF);
   ws2812fx.setMode(FX_MODE_STATIC);
   ws2812fx.start();
@@ -35,7 +36,7 @@ void loop() {
 
   // On Atmega32U4 based boards (leonardo, micro) serialEvent is not called
   // automatically when data arrive on the serial RX. We need to do it ourself
-  #if defined(__AVR_ATmega32U4__)
+  #if defined(__AVR_ATmega32U4__) || defined(ESP8266)
   serialEvent();
   #endif
 
@@ -68,19 +69,21 @@ void process_command() {
   }
 
   if(cmd == F("s+")) { 
-    ws2812fx.increaseSpeed(10);
+//  ws2812fx.increaseSpeed(10);
+    ws2812fx.setSpeed(ws2812fx.getSpeed() * 1.2);
     Serial.print(F("Increased speed by 10 to: "));
     Serial.println(ws2812fx.getSpeed());
   }
 
   if(cmd == F("s-")) {
-    ws2812fx.decreaseSpeed(10); 
+//  ws2812fx.decreaseSpeed(10);
+    ws2812fx.setSpeed(ws2812fx.getSpeed() * 0.8);
     Serial.print(F("Decreased speed by 10 to: "));
     Serial.println(ws2812fx.getSpeed());
   }
 
   if(cmd.startsWith(F("s "))) {
-    uint8_t s = (uint8_t) cmd.substring(2, cmd.length()).toInt();
+    uint16_t s = (uint16_t) cmd.substring(2, cmd.length()).toInt();
     ws2812fx.setSpeed(s); 
     Serial.print(F("Set speed to: "));
     Serial.println(ws2812fx.getSpeed());
