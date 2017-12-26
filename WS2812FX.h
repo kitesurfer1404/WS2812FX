@@ -157,7 +157,6 @@ class WS2812FX : public Adafruit_NeoPixel {
     WS2812FX(uint16_t n, uint8_t p, neoPixelType t) : Adafruit_NeoPixel(n, p, t) {
       _mode[FX_MODE_STATIC]                  = &WS2812FX::mode_static;
       _mode[FX_MODE_BLINK]                   = &WS2812FX::mode_blink;
-      _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_breath;
       _mode[FX_MODE_COLOR_WIPE]              = &WS2812FX::mode_color_wipe;
       _mode[FX_MODE_COLOR_WIPE_INV]          = &WS2812FX::mode_color_wipe_inv;
       _mode[FX_MODE_COLOR_WIPE_REV]          = &WS2812FX::mode_color_wipe_rev;
@@ -173,7 +172,6 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_FADE]                    = &WS2812FX::mode_fade;
       _mode[FX_MODE_THEATER_CHASE]           = &WS2812FX::mode_theater_chase;
       _mode[FX_MODE_THEATER_CHASE_RAINBOW]   = &WS2812FX::mode_theater_chase_rainbow;
-      _mode[FX_MODE_RUNNING_LIGHTS]          = &WS2812FX::mode_running_lights;
       _mode[FX_MODE_TWINKLE]                 = &WS2812FX::mode_twinkle;
       _mode[FX_MODE_TWINKLE_RANDOM]          = &WS2812FX::mode_twinkle_random;
       _mode[FX_MODE_TWINKLE_FADE]            = &WS2812FX::mode_twinkle_fade;
@@ -210,7 +208,17 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_CIRCUS_COMBUSTUS]        = &WS2812FX::mode_circus_combustus;
       _mode[FX_MODE_BICOLOR_CHASE]           = &WS2812FX::mode_bicolor_chase;
       _mode[FX_MODE_TRICOLOR_CHASE]          = &WS2812FX::mode_tricolor_chase;
+// if flash memory is constrained (i'm looking at you Adruino Nano), replace modes
+// that use a lot of flash with mode_static (reduces flash footprint by about 3600 bytes)
+#ifdef REDUCED_MODES
+      _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_static;
+      _mode[FX_MODE_RUNNING_LIGHTS]          = &WS2812FX::mode_static;
+      _mode[FX_MODE_ICU]                     = &WS2812FX::mode_static;
+#else
+      _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_breath;
+      _mode[FX_MODE_RUNNING_LIGHTS]          = &WS2812FX::mode_running_lights;
       _mode[FX_MODE_ICU]                     = &WS2812FX::mode_icu;
+#endif
 
       _name[FX_MODE_STATIC]                    = F("Static");
       _name[FX_MODE_BLINK]                     = F("Blink");
@@ -408,18 +416,18 @@ class WS2812FX : public Adafruit_NeoPixel {
       _brightness;
 
     const __FlashStringHelper*
-      _name[MODE_COUNT];
+      _name[MODE_COUNT]; // SRAM footprint: 2 bytes per element
 
     mode_ptr
-      _mode[MODE_COUNT];
+      _mode[MODE_COUNT]; // SRAM footprint: 4 bytes per element
 
     uint8_t _segment_index = 0;
     uint8_t _num_segments = 1;
-    segment _segments[MAX_NUM_SEGMENTS] = { // must explicitly set array size
+    segment _segments[MAX_NUM_SEGMENTS] = { // SRAM footprint: 20 bytes per element
       // mode, color[], speed, start, stop, reverse
       { FX_MODE_STATIC, {DEFAULT_COLOR}, DEFAULT_SPEED, 0, 7, false}
     };
-    segment_runtime _segment_runtimes[MAX_NUM_SEGMENTS];
+    segment_runtime _segment_runtimes[MAX_NUM_SEGMENTS]; // SRAM footprint: 14 bytes per element
 };
 
 #endif

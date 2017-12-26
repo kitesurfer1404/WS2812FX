@@ -50,9 +50,9 @@ void setup() {
   ws2812fx.init();
 
   // parameters: index, start, stop, mode, color, speed, reverse
-  ws2812fx.setSegment(0,  0,  9, FX_MODE_BLINK, 0xFF0000, 200, false); // segment 0 is leds 0 - 9
-  ws2812fx.setSegment(1, 10, 19, FX_MODE_SCAN,  0x00FF00, 240, false); // segment 1 is leds 10 - 19
-  ws2812fx.setSegment(2, 20, 29, FX_MODE_COMET, 0x0000FF, 200, true);  // segment 2 is leds 20 - 29
+  ws2812fx.setSegment(0,  0,  9, FX_MODE_BLINK, 0xFF0000, 1000, false); // segment 0 is leds 0 - 9
+  ws2812fx.setSegment(1, 10, 19, FX_MODE_SCAN,  0x00FF00, 1000, false); // segment 1 is leds 10 - 19
+  ws2812fx.setSegment(2, 20, 29, FX_MODE_COMET, 0x0000FF, 1000, true);  // segment 2 is leds 20 - 29
 
   ws2812fx.start();
 }

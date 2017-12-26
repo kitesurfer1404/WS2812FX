@@ -21,7 +21,7 @@ unsigned long now = 0;
 void setup() {
   ws2812fx.init();
   ws2812fx.setBrightness(255);
-  ws2812fx.setSpeed(200);
+  ws2812fx.setSpeed(1000);
   ws2812fx.setColor(0x007BFF);
   ws2812fx.setMode(FX_MODE_STATIC);
   ws2812fx.start();

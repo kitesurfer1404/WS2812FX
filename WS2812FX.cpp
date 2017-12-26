@@ -1167,22 +1167,13 @@ uint32_t prevLed, thisLed, nextLed;
   Adafruit_NeoPixel::setPixelColor(SEGMENT.start, px_r, px_g, px_b);
 */
   // set brightness(i) = ((brightness(i-1)/2 + brightness(i+1)) / 2) + brightness(i)
-  for(uint16_t i=SEGMENT.start; i <=SEGMENT.stop; i++) {
+  for(uint16_t i=SEGMENT.start + 1; i <SEGMENT.stop; i++) {
 // the new way. not as precise, but much faster, smaller and works with RGBW leds
-    if(i == SEGMENT.start) { // first LED has only one neighbour
-      prevLed = (Adafruit_NeoPixel::getPixelColor(i) >> 1) & 0x7F7F7F7F;
-    } else {
-      prevLed = (Adafruit_NeoPixel::getPixelColor(i-1) >> 1) & 0x7F7F7F7F;
-    }
-
+    prevLed = (Adafruit_NeoPixel::getPixelColor(i-1) >> 2) & 0x3F3F3F3F;
     thisLed = Adafruit_NeoPixel::getPixelColor(i);
-
-    if(i == SEGMENT.stop) { // last LED has only one neighbour
-      nextLed = (Adafruit_NeoPixel::getPixelColor(i) >> 1) & 0x7F7F7F7F;
-    } else {
-      nextLed = (Adafruit_NeoPixel::getPixelColor(i+1) >> 1) & 0x7F7F7F7F;
-    }
+    nextLed = (Adafruit_NeoPixel::getPixelColor(i+1) >> 2) & 0x3F3F3F3F;
     Adafruit_NeoPixel::setPixelColor(i, prevLed + thisLed + nextLed);
+
 /* the old way
     px_r = ((
             (((Adafruit_NeoPixel::getPixelColor(i-1) & 0xFF0000) >> 16) >> 1) +
