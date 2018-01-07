@@ -48,7 +48,7 @@ char index_html[] PROGMEM = R"=====(
     display:block;
   }
 
-  ul#brightness li, ul#speed li {
+  ul#brightness li, ul#speed li, ul#auto li {
     display:inline-block;
     width:30%;
   }
@@ -84,6 +84,11 @@ char index_html[] PROGMEM = R"=====(
     <ul id='speed'>
       <li><a href='#' class='s' id='-'>&#8722;</a></li>
       <li><a href='#' class='s' id='+'>&#43;</a></li>
+    </ul>
+
+    <ul id='auto'>
+      <li><a href='#' class='a' id='-'>&#9632;</a></li>
+      <li><a href='#' class='a' id='+'>&#9658;</a></li>
     </ul>
   </div>
 </body>
