@@ -50,6 +50,8 @@
 #define BRIGHTNESS_MIN 0
 #define BRIGHTNESS_MAX 255
 
+/* each segment uses 34 bytes of SRAM memory, so if you're application fails because of
+  insuffucient memory, decreasing MAX_NUM_SEGMENTS may help */
 #define MAX_NUM_SEGMENTS 10
 #define NUM_COLORS 3     /* number of colors per segment */
 #define SEGMENT          _segments[_segment_index]
