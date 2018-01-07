@@ -69,7 +69,7 @@ void WS2812FX::service() {
       if(now > SEGMENT_RUNTIME.next_time || _triggered) {
         doShow = true;
         uint16_t delay = (this->*_mode[SEGMENT.mode])();
-        SEGMENT_RUNTIME.next_time = now + max(delay, SPEED_MIN);
+        SEGMENT_RUNTIME.next_time = now + max((int)delay, SPEED_MIN);
         SEGMENT_RUNTIME.counter_mode_call++;
       }
     }
@@ -535,7 +535,7 @@ uint16_t WS2812FX::mode_breath(void) {
 uint16_t WS2812FX::mode_fade(void) {
   int lum = SEGMENT_RUNTIME.counter_mode_step - 31;
   lum = 63 - (abs(lum) * 2);
-  lum = map(lum, 0, 64, min(25, _brightness), _brightness);
+  lum = map(lum, 0, 64, min(25, (int)_brightness), _brightness);
 
   uint8_t w = (SEGMENT.colors[0] >> 24 & 0xFF) * lum / _brightness; // modify RGBW colors with brightness info
   uint8_t r = (SEGMENT.colors[0] >> 16 & 0xFF) * lum / _brightness;
