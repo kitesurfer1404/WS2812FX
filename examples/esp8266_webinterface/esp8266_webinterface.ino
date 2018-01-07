@@ -56,6 +56,10 @@ extern const char main_js[];
   IPAddress subnet(255,255,255,0);
 #endif
 
+// QUICKFIX...See https://github.com/esp8266/Arduino/issues/263
+#define min(a,b) ((a)<(b)?(a):(b))
+#define max(a,b) ((a)>(b)?(a):(b))
+
 #define LED_PIN 2                       // 0 = GPIO0, 2=GPIO2
 #define LED_COUNT 24
 
