@@ -72,7 +72,7 @@
 #define ORANGE     0xFF3000
 #define ULTRAWHITE 0xFFFFFFFF
 
-#define MODE_COUNT 56
+#define MODE_COUNT 57
 
 #define FX_MODE_STATIC                   0
 #define FX_MODE_BLINK                    1
@@ -130,6 +130,7 @@
 #define FX_MODE_BICOLOR_CHASE           53
 #define FX_MODE_TRICOLOR_CHASE          54
 #define FX_MODE_ICU                     55
+#define FX_MODE_CUSTOM                  56
 
 class WS2812FX : public Adafruit_NeoPixel {
 
@@ -221,6 +222,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_RUNNING_LIGHTS]          = &WS2812FX::mode_running_lights;
       _mode[FX_MODE_ICU]                     = &WS2812FX::mode_icu;
 #endif
+      _mode[FX_MODE_CUSTOM]                  = &WS2812FX::mode_custom;
 
       _name[FX_MODE_STATIC]                    = F("Static");
       _name[FX_MODE_BLINK]                     = F("Blink");
@@ -278,6 +280,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _name[FX_MODE_BICOLOR_CHASE]             = F("Bicolor Chase");
       _name[FX_MODE_TRICOLOR_CHASE]            = F("Tricolor Chase");
       _name[FX_MODE_ICU]                       = F("ICU");
+      _name[FX_MODE_CUSTOM]                    = F("Custom");
 
       _brightness = DEFAULT_BRIGHTNESS;
       _running = false;
@@ -296,6 +299,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       start(void),
       stop(void),
       setMode(uint8_t m),
+      setCustomMode(uint16_t (*p)()),
       setSpeed(uint16_t s),
       increaseSpeed(uint8_t s),
       decreaseSpeed(uint8_t s),
@@ -407,7 +411,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       tricolor_chase(uint32_t, uint32_t, uint32_t),
       mode_bicolor_chase(void),
       mode_tricolor_chase(void),
-      mode_icu(void);
+      mode_icu(void),
+      mode_custom(void);
 
     boolean
       _running,
