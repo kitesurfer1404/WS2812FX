@@ -49,6 +49,7 @@
   2017-02-02   removed "blackout" on mode, speed or color-change
   2017-09-26   implemented segment and reverse features
   2017-11-16   changed speed calc, reduced memory footprint
+  2018-02-24   added hooks for user created custom effects
 */
 
 #include "WS2812FX.h"
@@ -223,7 +224,7 @@ const __FlashStringHelper* WS2812FX::getModeName(uint8_t m) {
 }
 
 void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed, bool reverse) {
-  if(n < MAX_NUM_SEGMENTS) {
+  if(n < (sizeof(_segments) / sizeof(_segments[0]))) {
     if(n + 1 > _num_segments) _num_segments = n + 1;
     _segments[n].start = start;
     _segments[n].stop = stop;
@@ -235,7 +236,7 @@ void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode
 }
 
 void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse) {
-  if(n < MAX_NUM_SEGMENTS) {
+  if(n < (sizeof(_segments) / sizeof(_segments[0]))) {
     if(n + 1 > _num_segments) _num_segments = n + 1;
     _segments[n].start = start;
     _segments[n].stop = stop;
@@ -252,9 +253,9 @@ void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode
 void WS2812FX::resetSegments() {
   memset(_segments, 0, sizeof(_segments));
   memset(_segment_runtimes, 0, sizeof(_segment_runtimes));
-   _segment_index = 0;
+  _segment_index = 0;
   _num_segments = 1;
-  setSegment(0, 0, 7, FX_MODE_STATIC, {DEFAULT_COLOR}, DEFAULT_SPEED, false);
+  setSegment(0, 0, 7, FX_MODE_STATIC, DEFAULT_COLOR, DEFAULT_SPEED, false);
 }
 
 /* #####################################################
@@ -1352,4 +1353,24 @@ uint16_t WS2812FX::mode_icu() {
   Adafruit_NeoPixel::setPixelColor(SEGMENT.start + dest + SEGMENT_LENGTH/2, SEGMENT.colors[0]);
 
   return (SEGMENT.speed / SEGMENT_LENGTH);
+}
+
+/*
+ * Custom mode
+ */
+uint16_t (*customMode)(void) = NULL;
+uint16_t WS2812FX::mode_custom() {
+  if(customMode == NULL) {
+    return 1000; // if custom mode not set, do nothing
+  } else {
+    return customMode();
+  }
+}
+
+/*
+ * Custom mode helper
+ */
+void WS2812FX::setCustomMode(uint16_t (*p)()) {
+  setMode(FX_MODE_CUSTOM);
+  customMode = p;
 }

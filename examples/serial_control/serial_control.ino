@@ -71,14 +71,14 @@ void process_command() {
   if(cmd == F("s+")) { 
 //  ws2812fx.increaseSpeed(10);
     ws2812fx.setSpeed(ws2812fx.getSpeed() * 1.2);
-    Serial.print(F("Increased speed by 10 to: "));
+    Serial.print(F("Increased speed by 20% to: "));
     Serial.println(ws2812fx.getSpeed());
   }
 
   if(cmd == F("s-")) {
 //  ws2812fx.decreaseSpeed(10);
     ws2812fx.setSpeed(ws2812fx.getSpeed() * 0.8);
-    Serial.print(F("Decreased speed by 10 to: "));
+    Serial.print(F("Decreased speed by 20% to: "));
     Serial.println(ws2812fx.getSpeed());
   }
 
