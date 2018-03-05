@@ -51,7 +51,7 @@
 #define BRIGHTNESS_MAX 255
 
 /* each segment uses 34 bytes of SRAM memory, so if you're application fails because of
-  insuffucient memory, decreasing MAX_NUM_SEGMENTS may help */
+  insufficient memory, decreasing MAX_NUM_SEGMENTS may help */
 #define MAX_NUM_SEGMENTS 10
 #define NUM_COLORS 3     /* number of colors per segment */
 #define SEGMENT          _segments[_segment_index]
@@ -211,7 +211,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_CIRCUS_COMBUSTUS]        = &WS2812FX::mode_circus_combustus;
       _mode[FX_MODE_BICOLOR_CHASE]           = &WS2812FX::mode_bicolor_chase;
       _mode[FX_MODE_TRICOLOR_CHASE]          = &WS2812FX::mode_tricolor_chase;
-// if flash memory is constrained (i'm looking at you Adruino Nano), replace modes
+// if flash memory is constrained (I'm looking at you Arduino Nano), replace modes
 // that use a lot of flash with mode_static (reduces flash footprint by about 3600 bytes)
 #ifdef REDUCED_MODES
       _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_static;
