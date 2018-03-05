@@ -169,32 +169,49 @@ void configServer() {
       ws2812fx.stop(); // reset strip again in case length was increased
 
       JsonArray& patternsJson = deviceJson["patterns"];
-      numPatterns = patternsJson.size();
-      for (int i = 0; i< numPatterns; i++){
-        JsonObject& patt = patternsJson[i];
-        patterns[i].brightness = patt["brightness"];
-        patterns[i].duration = patt["duration"];
+      if(patternsJson.size() > 0 ) {
+        numPatterns = patternsJson.size();
+        for (int i = 0; i< numPatterns; i++){
+          JsonObject& patt = patternsJson[i];
+          JsonArray& segmentsJson = patt["segments"];
+          if(segmentsJson.size() == 0 ) continue;
 
-        JsonArray& segmentsJson = patt["segments"];
-        patterns[i].numSegments = segmentsJson.size();
-        for (int j = 0; j< segmentsJson.size(); j++){
-          JsonObject& seg = segmentsJson[j];
+          patterns[i].brightness = patt["brightness"];
+          patterns[i].duration = patt["duration"];
+
+          patterns[i].numSegments = segmentsJson.size();
+          for (int j = 0; j< segmentsJson.size(); j++){
+            JsonObject& seg = segmentsJson[j];
 //seg.printTo(Serial);Serial.println();
-          patterns[i].segments[j].start = seg["start"];
-          patterns[i].segments[j].stop = seg["stop"];
-          patterns[i].segments[j].mode = seg["mode"];
-          patterns[i].segments[j].speed = seg["speed"];
-          patterns[i].segments[j].reverse = seg["reverse"];
+            int start = seg["start"];
+            if(start < 0 || start >= ws2812fx.getLength()) start = 0;
+            patterns[i].segments[j].start = start;
 
-          JsonArray& colors = seg["colors"]; // the web interface sends three color values
-          // convert colors from strings ('#ffffff') to uint32_t
-          patterns[i].segments[j].colors[0] = strtoul(colors[0].as<char*>() + 1, 0, 16);
-          patterns[i].segments[j].colors[1] = strtoul(colors[1].as<char*>() + 1, 0, 16);
-          patterns[i].segments[j].colors[2] = strtoul(colors[2].as<char*>() + 1, 0, 16);
+            int stop = seg["stop"];
+            if(stop < 0 || stop >= ws2812fx.getLength()) stop = ws2812fx.getLength() - 1;
+            patterns[i].segments[j].stop = stop;
+
+            if(seg["mode"].is<unsigned int>()) { // seg["mode"] can be a mode number or a mode name
+              patterns[i].segments[j].mode = seg["mode"];
+            } else {
+              patterns[i].segments[j].mode = modeName2Index(seg["mode"]);
+            }
+
+            int speed = seg["speed"];
+            if(speed < 0 || speed >= 65535) speed = 1000;
+            patterns[i].segments[j].speed = speed;
+
+            patterns[i].segments[j].reverse = seg["reverse"];
+
+            JsonArray& colors = seg["colors"]; // the web interface sends three color values
+            // convert colors from strings ('#ffffff') to uint32_t
+            patterns[i].segments[j].colors[0] = strtoul(colors[0].as<char*>() + 1, 0, 16);
+            patterns[i].segments[j].colors[1] = strtoul(colors[1].as<char*>() + 1, 0, 16);
+            patterns[i].segments[j].colors[2] = strtoul(colors[2].as<char*>() + 1, 0, 16);
+          }
         }
+        saveToEEPROM();
       }
-
-      saveToEEPROM();
 
       currentPattern = 0;
       lastTime = 0;
@@ -233,3 +250,11 @@ void restoreFromEEPROM() {
   }
 }
 
+int modeName2Index(const char* name) {
+  for (int i = 0; i< ws2812fx.getModeCount(); i++){
+    if(strcmp_P(name, (PGM_P)ws2812fx.getModeName(i)) == 0) {
+      return i;
+    }
+  }
+  return 0;
+}
