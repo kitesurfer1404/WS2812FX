@@ -305,6 +305,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       decreaseSpeed(uint8_t s),
       setColor(uint8_t r, uint8_t g, uint8_t b),
       setColor(uint32_t c),
+      setSegmentColors(uint8_t n, const uint32_t colors[]),
       setBrightness(uint8_t b),
       increaseBrightness(uint8_t s),
       decreaseBrightness(uint8_t s),
