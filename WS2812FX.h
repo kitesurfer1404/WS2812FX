@@ -5,9 +5,9 @@
   www.aldick.org
   FEATURES
     * A lot of blinken modes and counting
-    * WS2812FX can be used as drop-in replacement for Adafruit Neopixel Library
+    * WS2812FX can be used as drop-in replacement for Adafruit NeoPixel Library
   NOTES
-    * Uses the Adafruit Neopixel library. Get it here:
+    * Uses the Adafruit NeoPixel library. Get it here:
       https://github.com/adafruit/Adafruit_NeoPixel
   LICENSE
   The MIT License (MIT)
@@ -50,7 +50,7 @@
 #define BRIGHTNESS_MIN 0
 #define BRIGHTNESS_MAX 255
 
-/* each segment uses 34 bytes of SRAM memory, so if you're application fails because of
+/* each segment uses 36 bytes of SRAM memory, so if you're application fails because of
   insufficient memory, decreasing MAX_NUM_SEGMENTS may help */
 #define MAX_NUM_SEGMENTS 10
 #define NUM_COLORS 3     /* number of colors per segment */
@@ -138,25 +138,26 @@ class WS2812FX : public Adafruit_NeoPixel {
   
   // segment parameters
   public:
-    typedef struct segment {
-      uint8_t  mode;
-      uint32_t colors[NUM_COLORS];
-      uint16_t speed;
+    typedef struct Segment { // 20 bytes
       uint16_t start;
       uint16_t stop;
+      uint16_t speed;
+      uint8_t  mode;
       bool     reverse;
+      uint32_t colors[NUM_COLORS];
     } segment;
 
   // segment runtime parameters
-  typedef struct segment_runtime {
-    uint32_t counter_mode_step;
-    uint32_t counter_mode_call;
-    unsigned long next_time;
-    uint16_t aux_param;
-  } segment_runtime;
+  public:
+    typedef struct Segment_runtime { // 16 bytes
+      unsigned long next_time;
+      uint32_t counter_mode_step;
+      uint32_t counter_mode_call;
+      uint16_t aux_param;
+      uint16_t aux_param2;
+    } segment_runtime;
 
   public:
-
     WS2812FX(uint16_t n, uint8_t p, neoPixelType t) : Adafruit_NeoPixel(n, p, t) {
       _mode[FX_MODE_STATIC]                  = &WS2812FX::mode_static;
       _mode[FX_MODE_BLINK]                   = &WS2812FX::mode_blink;
@@ -337,7 +338,13 @@ class WS2812FX : public Adafruit_NeoPixel {
     const __FlashStringHelper*
       getModeName(uint8_t m);
 
-    WS2812FX::segment*
+    WS2812FX::Segment
+      getSegment(void);
+
+    WS2812FX::Segment_runtime
+      getSegmentRuntime(void);
+
+    WS2812FX::Segment*
       getSegments(void);
 
   private:
@@ -431,10 +438,10 @@ class WS2812FX : public Adafruit_NeoPixel {
     uint8_t _segment_index = 0;
     uint8_t _num_segments = 1;
     segment _segments[MAX_NUM_SEGMENTS] = { // SRAM footprint: 20 bytes per element
-      // mode, color[], speed, start, stop, reverse
-      { FX_MODE_STATIC, {DEFAULT_COLOR}, DEFAULT_SPEED, 0, 7, false}
+      // start, stop, speed, mode, reverse, color[]
+      { 0, 7, DEFAULT_SPEED, FX_MODE_STATIC, false, {DEFAULT_COLOR}}
     };
-    segment_runtime _segment_runtimes[MAX_NUM_SEGMENTS]; // SRAM footprint: 14 bytes per element
+    segment_runtime _segment_runtimes[MAX_NUM_SEGMENTS]; // SRAM footprint: 16 bytes per element
 };
 
 #endif

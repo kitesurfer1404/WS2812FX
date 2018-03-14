@@ -237,9 +237,12 @@ void srv_handle_set() {
 
     if(server.argName(i) == "b") {
       if(server.arg(i)[0] == '-') {
-        ws2812fx.setBrightness(max((int)(ws2812fx.getBrightness() * 0.8), 5));
-      } else {
-        ws2812fx.setBrightness(min((int)(ws2812fx.getBrightness() * 1.2), 255));
+        ws2812fx.setBrightness(ws2812fx.getBrightness() * 0.8);
+      } else if(server.arg(i)[0] == ' ') {
+        ws2812fx.setBrightness(min(max(ws2812fx.getBrightness(), 5) * 1.2, 255));
+      } else { // set brightness directly
+        uint8_t tmp = (uint8_t) strtol(&server.arg(i)[0], NULL, 10);
+        ws2812fx.setBrightness(tmp);
       }
       Serial.print("brightness is "); Serial.println(ws2812fx.getBrightness());
     }
