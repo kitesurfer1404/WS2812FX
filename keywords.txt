@@ -34,6 +34,8 @@ getModeName	KEYWORD2
 getColor	KEYWORD2
 getNumSegments	KEYWORD2
 setNumSegments	KEYWORD2
+getSegment	KEYWORD2
+getSegmentRuntime	KEYWORD2
 getSegments	KEYWORD2
 color_wheel	KEYWORD2
 FX_MODE_STATIC	KEYWORD2
