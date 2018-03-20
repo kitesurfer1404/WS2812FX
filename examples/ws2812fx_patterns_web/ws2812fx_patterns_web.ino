@@ -49,20 +49,20 @@ uint16_t numLeds = 30; // default number of LEDs on the strip
 
 #define MAX_NUM_PATTERNS 8
 
-typedef struct Pattern { // 252 bytes/pattern
-  uint8_t brightness;
+typedef struct Pattern { // 208 bytes/pattern
   int duration;
+  uint8_t brightness;
   uint8_t numSegments;
   WS2812FX::segment segments[MAX_NUM_SEGMENTS];
-} Pattern;
+} pattern;
 
 // setup a couple default patterns
 Pattern patterns[MAX_NUM_PATTERNS] = {
-  {128, 10, 1, {
-    {FX_MODE_LARSON_SCANNER, {0x800080, 0, 0}, 3000, 0, numLeds-1, false}
+  {10, 128, 1, {
+    {0, numLeds-1, 3000, FX_MODE_LARSON_SCANNER, false, {0x800080, 0, 0}}
   }},
-  {32, 10, 1, {
-    {FX_MODE_LARSON_SCANNER, {0x808000, 0, 0}, 3000, 0, numLeds-1, false}
+  {10, 32, 1, {
+    {0, numLeds-1, 3000, FX_MODE_LARSON_SCANNER, false, {0x808000, 0, 0}}
   }}
 };
 
