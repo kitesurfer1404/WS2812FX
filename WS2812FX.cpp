@@ -127,6 +127,15 @@ void WS2812FX::setColor(uint32_t c) {
   setBrightness(_brightness);
 }
 
+void WS2812FX::setSegmentColors(uint8_t n, const uint32_t colors[]) {
+  if(n < (sizeof(_segments) / sizeof(_segments[0]))) {
+    if(n + 1 > _num_segments) _num_segments = n + 1;
+    for(uint8_t i=0; i<NUM_COLORS; i++) {
+      _segments[n].colors[i] = colors[i];
+    }
+  }
+}
+
 void WS2812FX::setBrightness(uint8_t b) {
   _brightness = constrain(b, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
   Adafruit_NeoPixel::setBrightness(_brightness);
