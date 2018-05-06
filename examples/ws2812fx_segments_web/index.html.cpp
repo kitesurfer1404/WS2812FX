@@ -106,7 +106,7 @@ char index_html[] PROGMEM = R"=====(
     var numPixels = 30;
     var segmentIndex = 0;
     var segments = [
-      {start: 0, stop: 9, mode:0, speed:200, reverse:false, colors:['#ff0000','#00ff00','#0000ff']}
+      {start: 0, stop: 9, mode:0, speed:1000, reverse:false, colors:['#ff0000','#00ff00','#0000ff']}
     ];
 
     // onready function
@@ -161,11 +161,12 @@ char index_html[] PROGMEM = R"=====(
       });
 
       noUiSlider.create(document.getElementById('speedSlider'), {
-        start: 200,
+        start: 1000,
         connect: [true, false],
+        step: 10,
         range: {
-          'min': 0,
-          'max': 255
+          'min': 20,
+          'max': 2000
         },
         format: wNumb({
           decimals: 0,
@@ -196,7 +197,7 @@ char index_html[] PROGMEM = R"=====(
       }
       if(start > numPixels - 1) start = numPixels - 1;
 
-      segments.push({start:start, stop:numPixels - 1, mode:0, speed:200, reverse:false, colors:['#ff0000','#00ff00','#0000ff']});
+      segments.push({start:start, stop:numPixels - 1, mode:0, speed:1000, reverse:false, colors:['#ff0000','#00ff00','#0000ff']});
       segmentIndex = segments.length - 1;
       updateWidgets();
     }
@@ -296,8 +297,19 @@ char index_html[] PROGMEM = R"=====(
       });
       json += "]}";
 
-      $.post("setsegments", json, function(data){
+//      $.post("setsegments", json, function(data){
+//        console.log(data);
+//      });
+      jQuery.ajax ({
+        url: "setsegments",
+        type: "POST",
+        data: JSON.stringify(json),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+//      contentType: "application/x-www-form-urlencoded; charset=utf-8",
+        success: function(){
         console.log(data);
+        }
       });
     }
 

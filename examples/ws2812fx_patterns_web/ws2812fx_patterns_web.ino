@@ -119,7 +119,7 @@ void loop() {
     ws2812fx.setBrightness(patterns[currentPattern].brightness);
     for(int i=0; i<patterns[currentPattern].numSegments; i++) {
       WS2812FX::segment seg = patterns[currentPattern].segments[i];
-      ws2812fx.setSegment(i, seg.start, seg.stop, seg.mode, seg.colors, seg.speed, seg.reverse);
+      ws2812fx.setSegment(i, seg.start, seg.stop, seg.mode, seg.colors, seg.speed, seg.options);
     }
     lastTime = now;
   }
@@ -201,7 +201,8 @@ void configServer() {
             if(speed < 0 || speed >= 65535) speed = 1000;
             patterns[i].segments[j].speed = speed;
 
-            patterns[i].segments[j].reverse = seg["reverse"];
+            bool reverse = seg["reverse"];
+            patterns[i].segments[j].options = reverse ? REVERSE : NO_OPTIONS;
 
             JsonArray& colors = seg["colors"]; // the web interface sends three color values
             // convert colors from strings ('#ffffff') to uint32_t

@@ -28,6 +28,10 @@ init	KEYWORD2
 service	KEYWORD2
 start	KEYWORD2
 stop	KEYWORD2
+speed	KEYWORD2
+mode	KEYWORD2
+options	KEYWORD2
+colors	KEYWORD2
 reverse	KEYWORD2
 trigger	KEYWORD2
 setMode	KEYWORD2
