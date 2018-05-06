@@ -67,7 +67,7 @@ void setup() {
     delay(500);
     Serial.print(".");
   }
-  Serial.print("\nServer IP is ");
+  Serial.print("\nPoint your browser to ");
   Serial.println(WiFi.localIP());
 
   /* init OTA */
@@ -122,7 +122,7 @@ void setup() {
       jsonSegment["stop"] = seg.stop;
       jsonSegment["mode"] = seg.mode;
       jsonSegment["speed"] = seg.speed;
-      jsonSegment["reverse"] = seg.reverse;
+      jsonSegment["reverse"] = seg.options & REVERSE ? true: false;
       JsonArray& jsonColors = jsonSegment.createNestedArray("colors");
       jsonColors.add(seg.colors[0]); // the web interface expects three color values
       jsonColors.add(seg.colors[1]);
@@ -141,6 +141,9 @@ void setup() {
   // receive the segment info in JSON format and setup the WS2812 strip
   server.on("/setsegments", HTTP_POST, [](){
     String data = server.arg("plain");
+    data = data.substring(1, data.length() - 1); // remove the surrounding quotes
+    data.replace("\\\"", "\""); // replace all the backslash quotes with just quotes
+//Serial.println(data);
     DynamicJsonBuffer jsonBuffer(1000);
     JsonObject& root = jsonBuffer.parseObject(data);
     if (root.success()) {
@@ -154,7 +157,8 @@ void setup() {
         JsonArray& colors = seg["colors"];
         // the web interface sends three color values
         uint32_t _colors[NUM_COLORS] = {colors[0], colors[1], colors[2]};
-        ws2812fx.setSegment(i, seg["start"], seg["stop"], seg["mode"], _colors, seg["speed"], seg["reverse"] != 0);
+        bool reverse = seg["reverse"];
+        ws2812fx.setSegment(i, seg["start"], seg["stop"], seg["mode"], _colors, seg["speed"], reverse ? REVERSE : NO_OPTIONS);
       }
       ws2812fx.start();
     }

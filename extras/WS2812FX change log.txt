@@ -1,0 +1,24 @@
+WS2182FX Change Log
+
+v1.0.3 changes 5/5/2018
+
+1) rearranged files and created a library.properties files
+to comply with the Arduino IDE 1.5 Library specification.
+
+2) additions to the keywords.txt file to highlight new keywords.
+
+3) WS2812FX now uses additional features from the Adafruit_NeoPixel
+library. Adafruit_NeoPixel library v1.1.4 or newer is required.
+
+4) New fade function that can fade to any color (not just black)
+and the fade speed can be adjusted.
+
+5) Added optional gamma correction.
+
+6) created new setSegment function to config fade and gamma options.
+(see WS2812FX.h for #defines to make option config easier)
+	i.e. setSegment(segNum, start, stop, mode, colors[], speed, NO_OPTIONS);
+	i.e. setSegment(segNum, start, stop, mode, colors[], speed, FADE_FAST);
+	i.e. setSegment(segNum, start, stop, mode, colors[], speed, FADE_SLOW);
+	i.e. setSegment(segNum, start, stop, mode, colors[], speed, REVERSE & FADE_XSLOW);
+	i.e. setSegment(segNum, start, stop, mode, colors[], speed, GAMMA);

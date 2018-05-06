@@ -39,16 +39,16 @@
 
 #include <Adafruit_NeoPixel.h>
 
-#define DEFAULT_BRIGHTNESS 50
-#define DEFAULT_MODE 0
-#define DEFAULT_SPEED 1000
-#define DEFAULT_COLOR 0xFF0000
+#define DEFAULT_BRIGHTNESS (uint8_t)50
+#define DEFAULT_MODE       (uint8_t)0
+#define DEFAULT_SPEED      (uint16_t)1000
+#define DEFAULT_COLOR      (uint32_t)0xFF0000
 
-#define SPEED_MIN 10
-#define SPEED_MAX 65535
+#define SPEED_MIN (uint16_t)10
+#define SPEED_MAX (uint16_t)65535
 
-#define BRIGHTNESS_MIN 0
-#define BRIGHTNESS_MAX 255
+#define BRIGHTNESS_MIN (uint8_t)0
+#define BRIGHTNESS_MAX (uint8_t)255
 
 /* each segment uses 36 bytes of SRAM memory, so if you're application fails because of
   insufficient memory, decreasing MAX_NUM_SEGMENTS may help */
@@ -70,7 +70,27 @@
 #define MAGENTA    0xFF00FF
 #define PURPLE     0x400080
 #define ORANGE     0xFF3000
+#define PINK       0xFF1493
 #define ULTRAWHITE 0xFFFFFFFF
+
+// options
+// bit    8: reverse animation
+// bits 5-7: fade rate
+// bits   4: gamma correction
+// bits 1-3: TBD
+#define NO_OPTIONS   (uint8_t)0x00
+#define REVERSE      (uint8_t)0x80
+#define IS_REVERSE   ((SEGMENT.options & REVERSE) == REVERSE)
+#define FADE_XFAST   (uint8_t)0x10
+#define FADE_FAST    (uint8_t)0x20
+#define FADE_MEDIUM  (uint8_t)0x30
+#define FADE_SLOW    (uint8_t)0x40
+#define FADE_XSLOW   (uint8_t)0x50
+#define FADE_XXSLOW  (uint8_t)0x60
+#define FADE_GLACIAL (uint8_t)0x70
+#define FADE_RATE    ((SEGMENT.options & 0x70) >> 4)
+#define GAMMA        (uint8_t)0x08
+#define IS_GAMMA     ((SEGMENT.options & GAMMA) == GAMMA)
 
 #define MODE_COUNT 57
 
@@ -143,7 +163,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       uint16_t stop;
       uint16_t speed;
       uint8_t  mode;
-      bool     reverse;
+      uint8_t  options;
       uint32_t colors[NUM_COLORS];
     } segment;
 
@@ -213,7 +233,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_BICOLOR_CHASE]           = &WS2812FX::mode_bicolor_chase;
       _mode[FX_MODE_TRICOLOR_CHASE]          = &WS2812FX::mode_tricolor_chase;
 // if flash memory is constrained (I'm looking at you Arduino Nano), replace modes
-// that use a lot of flash with mode_static (reduces flash footprint by about 3600 bytes)
+// that use a lot of flash with mode_static (reduces flash footprint by about 2100 bytes)
 #ifdef REDUCED_MODES
       _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_static;
       _mode[FX_MODE_RUNNING_LIGHTS]          = &WS2812FX::mode_static;
@@ -299,6 +319,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       service(void),
       start(void),
       stop(void),
+      strip_off(void),
+      fade_out(void),
       setMode(uint8_t m),
       setCustomMode(uint16_t (*p)()),
       setSpeed(uint16_t s),
@@ -316,7 +338,11 @@ class WS2812FX : public Adafruit_NeoPixel {
       setNumSegments(uint8_t n),
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color,   uint16_t speed, bool reverse),
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse),
-      resetSegments();
+      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options),
+      resetSegments(),
+      setPixelColor(uint16_t n, uint32_t c),
+      setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b),
+      setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w);
 
     boolean
       isRunning(void);
@@ -325,7 +351,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       getMode(void),
       getBrightness(void),
       getModeCount(void),
-      getNumSegments(void);
+      getNumSegments(void),
+      get_random_wheel_index(uint8_t);
 
     uint16_t
       getSpeed(void),
@@ -346,11 +373,6 @@ class WS2812FX : public Adafruit_NeoPixel {
 
     WS2812FX::Segment*
       getSegments(void);
-
-  private:
-    void
-      strip_off(void),
-      fade_out(void);
 
     uint16_t
       mode_static(void),
@@ -421,25 +443,22 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_icu(void),
       mode_custom(void);
 
+  private:
+    uint8_t _brightness;
+
     boolean
       _running,
       _triggered;
 
-    uint8_t
-      get_random_wheel_index(uint8_t),
-      _brightness;
+    const __FlashStringHelper* _name[MODE_COUNT]; // SRAM footprint: 2 bytes per element
 
-    const __FlashStringHelper*
-      _name[MODE_COUNT]; // SRAM footprint: 2 bytes per element
-
-    mode_ptr
-      _mode[MODE_COUNT]; // SRAM footprint: 4 bytes per element
+    mode_ptr _mode[MODE_COUNT]; // SRAM footprint: 4 bytes per element
 
     uint8_t _segment_index = 0;
     uint8_t _num_segments = 1;
     segment _segments[MAX_NUM_SEGMENTS] = { // SRAM footprint: 20 bytes per element
-      // start, stop, speed, mode, reverse, color[]
-      { 0, 7, DEFAULT_SPEED, FX_MODE_STATIC, false, {DEFAULT_COLOR}}
+      // start, stop, speed, mode, options, color[]
+      { 0, 7, DEFAULT_SPEED, FX_MODE_STATIC, NO_OPTIONS, {DEFAULT_COLOR}}
     };
     segment_runtime _segment_runtimes[MAX_NUM_SEGMENTS]; // SRAM footprint: 16 bytes per element
 };

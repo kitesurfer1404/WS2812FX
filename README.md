@@ -9,7 +9,6 @@ Features
 --------
 
 * 53 different effects. And counting.
-* Free of any delay()
 * Tested on Arduino Nano, Uno, Micro and ESP8266.
 * All effects with printable names - easy to use in user interfaces.
 * FX, speed and brightness controllable on the fly.
@@ -19,7 +18,7 @@ Features
 Download, Install and Example
 -----------------------------
 
-* Install the famous [Adafruit NeoPixel library](https://github.com/adafruit/Adafruit_NeoPixel)
+* Install the famous [Adafruit NeoPixel library](https://github.com/adafruit/Adafruit_NeoPixel) (v1.1.4 or newer)
 * Download this repository.
 * Extract to your Arduino libraries directory.
 * Open Arduino IDE.

@@ -6,7 +6,7 @@
     "name": "Harm Aldick",
     "url": "https://github.com/kitesurfer1404/WS2812FX"
   },
-  "version": "1.0.2",
+  "version": "1.0.3",
   "downloadUrl": "https://github.com/kitesurfer1404/WS2812FX/archive/master.zip",
   "export": {
     "include": "WS2812FX-master"
@@ -20,7 +20,7 @@
   "dependencies": [
     {
       "name": "Adafruit NeoPixel",
-      "version": "~1.1.2"
+      "version": "~1.1.4"
     }
   ]
 }
