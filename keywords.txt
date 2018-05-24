@@ -35,6 +35,7 @@ colors	KEYWORD2
 reverse	KEYWORD2
 trigger	KEYWORD2
 setMode	KEYWORD2
+strip_off	KEYWORD2
 setCustomMode	KEYWORD2
 setSpeed	KEYWORD2
 increaseSpeed	KEYWORD2
@@ -62,6 +63,7 @@ getSegment	KEYWORD2
 getSegmentRuntime	KEYWORD2
 getSegments	KEYWORD2
 color_wheel	KEYWORD2
+get_random_wheel_index	KEYWORD2
 
 FX_MODE_STATIC	KEYWORD2
 FX_MODE_BLINK	KEYWORD2
