@@ -445,6 +445,7 @@ class WS2812FX : public Adafruit_NeoPixel {
 
   private:
     uint8_t _brightness;
+    uint16_t (*customMode)(void) = NULL;
 
     boolean
       _running,
