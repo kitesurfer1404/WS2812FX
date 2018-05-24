@@ -1,6 +1,25 @@
 WS2182FX Change Log
 
+v1.0.4 changes 5/13/2018
+------------------------
+
+1) fixed breath and fade mode's divide-by-zero bug (caused system to crash
+when using those two modes and setting brightness to zero).
+
+2) fixed multi-strobe mode, which was broken since the speed code rewrite.
+
+3) changed customMode from a global variable to an instance variable, so
+multiple instances of ws2812fx can each have their own custom effect.
+
+4) added ws2812fx_custom_FastLED example sketch to show how to integrate
+FastLED features into WS2812FX.
+
+5) added user's guide.
+
+6) reduced the Arduino flash memory footprint by about 400 bytes.
+
 v1.0.3 changes 5/5/2018
+-----------------------
 
 1) rearranged files and created a library.properties files
 to comply with the Arduino IDE 1.5 Library specification.
