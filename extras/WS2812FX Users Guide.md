@@ -6,7 +6,8 @@ WS2812FX is a library of lighting effects, which allows
 [Arduino](https://www.arduino.cc/) or
 [ESP8266](https://en.wikipedia.org/wiki/ESP8266) microcontrollers to control
 [WS2812](http://www.world-semi.com/products/details-178.html) programmable LEDs.
-WS2812FX has over 50 pre-programmed effects, which can be used to create dazzling lightshows.
+WS2812FX has over 50 pre-programmed effects, which can be used to create dazzling
+lightshows.
 ***
 
 ## Disclaimer
@@ -55,9 +56,12 @@ wires, resistors, capacitors and an LED or two are also handy.
     collectively as NeoPixels, which is Adafruit’s brand of programmable LEDs.
     The LEDs have several nice features:
 
-    - Powered by a 5V supply. If you only have a few, they can be powered by the same USB cable use to power and program the ESP8266 dev board.
+    - Powered by a 5V supply. If you only have a few, they can be powered by
+    the same USB cable use to power and program the ESP8266 dev board.
 
-    - Data transfer is done using a simple 1-wire serial interface. When the LEDs are wired in cascade, you drive the first LED from the microcontroller and each LED automatically passes data to the next LED in the chain.
+    - Data transfer is done using a simple 1-wire serial interface. When the
+    LEDs are wired in cascade, you drive the first LED from the microcontroller
+    and each LED automatically passes data to the next LED in the chain.
 
     - You don’t have to buy them individually and wire them all together yourself.
     Instead you can buy them in many convenient configurations, such as long
@@ -285,9 +289,9 @@ indexes:
 ```c++
 // divide a strip of LEDs into thirds
 int size = LED_COUNT/3; // calc the size of each segment
-ws2812fx.setSegment(0, 0,       size-1,      FX_MODE_FADE,  RED,   2000, false);
-ws2812fx.setSegment(1, size,    size\*2-1,   FX_MODE_SCAN,  BLUE,  2000, true);
-ws2812fx.setSegment(2, size\*2, LED_COUNT-1, FX_MODE_COMET, GREEN, 2000, true);
+ws2812fx.setSegment(0, 0,       size-1,     FX_MODE_FADE,  RED,   2000, false);
+ws2812fx.setSegment(1, size,    size*2-1,   FX_MODE_SCAN,  BLUE,  2000, true);
+ws2812fx.setSegment(2, size*2, LED_COUNT-1, FX_MODE_COMET, GREEN, 2000, true);
 ```
 This allows your project to accommodate strips of different lengths just by
 changing the LED_COUNT value;
@@ -396,6 +400,85 @@ ws2812fx.setSegment(0, 0, 9, FX_MODE_COMET, colors, 2000, options);
 ```
 ***
 
+## Custom Effects
+
+If you're not satisfied with the lighting effects built-in to WS2128FX,
+or you're just looking for a challenge, you can build your own custom
+effects. To be honest, this isn't trivial. Creating a custom effect
+sometimes requires an in-depth knowledge of how segments work and what the
+segment API provides. You may need to dig into the WS2812FX source code to
+gain a deeper understanding of how it works. But if you think you've got
+the programming chops, go for it! There's two example sketches,
+**ws2812fx_custom_effect** and **ws2812fx_custom_FastLED**, that might help
+you get started.
+
+The basic steps are:
+1.  Create a function that manipulates the LEDs in the segment to implement
+your effect. It must return a uint16_t value, usually the segment's speed value.
+```c++
+uint16_t myCustomEffect(void) {
+  int numColors = 7; // define a color pallette, say blueish-greenish
+  uint32_t colors[] = {BLUE, GREEN, 0x002080, 0x008020, 0x002020,  0x002000, 0x000020};
+
+  // get the current segment
+  WS2812FX::Segment seg = ws2812fx.getSegment();
+
+  // loop through the segment's LEDs, updating each LED in some way
+  for(uint16_t i=seg.start; i<seg.stop; i++) {
+    ws2812fx.setPixelColor(i, colors[random(numColors)]); // random colors from the pallette
+  }
+  return seg.speed; // return the segment's speed
+}
+```
+2.  Call the WS2812FX setCustomEffect() function, passing the name of your
+custom effect function.
+```c++
+ws2812fx.setCustomMode(myCustomEffect);
+```
+3.  Create a segment using the FX_MODE_CUSTOM mode.
+```c++
+ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_CUSTOM, RED, 300, NO_OPTIONS);
+```
+***
+
+## Custom Show() function
+
+Another of WS2812FX's more advanced features is it's support for a custom show()
+function. By default, when WS2812FX needs to update the LED colors, it calls
+Adafruit_NeoPixel's built-in show() function. Show() is the function that takes
+care of actually sending pulses to the LED's Din pin, which update the LED's
+color. The show() function built-in to Adafruit_NeoPixel works perfectly fine,
+but it does have one drawback. It disables interrupts. What this means is that
+while the LEDs are being updated, all background processes are suspended. On
+an ESP8266, the WiFi processing is blocked, or on an Arduino the PWM output
+will hang. Admittedly the LED update happens very fast (about 30 microseconds
+per LED), and interrupts are suspended for a very short amount of time. But this
+short "pause" can cause problems with time critical applications. Adafruit has
+a nice [article](https://learn.adafruit.com/neopixels-and-servos/overview)
+that talks about this issue.
+
+By creating a custom show() function, you can bypass the Adafruit show() function
+and create you're own completely different way of updating the LED colors. For
+example, a custom show() function could be used to communicate the LED state
+over a network to a collection of remote devices. Or the **ws2812fx_dma**
+example sketch uses a custom show() function and the NeoPixelBus library's
+DMA class to drive the LEDs without disabling interrupts. To be sure, this
+is an advanced feature, not for the faint of heart. It requires a healthy
+knowledge of the WS2812 Din timing requirements and probably a deeper
+understanding of WS2812FX's inner workings. But if you have a project that needs
+to handle driving the LEDs in a unique way, then a custom show() function may
+be the solution.
+
+The basic idea follows the custom effect implementation.
+1.  Create a function that transforms the LED data into a form that can create
+the pulse train required by the LEDs. This is the hard part.
+2.  Call the WS2812FX setCustomShow() function, passing the name of your custom
+show() function.
+```c++
+ws2812fx.setCustomShow(myCustomShow);
+```
+***
+
 ## One More Thing
 
 Once you’ve mastered controlling LEDs with WS2812FX you’re ready to start
@@ -405,9 +488,7 @@ controls. The **serial_control** sketch shows how you might control your lights
 with a serial interface, like the Serial Monitor built into the Arduino IDE. If
 you’re using an ESP8266, you’ve got network (Wi-Fi) connectivity built-in! The
 **esp8266_webinterface** and **ws2812fx_segments_web** example sketches are good
-starting points if you’re trying to create a web interface. There are two
-**ws2812fx_custom** example sketches that show how to create custom effects and
-integrate them with WS2812FX.
+starting points if you’re trying to create a web interface.
 
 If you’re looking for inspiration, check out
 [McLighting](https://github.com/toblum/McLighting), an easy-to-use web interface

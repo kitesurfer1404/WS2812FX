@@ -58,7 +58,7 @@ void WS2812FX::init() {
   RESET_RUNTIME;
   Adafruit_NeoPixel::begin();
   setBrightness(_brightness);
-  Adafruit_NeoPixel::show();
+  show();
 }
 
 void WS2812FX::service() {
@@ -76,7 +76,7 @@ void WS2812FX::service() {
     }
     if(doShow) {
       delay(1); // for ESP32 (see https://forums.adafruit.com/viewtopic.php?f=47&t=117327)
-      Adafruit_NeoPixel::show();
+      show();
     }
     _triggered = false;
   }
@@ -109,6 +109,15 @@ void WS2812FX::setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_
     Adafruit_NeoPixel::setPixelColor(n, gamma8(r), gamma8(g), gamma8(b), gamma8(w));
   } else {
     Adafruit_NeoPixel::setPixelColor(n, r, g, b, w);
+  }
+}
+
+// overload show() functions so we can use custom show()
+void WS2812FX::show(void) {
+  if(customShow == NULL) {
+    Adafruit_NeoPixel::show();
+  } else {
+    customShow();
   }
 }
 
@@ -160,7 +169,7 @@ void WS2812FX::setColor(uint32_t c) {
 void WS2812FX::setBrightness(uint8_t b) {
   _brightness = constrain(b, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
   Adafruit_NeoPixel::setBrightness(_brightness);
-  Adafruit_NeoPixel::show();
+  show();
   delay(1);
 }
 
@@ -200,7 +209,7 @@ void WS2812FX::decreaseLength(uint16_t s) {
   for(uint16_t i=_segments[0].start + s; i <= (_segments[0].stop - _segments[0].start + 1); i++) {
     setPixelColor(i, 0);
   }
-  Adafruit_NeoPixel::show();
+  show();
 
   setLength(s);
 }
@@ -304,7 +313,7 @@ void WS2812FX::resetSegments() {
  */
 void WS2812FX::strip_off() {
   Adafruit_NeoPixel::clear();
-  Adafruit_NeoPixel::show();
+  show();
 }
 
 
@@ -1391,4 +1400,11 @@ uint16_t WS2812FX::mode_custom() {
  */
 void WS2812FX::setCustomMode(uint16_t (*p)()) {
   customMode = p;
+}
+
+/*
+ * Custom show helper
+ */
+void WS2812FX::setCustomShow(void (*p)()) {
+  customShow = p;
 }

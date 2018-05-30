@@ -40,6 +40,8 @@
 #include <ArduinoJson.h>
 #include <EEPROM.h>
 
+#define VERSION "1.0.1"
+
 uint8_t  dataPin = D1; // default digital pin used to drive the LED strip
 uint16_t numLeds = 30; // default number of LEDs on the strip
 
@@ -58,12 +60,9 @@ typedef struct Pattern { // 208 bytes/pattern
 
 // setup a couple default patterns
 Pattern patterns[MAX_NUM_PATTERNS] = {
-  {10, 128, 1, {
-    {0, numLeds-1, 3000, FX_MODE_LARSON_SCANNER, false, {0x800080, 0, 0}}
-  }},
-  {10, 32, 1, {
-    {0, numLeds-1, 3000, FX_MODE_LARSON_SCANNER, false, {0x808000, 0, 0}}
-  }}
+  // duration, brightness, numSegments, [ { first, last, speed, mode, options, colors[] } ]
+  {10, 128, 1, { {0, numLeds-1, 3000, FX_MODE_LARSON_SCANNER, NO_OPTIONS, {RED,  0, 0}} }},
+  {10,  32, 1, { {0, numLeds-1, 3000, FX_MODE_LARSON_SCANNER, NO_OPTIONS, {BLUE, 0, 0}} }}
 };
 
 int numPatterns = 2;
@@ -131,7 +130,24 @@ void configServer() {
     server.send(404, "text/plain", "Page not found");
   });
 
-  // send the WS2812 mode info in JSON format
+  // return the WS2812FX status (optionally set the running state)
+  server.on("/status", [](){
+    server.sendHeader("Access-Control-Allow-Origin", "*");
+    String running = server.arg("running");
+    if (running.length() > 0) {
+      if (running == "true") ws2812fx.start();
+      else ws2812fx.stop();
+    }
+
+    char status[50] = "{\"version\":\"";
+    strcat(status, VERSION);
+    strcat(status, "\",\"isRunning\":");
+    strcat(status, ws2812fx.isRunning() ? "true" : "false");
+    strcat(status, "}");
+    server.send(200, "application/json", status);
+  });
+
+  // send the WS2812FX mode info in JSON format
   server.on("/getModes", [](){
     char modes[1000] = "[";
     for(uint8_t i=0; i < ws2812fx.getModeCount(); i++) {
@@ -198,11 +214,18 @@ void configServer() {
             }
 
             int speed = seg["speed"];
-            if(speed < 0 || speed >= 65535) speed = 1000;
+            if(speed < SPEED_MIN || speed >= SPEED_MAX) speed = 1000;
             patterns[i].segments[j].speed = speed;
 
+            patterns[i].segments[j].options = 0;
             bool reverse = seg["reverse"];
-            patterns[i].segments[j].options = reverse ? REVERSE : NO_OPTIONS;
+            if(reverse) patterns[i].segments[j].options |= REVERSE;
+
+            bool gamma = seg["gamma"];
+            if(gamma) patterns[i].segments[j].options |= GAMMA;
+
+            int fadeRate = seg["fadeRate"];
+            if(fadeRate > 0) patterns[i].segments[j].options |= (fadeRate & 0x7) << 4;
 
             JsonArray& colors = seg["colors"]; // the web interface sends three color values
             // convert colors from strings ('#ffffff') to uint32_t
