@@ -1,5 +1,16 @@
 WS2182FX Change Log
 
+v1.0.5 changes 5/30/2018
+------------------------
+
+1) Added custom effect and custom show sections to the user's guide
+
+2) Added the ws2812fx_dma example sketch to demo a custom show function
+
+3) Updated the ws2812fx_patterns_web example sketch to be able to use
+the new gamma and fade rate features introduced in v1.0.4.
+
+
 v1.0.4 changes 5/13/2018
 ------------------------
 
@@ -17,6 +28,7 @@ FastLED features into WS2812FX.
 5) added user's guide.
 
 6) reduced the Arduino flash memory footprint by about 400 bytes.
+
 
 v1.0.3 changes 5/5/2018
 -----------------------

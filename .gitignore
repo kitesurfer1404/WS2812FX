@@ -1,3 +1,4 @@
 .vscode/c_cpp_properties.json
 .vscode/arduino.json
+.DS_Store
 *.development

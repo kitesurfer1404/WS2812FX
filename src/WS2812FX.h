@@ -75,8 +75,8 @@
 
 // options
 // bit    8: reverse animation
-// bits 5-7: fade rate
-// bits   4: gamma correction
+// bits 5-7: fade rate (0-7)
+// bit    4: gamma correction
 // bits 1-3: TBD
 #define NO_OPTIONS   (uint8_t)0x00
 #define REVERSE      (uint8_t)0x80
@@ -323,6 +323,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       fade_out(void),
       setMode(uint8_t m),
       setCustomMode(uint16_t (*p)()),
+      setCustomShow(void (*p)()),
       setSpeed(uint16_t s),
       increaseSpeed(uint8_t s),
       decreaseSpeed(uint8_t s),
@@ -342,7 +343,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       resetSegments(),
       setPixelColor(uint16_t n, uint32_t c),
       setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b),
-      setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w);
+      setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w),
+      show(void);
 
     boolean
       isRunning(void);
@@ -446,6 +448,7 @@ class WS2812FX : public Adafruit_NeoPixel {
   private:
     uint8_t _brightness;
     uint16_t (*customMode)(void) = NULL;
+    void (*customShow)(void) = NULL;
 
     boolean
       _running,
