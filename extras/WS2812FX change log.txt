@@ -1,5 +1,15 @@
 WS2182FX Change Log
 
+v1.0.6 changes 6/12/2018
+------------------------
+
+1) Small tweak to theater chase effect to allow using a background color
+other then black.
+
+2) Added the ws2812fx_alexa example sketch to demo using an Amazon Echo and
+Alexa to control the show.
+
+
 v1.0.5 changes 5/30/2018
 ------------------------
 

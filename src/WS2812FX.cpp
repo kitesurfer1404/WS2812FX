@@ -697,7 +697,7 @@ uint16_t WS2812FX::theater_chase(uint32_t color1, uint32_t color2) {
  * Inspired by the Adafruit examples.
  */
 uint16_t WS2812FX::mode_theater_chase(void) {
-  return theater_chase(SEGMENT.colors[0], BLACK);
+  return theater_chase(SEGMENT.colors[0], SEGMENT.colors[1]);
 }
 
 
