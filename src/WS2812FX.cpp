@@ -264,7 +264,7 @@ WS2812FX::Segment* WS2812FX::getSegments(void) {
 
 const __FlashStringHelper* WS2812FX::getModeName(uint8_t m) {
   if(m < MODE_COUNT) {
-    return _name[m];
+    return _names[m];
   } else {
     return F("");
   }
@@ -1385,21 +1385,40 @@ uint16_t WS2812FX::mode_icu(void) {
 }
 
 /*
- * Custom mode
+ * Custom modes
  */
-uint16_t WS2812FX::mode_custom() {
-  if(customMode == NULL) {
-    return 1000; // if custom mode not set, do nothing
-  } else {
-    return customMode();
-  }
+uint16_t WS2812FX::mode_custom_0() {
+  return customMode0();
+}
+uint16_t WS2812FX::mode_custom_1() {
+  return customMode1();
+}
+uint16_t WS2812FX::mode_custom_2() {
+  return customMode2();
+}
+uint16_t WS2812FX::mode_custom_3() {
+  return customMode3();
 }
 
 /*
- * Custom mode helper
+ * Custom mode helpers
  */
 void WS2812FX::setCustomMode(uint16_t (*p)()) {
-  customMode = p;
+  customMode0 = p;
+}
+
+uint8_t WS2812FX::setCustomMode(const __FlashStringHelper* name, uint16_t (*p)()) {
+  if(_custom_mode_index < MODE_COUNT) {
+    _names[_custom_mode_index] = name; // store the custom mode name
+    if(_custom_mode_index == FX_MODE_CUSTOM_0) customMode0 = p; // store the custom mode
+    if(_custom_mode_index == FX_MODE_CUSTOM_1) customMode1 = p;
+    if(_custom_mode_index == FX_MODE_CUSTOM_2) customMode2 = p;
+    if(_custom_mode_index == FX_MODE_CUSTOM_3) customMode3 = p;
+
+    _custom_mode_index++;
+    return (_custom_mode_index - 1);
+  }
+  return 0;
 }
 
 /*
