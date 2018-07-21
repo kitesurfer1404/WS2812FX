@@ -1,5 +1,31 @@
 WS2182FX Change Log
 
+v1.0.7 changes 7/19/2018
+------------------------
+
+1) Moved the _name array variable out of the WS2812FX class and made
+it a global variable. This fixes the problem where putting local
+variables in PROGMEM (with the F() macro) caused "section type conflict
+with __c" compiler error for ESP implementations.
+See this issue: https://github.com/kitesurfer1404/WS2812FX/issues/83
+
+Also, the examples/serial_control sketch was refactored to remove the ugly
+code hack used to workaround this problem in the past.
+
+As a bonus, making _name a global variable is more memory efficient and
+reduces the Arduino flash memory footprint by 1600 bytes.
+
+2) Expanded the custom effect feature to allow for up to four custom
+effects. See the examples/ws2812fx_custom_effect2 sketch for a demo
+of using more then one custom effect in a sketch.
+
+3) added a src/custom folder to contain user written custom effects. To
+maintain Arduino compatibility, with its limited flash memory, it's not
+practical to just incorporating more and more effects into the library.
+Creating a folder for custom effects, that users can pick and choose
+from, is a first step toward partitioning the mode/effect code base.
+
+
 v1.0.6 changes 6/12/2018
 ------------------------
 

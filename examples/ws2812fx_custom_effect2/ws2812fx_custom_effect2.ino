@@ -1,5 +1,5 @@
 /*
-  Demo sketch for creating custom effects.
+  Demo sketch for creating multiple custom effects.
   
   Keith Lord - 2018
 
@@ -28,10 +28,14 @@
   THE SOFTWARE.
   
   CHANGELOG
-  2018-02-26 initial version
+  2018-07-19 initial version
 */
 
 #include <WS2812FX.h>
+
+// include the custom effects
+#include "custom/DualLarson.h"
+#include "custom/RandomChase.h"
 
 #define LED_COUNT 30
 #define LED_PIN 5
@@ -44,12 +48,14 @@ void setup() {
   ws2812fx.init();
   ws2812fx.setBrightness(255);
 
-  // segment 0 is the builtin comet effect
-  ws2812fx.setSegment(0, 0,           LED_COUNT/2 - 1, FX_MODE_COMET,  RED, 1000, false);
+  // setup the custom effects
+  uint8_t randomChaseMode = ws2812fx.setCustomMode(F("Random Chase"), randomChase);
+  uint8_t dualLarsonMode  = ws2812fx.setCustomMode(F("Dual Larson"), dualLarson);
 
-  // segment 1 is our custom effect
-  ws2812fx.setCustomMode(myCustomEffect);
-  ws2812fx.setSegment(1, LED_COUNT/2, LED_COUNT - 1,   FX_MODE_CUSTOM, RED, 50, false);
+  uint32_t colors[] = {RED, BLUE, WHITE};
+
+  ws2812fx.setSegment(0, 0,           LED_COUNT/2 - 1, randomChaseMode, BLUE,     50, NO_OPTIONS);
+  ws2812fx.setSegment(1, LED_COUNT/2, LED_COUNT - 1,   dualLarsonMode,  colors, 2000, FADE_SLOW);
 
   ws2812fx.start();
 }
@@ -57,17 +63,3 @@ void setup() {
 void loop() {
   ws2812fx.service();
 }
-
-uint16_t myCustomEffect(void) { // random chase
-  WS2812FX::Segment seg = ws2812fx.getSegment(); // get the current segment
-  for(uint16_t i=seg.stop; i>seg.start; i--) {
-    ws2812fx.setPixelColor(i, ws2812fx.getPixelColor(i-1));
-  }
-  uint32_t color = ws2812fx.getPixelColor(seg.start + 1);
-  int r = random(6) != 0 ? (color >> 16 & 0xFF) : random(256);
-  int g = random(6) != 0 ? (color >> 8  & 0xFF) : random(256);
-  int b = random(6) != 0 ? (color       & 0xFF) : random(256);
-  ws2812fx.setPixelColor(seg.start, r, g, b);
-  return seg.speed; // return the delay until the next animation step (in msec)
-}
-

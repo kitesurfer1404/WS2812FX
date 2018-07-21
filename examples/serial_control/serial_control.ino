@@ -4,14 +4,6 @@
 #define LED_COUNT 30
 #define LED_PIN 5
 
-// ESP boards generate a "section type conflict with __c" error when
-// putting non-global strings in PROGMEM. i.e. can't use F() for local strings.
-#if defined(__AVR__) // Arduino
-  #define STRING(x) F(x)
-#else // ESP
-  #define STRING(x) x
-#endif
-
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
 // Parameter 3 = pixel type flags, add together as needed:
@@ -57,65 +49,65 @@ void loop() {
  * Checks received command and calls corresponding functions.
  */
 void process_command() {
-  if(cmd == STRING("b+")) { 
+  if(cmd == F("b+")) { 
     ws2812fx.increaseBrightness(25);
-    Serial.print(STRING("Increased brightness by 25 to: "));
+    Serial.print(F("Increased brightness by 25 to: "));
     Serial.println(ws2812fx.getBrightness());
   }
 
-  if(cmd == STRING("b-")) {
+  if(cmd == F("b-")) {
     ws2812fx.decreaseBrightness(25); 
-    Serial.print(STRING("Decreased brightness by 25 to: "));
+    Serial.print(F("Decreased brightness by 25 to: "));
     Serial.println(ws2812fx.getBrightness());
   }
 
-  if(cmd.startsWith(STRING("b "))) { 
+  if(cmd.startsWith(F("b "))) { 
     uint8_t b = (uint8_t) cmd.substring(2, cmd.length()).toInt();
     ws2812fx.setBrightness(b);
-    Serial.print(STRING("Set brightness to: "));
+    Serial.print(F("Set brightness to: "));
     Serial.println(ws2812fx.getBrightness());
   }
 
-  if(cmd == STRING("s+")) { 
+  if(cmd == F("s+")) { 
 //  ws2812fx.increaseSpeed(10);
     ws2812fx.setSpeed(ws2812fx.getSpeed() * 1.2);
-    Serial.print(STRING("Increased speed by 20% to: "));
+    Serial.print(F("Increased speed by 20% to: "));
     Serial.println(ws2812fx.getSpeed());
   }
 
-  if(cmd == STRING("s-")) {
+  if(cmd == F("s-")) {
 //  ws2812fx.decreaseSpeed(10);
     ws2812fx.setSpeed(ws2812fx.getSpeed() * 0.8);
-    Serial.print(STRING("Decreased speed by 20% to: "));
+    Serial.print(F("Decreased speed by 20% to: "));
     Serial.println(ws2812fx.getSpeed());
   }
 
-  if(cmd.startsWith(STRING("s "))) {
+  if(cmd.startsWith(F("s "))) {
     uint16_t s = (uint16_t) cmd.substring(2, cmd.length()).toInt();
     ws2812fx.setSpeed(s); 
-    Serial.print(STRING("Set speed to: "));
+    Serial.print(F("Set speed to: "));
     Serial.println(ws2812fx.getSpeed());
   }
 
-  if(cmd.startsWith(STRING("m "))) { 
+  if(cmd.startsWith(F("m "))) { 
     uint8_t m = (uint8_t) cmd.substring(2, cmd.length()).toInt();
     ws2812fx.setMode(m);
-    Serial.print(STRING("Set mode to: "));
+    Serial.print(F("Set mode to: "));
     Serial.print(ws2812fx.getMode());
     Serial.print(" - ");
     Serial.println(ws2812fx.getModeName(ws2812fx.getMode()));
   }
 
-  if(cmd.startsWith(STRING("c "))) { 
+  if(cmd.startsWith(F("c "))) { 
     uint32_t c = (uint32_t) strtol(&cmd.substring(2, cmd.length())[0], NULL, 16);
     ws2812fx.setColor(c); 
-    Serial.print(STRING("Set color to: "));
-    Serial.print(STRING("0x"));
-    if(ws2812fx.getColor() < 0x100000) { Serial.print(STRING("0")); }
-    if(ws2812fx.getColor() < 0x010000) { Serial.print(STRING("0")); }
-    if(ws2812fx.getColor() < 0x001000) { Serial.print(STRING("0")); }
-    if(ws2812fx.getColor() < 0x000100) { Serial.print(STRING("0")); }
-    if(ws2812fx.getColor() < 0x000010) { Serial.print(STRING("0")); }
+    Serial.print(F("Set color to: "));
+    Serial.print(F("0x"));
+    if(ws2812fx.getColor() < 0x100000) { Serial.print(F("0")); }
+    if(ws2812fx.getColor() < 0x010000) { Serial.print(F("0")); }
+    if(ws2812fx.getColor() < 0x001000) { Serial.print(F("0")); }
+    if(ws2812fx.getColor() < 0x000100) { Serial.print(F("0")); }
+    if(ws2812fx.getColor() < 0x000010) { Serial.print(F("0")); }
     Serial.println(ws2812fx.getColor(), HEX);
   }
 
@@ -127,23 +119,23 @@ void process_command() {
  * Prints a usage menu.
  */
 void printUsage() {
-  Serial.println(STRING("Usage:"));
+  Serial.println(F("Usage:"));
   Serial.println();
-  Serial.println(STRING("m <n> \t : select mode <n>"));
+  Serial.println(F("m <n> \t : select mode <n>"));
   Serial.println();
-  Serial.println(STRING("b+ \t : increase brightness"));
-  Serial.println(STRING("b- \t : decrease brightness"));
-  Serial.println(STRING("b <n> \t : set brightness to <n>"));
+  Serial.println(F("b+ \t : increase brightness"));
+  Serial.println(F("b- \t : decrease brightness"));
+  Serial.println(F("b <n> \t : set brightness to <n>"));
   Serial.println();
-  Serial.println(STRING("s+ \t : increase speed"));
-  Serial.println(STRING("s- \t : decrease speed"));
-  Serial.println(STRING("s <n> \t : set speed to <n>"));
+  Serial.println(F("s+ \t : increase speed"));
+  Serial.println(F("s- \t : decrease speed"));
+  Serial.println(F("s <n> \t : set speed to <n>"));
   Serial.println();
-  Serial.println(STRING("c 0x007BFF \t : set color to 0x007BFF"));
+  Serial.println(F("c 0x007BFF \t : set color to 0x007BFF"));
   Serial.println();
   Serial.println();
-  Serial.println(STRING("Have a nice day."));
-  Serial.println(STRING("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+  Serial.println(F("Have a nice day."));
+  Serial.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
   Serial.println();
 }
 
@@ -152,11 +144,11 @@ void printUsage() {
  * Prints all available WS2812FX blinken modes.
  */
 void printModes() {
-  Serial.println(STRING("Supporting the following modes: "));
+  Serial.println(F("Supporting the following modes: "));
   Serial.println();
   for(int i=0; i < ws2812fx.getModeCount(); i++) {
     Serial.print(i);
-    Serial.print(STRING("\t"));
+    Serial.print(F("\t"));
     Serial.println(ws2812fx.getModeName(i));
   }
   Serial.println();
