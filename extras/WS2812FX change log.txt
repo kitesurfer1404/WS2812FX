@@ -1,5 +1,26 @@
 WS2182FX Change Log
 
+v1.0.8 changes 7/25/2018
+------------------------
+
+1) Fixed a bug introduced in v1.0.7 that assigned the wrong names
+to the Halloween, Fire Flicker and Circus Combustus effects.
+
+2) Some performance improvements:
+	a) many effects use the Arduino random() function, which is quite
+	slow, so added a fast 8-bit random number generator function
+	shamelessly borrowed from the smart, maniacally-focused-on-speed
+	FastLED team.
+
+	b) refactored the tricolor_chase() function, which was slower then
+	it needed to be.
+
+	c) adjusted MIN_SPEED for speedy ESP devices, so they can run
+	animations much faster then pokey Arduinos.
+
+3) added the MultiComet custom effect
+
+
 v1.0.7 changes 7/19/2018
 ------------------------
 

@@ -46,7 +46,13 @@
 #define DEFAULT_SPEED      (uint16_t)1000
 #define DEFAULT_COLOR      (uint32_t)0xFF0000
 
-#define SPEED_MIN (uint16_t)10
+#if defined(ESP8266) || defined(ESP32)
+  //#pragma message("Compiling for ESP")
+  #define SPEED_MIN (uint16_t)2
+#else
+  //#pragma message("Compiling for Arduino")
+  #define SPEED_MIN (uint16_t)10
+#endif
 #define SPEED_MAX (uint16_t)65535
 
 #define BRIGHTNESS_MIN (uint8_t)0
@@ -208,11 +214,11 @@ const char name_44[] PROGMEM = "Comet";
 const char name_45[] PROGMEM = "Fireworks";
 const char name_46[] PROGMEM = "Fireworks Random";
 const char name_47[] PROGMEM = "Merry Christmas";
-const char name_48[] PROGMEM = "Halloween";
-const char name_49[] PROGMEM = "Fire Flicker";
-const char name_50[] PROGMEM = "Fire Flicker (soft)";
-const char name_51[] PROGMEM = "Fire Flicker (intense)";
-const char name_52[] PROGMEM = "Circus Combustus";
+const char name_48[] PROGMEM = "Fire Flicker";
+const char name_49[] PROGMEM = "Fire Flicker (soft)";
+const char name_50[] PROGMEM = "Fire Flicker (intense)";
+const char name_51[] PROGMEM = "Circus Combustus";
+const char name_52[] PROGMEM = "Halloween";
 const char name_53[] PROGMEM = "Bicolor Chase";
 const char name_54[] PROGMEM = "Tricolor Chase";
 const char name_55[] PROGMEM = "ICU";
@@ -355,11 +361,11 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_FIREWORKS]               = &WS2812FX::mode_fireworks;
       _mode[FX_MODE_FIREWORKS_RANDOM]        = &WS2812FX::mode_fireworks_random;
       _mode[FX_MODE_MERRY_CHRISTMAS]         = &WS2812FX::mode_merry_christmas;
-      _mode[FX_MODE_HALLOWEEN]               = &WS2812FX::mode_halloween;
       _mode[FX_MODE_FIRE_FLICKER]            = &WS2812FX::mode_fire_flicker;
       _mode[FX_MODE_FIRE_FLICKER_SOFT]       = &WS2812FX::mode_fire_flicker_soft;
       _mode[FX_MODE_FIRE_FLICKER_INTENSE]    = &WS2812FX::mode_fire_flicker_intense;
       _mode[FX_MODE_CIRCUS_COMBUSTUS]        = &WS2812FX::mode_circus_combustus;
+      _mode[FX_MODE_HALLOWEEN]               = &WS2812FX::mode_halloween;
       _mode[FX_MODE_BICOLOR_CHASE]           = &WS2812FX::mode_bicolor_chase;
       _mode[FX_MODE_TRICOLOR_CHASE]          = &WS2812FX::mode_tricolor_chase;
 // if flash memory is constrained (I'm looking at you Arduino Nano), replace modes
@@ -390,6 +396,7 @@ class WS2812FX : public Adafruit_NeoPixel {
     }
 
     void
+//    timer(void),
       init(void),
       service(void),
       start(void),
@@ -425,6 +432,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       isRunning(void);
 
     uint8_t
+      random8(void),
+      random8(uint8_t),
       getBrightness(void),
       getMode(void),
       getModeCount(void),
@@ -529,6 +538,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_custom_3(void);
 
   private:
+    uint16_t _rand16seed;
     uint8_t _brightness;
     uint8_t _custom_mode_index = FX_MODE_CUSTOM_0; // index of the first custom mode
     uint16_t (*customMode0)(void) = [] () {return (uint16_t)1000;};
