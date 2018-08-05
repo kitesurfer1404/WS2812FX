@@ -586,24 +586,19 @@ uint16_t WS2812FX::mode_breath(void) {
 
 
 /*
- * Fades the LEDs on and (almost) off again.
+ * Fades the LEDs between two colors
  */
 uint16_t WS2812FX::mode_fade(void) {
   int lum = SEGMENT_RUNTIME.counter_mode_step;
-  if(lum > 255) lum = 511 - lum; // lum = 25 -> 255 -> 25
+  if(lum > 255) lum = 511 - lum; // lum = 0 -> 255 -> 0
 
-  uint32_t color = SEGMENT.colors[0];
-  uint8_t w = (color >> 24 & 0xFF) * lum / 256;
-  uint8_t r = (color >> 16 & 0xFF) * lum / 256;
-  uint8_t g = (color >>  8 & 0xFF) * lum / 256;
-  uint8_t b = (color       & 0xFF) * lum / 256;
+  uint32_t color = color_blend(SEGMENT.colors[0], SEGMENT.colors[1], lum);
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
-    setPixelColor(i, r, g, b, w);
+    setPixelColor(i, color);
   }
-//Serial.print(lum);Serial.print(" ");Serial.println(r);
 
   SEGMENT_RUNTIME.counter_mode_step += 4;
-  if(SEGMENT_RUNTIME.counter_mode_step > (512-25)) SEGMENT_RUNTIME.counter_mode_step = 25;
+  if(SEGMENT_RUNTIME.counter_mode_step > 511) SEGMENT_RUNTIME.counter_mode_step = 0;
   return (SEGMENT.speed / 128);
 }
 
@@ -617,7 +612,7 @@ uint16_t WS2812FX::mode_scan(void) {
   }
 
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
-    setPixelColor(i, BLACK);
+    setPixelColor(i, SEGMENT.colors[1]);
   }
 
   int led_offset = SEGMENT_RUNTIME.counter_mode_step - (SEGMENT_LENGTH - 1);
@@ -643,7 +638,7 @@ uint16_t WS2812FX::mode_dual_scan(void) {
   }
 
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
-    setPixelColor(i, BLACK);
+    setPixelColor(i, SEGMENT.colors[1]);
   }
 
   int led_offset = SEGMENT_RUNTIME.counter_mode_step - (SEGMENT_LENGTH - 1);
@@ -738,15 +733,16 @@ uint16_t WS2812FX::mode_running_lights(void) {
   uint8_t g = ((SEGMENT.colors[0] >>  8) & 0xFF);
   uint8_t b =  (SEGMENT.colors[0]        & 0xFF);
 
+  uint8_t sineIncr = max(1, (256 / SEGMENT_LENGTH));
   for(uint16_t i=0; i < SEGMENT_LENGTH; i++) {
-	  int lum = (int)sine8(((i + SEGMENT_RUNTIME.counter_mode_step) * 256) / SEGMENT_LENGTH);
+    int lum = (int)sine8(((i + SEGMENT_RUNTIME.counter_mode_step) * sineIncr));
     if(IS_REVERSE) {
       setPixelColor(SEGMENT.start + i, (r * lum) / 256, (g * lum) / 256, (b * lum) / 256, (w * lum) / 256);
     } else {
-      setPixelColor(SEGMENT.stop - i, (r * lum) / 256, (g * lum) / 256, (b * lum) / 256, (w * lum) / 256);
+      setPixelColor(SEGMENT.stop - i,  (r * lum) / 256, (g * lum) / 256, (b * lum) / 256, (w * lum) / 256);
     }
   }
-  SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % SEGMENT_LENGTH;
+  SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % 256;
   return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
@@ -754,17 +750,17 @@ uint16_t WS2812FX::mode_running_lights(void) {
 /*
  * twinkle function
  */
-uint16_t WS2812FX::twinkle(uint32_t color) {
+uint16_t WS2812FX::twinkle(uint32_t color1, uint32_t color2) {
   if(SEGMENT_RUNTIME.counter_mode_step == 0) {
     for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
-      setPixelColor(i, BLACK);
+      setPixelColor(i, color2);
     }
     uint16_t min_leds = max(1, SEGMENT_LENGTH / 5); // make sure, at least one LED is on
     uint16_t max_leds = max(1, SEGMENT_LENGTH / 2); // make sure, at least one LED is on
     SEGMENT_RUNTIME.counter_mode_step = random(min_leds, max_leds);
   }
 
-  setPixelColor(SEGMENT.start + random(SEGMENT_LENGTH), color);
+  setPixelColor(SEGMENT.start + random(SEGMENT_LENGTH), color1);
 
   SEGMENT_RUNTIME.counter_mode_step--;
   return (SEGMENT.speed / SEGMENT_LENGTH);
@@ -772,29 +768,31 @@ uint16_t WS2812FX::twinkle(uint32_t color) {
 
 /*
  * Blink several LEDs on, reset, repeat.
- * Inspired by www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
+ * Inspired by www.tweaking4all.com/hardware/arduino/arduino-led-strip-effects/
  */
 uint16_t WS2812FX::mode_twinkle(void) {
-  return twinkle(SEGMENT.colors[0]);
+  return twinkle(SEGMENT.colors[0], SEGMENT.colors[1]);
 }
 
 /*
  * Blink several LEDs in random colors on, reset, repeat.
- * Inspired by www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
+ * Inspired by www.tweaking4all.com/hardware/arduino/arduino-led-strip-effects/
  */
 uint16_t WS2812FX::mode_twinkle_random(void) {
-  return twinkle(color_wheel(random8()));
+  return twinkle(color_wheel(random8()), SEGMENT.colors[1]);
 }
 
 
 /*
  * fade out function
- * fades out the current segment by dividing each pixel's intensity by 2
  */
 void WS2812FX::fade_out() {
-  static const float rateMap[] = {0.0, 1.20, 1.5, 2.0, 4.0, 8.0, 16.0, 64.0};
-  uint8_t rate = FADE_RATE;
-  float mappedRate = rateMap[rate];
+  static const uint8_t rateMapH[] = {0, 1, 1, 1, 2, 3, 4, 6};
+  static const uint8_t rateMapL[] = {0, 2, 3, 8, 8, 8, 8, 8};
+
+  uint8_t rate  = FADE_RATE;
+  uint8_t rateH = rateMapH[rate];
+  uint8_t rateL = rateMapL[rate];
 
   uint32_t color = SEGMENT.colors[1]; // target color
   int w2 = (color >> 24) & 0xff;
@@ -807,25 +805,53 @@ void WS2812FX::fade_out() {
     if(rate == 0) { // old fade-to-black algorithm
       setPixelColor(i, (color >> 1) & 0x7F7F7F7F);
     } else { // new fade-to-color algorithm
-      int w1 = (color >> 24) & 0xff;
+      int w1 = (color >> 24) & 0xff; // current color
       int r1 = (color >> 16) & 0xff;
       int g1 = (color >>  8) & 0xff;
       int b1 =  color        & 0xff;
 
-      int wdelta = (w2 - w1) / mappedRate;
-      int rdelta = (r2 - r1) / mappedRate;
-      int gdelta = (g2 - g1) / mappedRate;
-      int bdelta = (b2 - b1) / mappedRate;
+      // calculate the color differences between the current and target colors
+      int wdelta = w2 - w1;
+      int rdelta = r2 - r1;
+      int gdelta = g2 - g1;
+      int bdelta = b2 - b1;
 
-      // if fade isn't complete, make sure delta is at least 1 (fixes rounding issues)
-      wdelta += (w2 == w1) ? 0 : (w2 > w1) ? 1 : -1;
-      rdelta += (r2 == r1) ? 0 : (r2 > r1) ? 1 : -1;
-      gdelta += (g2 == g1) ? 0 : (g2 > g1) ? 1 : -1;
-      bdelta += (b2 == b1) ? 0 : (b2 > b1) ? 1 : -1;
+      // if the current and target colors are almost the same, jump right to the target color,
+      // otherwise calculate an intermediate color. (fixes rounding issues)
+      wdelta = abs(wdelta) < 3 ? wdelta : (wdelta >> rateH) + (wdelta >> rateL);
+      rdelta = abs(rdelta) < 3 ? rdelta : (rdelta >> rateH) + (rdelta >> rateL);
+      gdelta = abs(gdelta) < 3 ? gdelta : (gdelta >> rateH) + (gdelta >> rateL);
+      bdelta = abs(bdelta) < 3 ? bdelta : (bdelta >> rateH) + (bdelta >> rateL);
 
       setPixelColor(i, r1 + rdelta, g1 + gdelta, b1 + bdelta, w1 + wdelta);
     }
   }
+}
+
+
+/*
+ * color blend function
+ */
+uint32_t WS2812FX::color_blend(uint32_t color1, uint32_t color2, uint8_t blend) {
+  if(blend == 0)   return color1;
+  if(blend == 255) return color2;
+
+  int w1 = (color1 >> 24) & 0xff;
+  int r1 = (color1 >> 16) & 0xff;
+  int g1 = (color1 >>  8) & 0xff;
+  int b1 =  color1        & 0xff;
+
+  int w2 = (color2 >> 24) & 0xff;
+  int r2 = (color2 >> 16) & 0xff;
+  int g2 = (color2 >>  8) & 0xff;
+  int b2 =  color2        & 0xff;
+
+  uint32_t w3 = ((w2 * blend) + (w1 * (255 - blend))) / 256;
+  uint32_t r3 = ((r2 * blend) + (r1 * (255 - blend))) / 256;
+  uint32_t g3 = ((g2 * blend) + (g1 * (255 - blend))) / 256;
+  uint32_t b3 = ((b2 * blend) + (b1 * (255 - blend))) / 256;
+
+  return ((w3 << 24) | (r3 << 16) | (g3 << 8) | (b3));
 }
 
 
@@ -860,10 +886,10 @@ uint16_t WS2812FX::mode_twinkle_fade_random(void) {
 
 /*
  * Blinks one LED at a time.
- * Inspired by www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
+ * Inspired by www.tweaking4all.com/hardware/arduino/arduino-led-strip-effects/
  */
 uint16_t WS2812FX::mode_sparkle(void) {
-  setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.aux_param, BLACK);
+  setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.aux_param, SEGMENT.colors[1]);
   SEGMENT_RUNTIME.aux_param = random(SEGMENT_LENGTH); // aux_param stores the random led index
   setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.aux_param, SEGMENT.colors[0]);
   return (SEGMENT.speed / SEGMENT_LENGTH);
@@ -872,7 +898,7 @@ uint16_t WS2812FX::mode_sparkle(void) {
 
 /*
  * Lights all LEDs in the color. Flashes single white pixels randomly.
- * Inspired by www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
+ * Inspired by www.tweaking4all.com/hardware/arduino/arduino-led-strip-effects/
  */
 uint16_t WS2812FX::mode_flash_sparkle(void) {
   if(SEGMENT_RUNTIME.counter_mode_call == 0) {
@@ -894,7 +920,7 @@ uint16_t WS2812FX::mode_flash_sparkle(void) {
 
 /*
  * Like flash sparkle. With more flash.
- * Inspired by www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
+ * Inspired by www.tweaking4all.com/hardware/arduino/arduino-led-strip-effects/
  */
 uint16_t WS2812FX::mode_hyper_sparkle(void) {
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
@@ -1237,16 +1263,29 @@ uint16_t WS2812FX::mode_comet(void) {
  * Fireworks function.
  */
 uint16_t WS2812FX::fireworks(uint32_t color) {
-  uint32_t prevLed, thisLed, nextLed;
+  fade_out();
 
-  fade_out(); // reduce each LEDs brightness by half
-
-  // set brightness(i) = ((brightness(i-1)/4 + brightness(i+1))/4) + brightness(i)
+//// set brightness(i) = brightness(i-1)/4 + brightness(i) + brightness(i+1)/4
+/*
+// the old way, so many calls to the pokey getPixelColor() function made this super slow
   for(uint16_t i=SEGMENT.start + 1; i <SEGMENT.stop; i++) {
-    prevLed = (Adafruit_NeoPixel::getPixelColor(i-1) >> 2) & 0x3F3F3F3F;
-    thisLed = Adafruit_NeoPixel::getPixelColor(i);
-    nextLed = (Adafruit_NeoPixel::getPixelColor(i+1) >> 2) & 0x3F3F3F3F;
+    uint32_t prevLed = (Adafruit_NeoPixel::getPixelColor(i-1) >> 2) & 0x3F3F3F3F;
+    uint32_t thisLed = Adafruit_NeoPixel::getPixelColor(i);
+    uint32_t nextLed = (Adafruit_NeoPixel::getPixelColor(i+1) >> 2) & 0x3F3F3F3F;
     setPixelColor(i, prevLed + thisLed + nextLed);
+  }
+*/
+
+// the new way, manipulate the Adafruit_NeoPixels pixels[] array directly, about 5x faster
+  uint8_t *pixels = getPixels();
+  uint8_t pixelsPerLed = (wOffset == rOffset) ? 3 : 4; // RGB or RGBW device
+  uint16_t startPixel = SEGMENT.start * pixelsPerLed + pixelsPerLed;
+  uint16_t stopPixel = SEGMENT.stop * pixelsPerLed ;
+  for(uint16_t i=startPixel; i <stopPixel; i++) {
+    uint16_t tmpPixel = (pixels[i - pixelsPerLed] >> 2) +
+      pixels[i] +
+      (pixels[i + pixelsPerLed] >> 2);
+    pixels[i] =  tmpPixel > 255 ? 255 : tmpPixel;
   }
 
   if(!_triggered) {
@@ -1263,22 +1302,18 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
   return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
-
 /*
  * Firework sparks.
  */
 uint16_t WS2812FX::mode_fireworks(void) {
-  uint32_t color = SEGMENT.colors[0];
-  return fireworks(color);
+  return fireworks(SEGMENT.colors[0]);
 }
-
 
 /*
  * Random colored firework sparks.
  */
 uint16_t WS2812FX::mode_fireworks_random(void) {
-  uint32_t color = color_wheel(random8());
-  return fireworks(color);
+  return fireworks(color_wheel(random8()));
 }
 
 

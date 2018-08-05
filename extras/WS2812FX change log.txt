@@ -1,5 +1,29 @@
 WS2182FX Change Log
 
+
+v1.0.9 changes 8/3/2018
+------------------------
+
+1) Created a color_blend() helper function.
+
+2) Refactored the Fade effect to use the color_blend function, so
+	you can now fade to a second color (not just black).
+
+3) Tweaked the Scan, Twinkle and Sparkle effects to allow a background
+	color other then black.
+
+4) Some performance improvements:
+	a) sped up the Running Lights effect by refactoring some division
+	operations, which are very slow on Arduino.
+
+	b) sped up the fade_out() function by replacing floating point
+	math with integer math.
+
+	c) refactored the Fireworks effects, which were very slow because
+	they called the sluggish getPixelColor() function many, many times.
+
+5) added the TriFade and Oscillate custom effects.
+
 v1.0.8 changes 7/25/2018
 ------------------------
 
