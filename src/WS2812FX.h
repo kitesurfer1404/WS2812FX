@@ -466,13 +466,15 @@ class WS2812FX : public Adafruit_NeoPixel {
       blink(uint32_t, uint32_t, bool strobe),
       color_wipe(uint32_t, uint32_t, bool),
       theater_chase(uint32_t, uint32_t),
-      twinkle(uint32_t),
+      twinkle(uint32_t, uint32_t),
       twinkle_fade(uint32_t),
       chase(uint32_t, uint32_t, uint32_t),
       running(uint32_t, uint32_t),
       fireworks(uint32_t),
       fire_flicker(int),
       tricolor_chase(uint32_t, uint32_t, uint32_t);
+    uint32_t
+      color_blend(uint32_t, uint32_t, uint8_t);
 
     // builtin modes
     uint16_t
