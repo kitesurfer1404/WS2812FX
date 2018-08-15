@@ -249,9 +249,9 @@ void srv_handle_set() {
 
     if(server.argName(i) == "s") {
       if(server.arg(i)[0] == '-') {
-        ws2812fx.setSpeed(ws2812fx.getSpeed() * 0.8);
-      } else {
         ws2812fx.setSpeed(max(ws2812fx.getSpeed(), 5) * 1.2);
+      } else {
+        ws2812fx.setSpeed(ws2812fx.getSpeed() * 0.8);
       }
       Serial.print("speed is "); Serial.println(ws2812fx.getSpeed());
     }
