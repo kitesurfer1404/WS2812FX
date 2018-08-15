@@ -82,8 +82,8 @@ char index_html[] PROGMEM = R"=====(
     </ul>
 
     <ul id='speed'>
-      <li><a href='#' class='s' id='-'>&#8722;</a></li>
-      <li><a href='#' class='s' id='+'>&#43;</a></li>
+      <li><a href='#' class='s' id='+'>&#8722;</a></li>
+      <li><a href='#' class='s' id='-'>&#43;</a></li>
     </ul>
 
     <ul id='auto'>
