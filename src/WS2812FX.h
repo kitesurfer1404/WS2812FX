@@ -81,7 +81,7 @@
 #define PINK       (uint32_t)0xFF1493
 #define ULTRAWHITE (uint32_t)0xFFFFFFFF
 
-// options
+// segment options
 // bit    8: reverse animation
 // bits 5-7: fade rate (0-7)
 // bit    4: gamma correction
@@ -99,6 +99,14 @@
 #define FADE_RATE    ((SEGMENT.options & 0x70) >> 4)
 #define GAMMA        (uint8_t)0x08
 #define IS_GAMMA     ((SEGMENT.options & GAMMA) == GAMMA)
+
+// segment runtime options (aux_param2)
+#define FRAME      (uint8_t)0x80
+#define SET_FRAME  (SEGMENT_RUNTIME.aux_param2 |=  FRAME)
+#define CLR_FRAME  (SEGMENT_RUNTIME.aux_param2 &= ~FRAME)
+#define CYCLE     (uint8_t)0x40
+#define SET_CYCLE (SEGMENT_RUNTIME.aux_param2 |=  CYCLE)
+#define CLR_CYCLE (SEGMENT_RUNTIME.aux_param2 &= ~CYCLE)
 
 #define MODE_COUNT  (sizeof(_names)/sizeof(_names[0]))
 
@@ -310,8 +318,9 @@ class WS2812FX : public Adafruit_NeoPixel {
       unsigned long next_time;
       uint32_t counter_mode_step;
       uint32_t counter_mode_call;
-      uint16_t aux_param;
-      uint16_t aux_param2;
+      uint8_t aux_param;   // auxilary param (usually stores a color_wheel index)
+      uint8_t aux_param2;  // auxilary param (usually stores bitwise options)
+      uint16_t aux_param3; // auxilary param (usually stores a segment index)
     } segment_runtime;
 
     WS2812FX(uint16_t n, uint8_t p, neoPixelType t) : Adafruit_NeoPixel(n, p, t) {
@@ -429,7 +438,11 @@ class WS2812FX : public Adafruit_NeoPixel {
       show(void);
 
     boolean
-      isRunning(void);
+      isRunning(void),
+      isFrame(void),
+      isFrame(uint8_t),
+      isCycle(void),
+      isCycle(uint8_t);
 
     uint8_t
       random8(void),
@@ -452,10 +465,10 @@ class WS2812FX : public Adafruit_NeoPixel {
     const __FlashStringHelper*
       getModeName(uint8_t m);
 
-    WS2812FX::Segment
+    WS2812FX::Segment*
       getSegment(void);
 
-    WS2812FX::Segment_runtime
+    WS2812FX::Segment_runtime*
       getSegmentRuntime(void);
 
     WS2812FX::Segment*

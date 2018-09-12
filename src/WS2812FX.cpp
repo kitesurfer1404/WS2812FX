@@ -73,7 +73,9 @@ void WS2812FX::service() {
     bool doShow = false;
     for(uint8_t i=0; i < _num_segments; i++) {
       _segment_index = i;
+      CLR_FRAME;
       if(now > SEGMENT_RUNTIME.next_time || _triggered) {
+        SET_FRAME;
         doShow = true;
         uint16_t delay = (this->*_mode[SEGMENT.mode])();
         SEGMENT_RUNTIME.next_time = now + max(delay, SPEED_MIN);
@@ -176,7 +178,7 @@ void WS2812FX::setBrightness(uint8_t b) {
   _brightness = constrain(b, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
   Adafruit_NeoPixel::setBrightness(_brightness);
   show();
-  delay(1);
+//delay(1);
 }
 
 void WS2812FX::increaseBrightness(uint8_t s) {
@@ -224,6 +226,22 @@ boolean WS2812FX::isRunning() {
   return _running;
 }
 
+boolean WS2812FX::isFrame() {
+  return isFrame(0);
+}
+
+boolean WS2812FX::isFrame(uint8_t segIndex) {
+  return (_segment_runtimes[segIndex].aux_param2 & FRAME);
+}
+
+boolean WS2812FX::isCycle() {
+  return isCycle(0);
+}
+
+boolean WS2812FX::isCycle(uint8_t segIndex) {
+  return (_segment_runtimes[segIndex].aux_param2 & CYCLE);
+}
+
 uint8_t WS2812FX::getMode(void) {
   return _segments[0].mode;
 }
@@ -256,12 +274,12 @@ uint32_t WS2812FX::getColor(void) {
   return _segments[0].colors[0];
 }
 
-WS2812FX::Segment WS2812FX::getSegment(void) {
-  return SEGMENT;
+WS2812FX::Segment* WS2812FX::getSegment(void) {
+  return &_segments[_segment_index];
 }
 
-WS2812FX::Segment_runtime WS2812FX::getSegmentRuntime(void) {
-  return SEGMENT_RUNTIME;
+WS2812FX::Segment_runtime* WS2812FX::getSegmentRuntime(void) {
+  return &_segment_runtimes[_segment_index];
 }
 
 WS2812FX::Segment* WS2812FX::getSegments(void) {
@@ -459,6 +477,9 @@ uint16_t WS2812FX::color_wipe(uint32_t color1, uint32_t color2, bool rev) {
     }
   }
 
+  if(SEGMENT_RUNTIME.counter_mode_step % SEGMENT_LENGTH == 0) SET_CYCLE;
+  else CLR_CYCLE;
+
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % (SEGMENT_LENGTH * 2);
   return (SEGMENT.speed / (SEGMENT_LENGTH * 2));
 }
@@ -577,7 +598,6 @@ uint16_t WS2812FX::mode_breath(void) {
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
     setPixelColor(i, r, g, b, w);
   }
-//Serial.print(lum);Serial.print(" ");Serial.print(r);Serial.print(" ");Serial.println(delay);
 
   SEGMENT_RUNTIME.counter_mode_step += 2;
   if(SEGMENT_RUNTIME.counter_mode_step > (512-15)) SEGMENT_RUNTIME.counter_mode_step = 15;
@@ -889,9 +909,9 @@ uint16_t WS2812FX::mode_twinkle_fade_random(void) {
  * Inspired by www.tweaking4all.com/hardware/arduino/arduino-led-strip-effects/
  */
 uint16_t WS2812FX::mode_sparkle(void) {
-  setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.aux_param, SEGMENT.colors[1]);
-  SEGMENT_RUNTIME.aux_param = random(SEGMENT_LENGTH); // aux_param stores the random led index
-  setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.aux_param, SEGMENT.colors[0]);
+  setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.aux_param3, SEGMENT.colors[1]);
+  SEGMENT_RUNTIME.aux_param3 = random(SEGMENT_LENGTH); // aux_param3 stores the random led index
+  setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.aux_param3, SEGMENT.colors[0]);
   return (SEGMENT.speed / SEGMENT_LENGTH);
 }
 
@@ -907,11 +927,11 @@ uint16_t WS2812FX::mode_flash_sparkle(void) {
     }
   }
 
-  setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.aux_param, SEGMENT.colors[0]);
+  setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.aux_param3, SEGMENT.colors[0]);
 
   if(random8(5) == 0) {
-    SEGMENT_RUNTIME.aux_param = random(SEGMENT_LENGTH); // aux_param stores the random led index
-    setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.aux_param, WHITE);
+    SEGMENT_RUNTIME.aux_param3 = random(SEGMENT_LENGTH); // aux_param3 stores the random led index
+    setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.aux_param3, WHITE);
     return 20;
   } 
   return SEGMENT.speed;
@@ -981,6 +1001,9 @@ uint16_t WS2812FX::chase(uint32_t color1, uint32_t color2, uint32_t color3) {
     setPixelColor(SEGMENT.start + b, color2);
     setPixelColor(SEGMENT.start + c, color3);
   }
+
+  if(b == 0) SET_CYCLE;
+  else CLR_CYCLE;
 
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % SEGMENT_LENGTH;
   return (SEGMENT.speed / SEGMENT_LENGTH);
@@ -1237,6 +1260,9 @@ uint16_t WS2812FX::mode_larson_scanner(void) {
     }
   }
 
+  if(SEGMENT_RUNTIME.counter_mode_step % SEGMENT_LENGTH == 0) SET_CYCLE;
+  else CLR_CYCLE;
+
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % ((SEGMENT_LENGTH * 2) - 2);
   return (SEGMENT.speed / (SEGMENT_LENGTH * 2));
 }
@@ -1403,23 +1429,23 @@ uint16_t WS2812FX::mode_icu(void) {
   setPixelColor(SEGMENT.start + dest, SEGMENT.colors[0]);
   setPixelColor(SEGMENT.start + dest + SEGMENT_LENGTH/2, SEGMENT.colors[0]);
 
-  if(SEGMENT_RUNTIME.aux_param == dest) { // pause between eye movements
+  if(SEGMENT_RUNTIME.aux_param3 == dest) { // pause between eye movements
     if(random8(6) == 0) { // blink once in a while
       setPixelColor(SEGMENT.start + dest, BLACK);
       setPixelColor(SEGMENT.start + dest + SEGMENT_LENGTH/2, BLACK);
       return 200;
     }
-    SEGMENT_RUNTIME.aux_param = random(SEGMENT_LENGTH/2);
+    SEGMENT_RUNTIME.aux_param3 = random(SEGMENT_LENGTH/2);
     return 1000 + random(2000);
   }
 
   setPixelColor(SEGMENT.start + dest, BLACK);
   setPixelColor(SEGMENT.start + dest + SEGMENT_LENGTH/2, BLACK);
 
-  if(SEGMENT_RUNTIME.aux_param > SEGMENT_RUNTIME.counter_mode_step) {
+  if(SEGMENT_RUNTIME.aux_param3 > SEGMENT_RUNTIME.counter_mode_step) {
     SEGMENT_RUNTIME.counter_mode_step++;
     dest++;
-  } else if (SEGMENT_RUNTIME.aux_param < SEGMENT_RUNTIME.counter_mode_step) {
+  } else if (SEGMENT_RUNTIME.aux_param3 < SEGMENT_RUNTIME.counter_mode_step) {
     SEGMENT_RUNTIME.counter_mode_step--;
     dest--;
   }

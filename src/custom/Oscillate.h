@@ -46,8 +46,8 @@ typedef struct Oscillator {
 } oscillator;
 
 uint16_t oscillate(void) {
-  WS2812FX::Segment seg = ws2812fx.getSegment(); // get the current segment
-  int seglen = seg.stop - seg.start + 1;
+  WS2812FX::Segment* seg = ws2812fx.getSegment(); // get the current segment
+  int seglen = seg->stop - seg->start + 1;
 
   static oscillator oscillators[NUM_COLORS] = {
     {seglen/4,   seglen/8,  1, 1},
@@ -73,12 +73,12 @@ uint16_t oscillate(void) {
     uint32_t color = BLACK;
     for(int8_t j=0; j < sizeof(oscillators)/sizeof(oscillators[0]); j++) {
       if(i >= oscillators[j].pos - oscillators[j].size && i <= oscillators[j].pos + oscillators[j].size) {
-        color = (color == BLACK) ? seg.colors[j] : ws2812fx.color_blend(color, seg.colors[j], 128);
+        color = (color == BLACK) ? seg->colors[j] : ws2812fx.color_blend(color, seg->colors[j], 128);
       }
     }
-    ws2812fx.setPixelColor(seg.start + i, color);
+    ws2812fx.setPixelColor(seg->start + i, color);
   }
-  return(seg.speed / 8);
+  return(seg->speed / 8);
 }
 
 #endif
