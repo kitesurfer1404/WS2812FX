@@ -1,5 +1,5 @@
 /*
-  Custom effect that creates a random chase effect
+  Custom effect that mimics a multiband VU meter
   
   Keith Lord - 2018
 
@@ -28,26 +28,52 @@
   THE SOFTWARE.
   
   CHANGELOG
-  2018-02-26 initial version
+  2018-08-21 initial version
 */
 
-#ifndef RandomChase_h
-#define RandomChase_h
+#ifndef VUMeter_h
+#define VUMeter_h
 
 #include <WS2812FX.h>
 
+#ifndef NUM_BANDS
+  #define NUM_BANDS 2
+#endif
+
+// set USE_RANDOM_DATA to false in the line below if vuMeterBands[] is populated
+// by an external data source. otherwise random data will be used for the effect.
+#ifndef USE_RANDOM_DATA
+  #define USE_RANDOM_DATA true
+#endif
+
 extern WS2812FX ws2812fx;
 
-uint16_t randomChase(void) {
+uint8_t vuMeterBands[NUM_BANDS]; // global VU meter band amplitude data (range 0-255)
+
+uint16_t vuMeter(void) {
   WS2812FX::Segment* seg = ws2812fx.getSegment();
-  for(uint16_t i=seg->stop; i>seg->start; i--) {
-    ws2812fx.setPixelColor(i, ws2812fx.getPixelColor(i-1));
+  uint16_t seglen = seg->stop - seg->start + 1;
+  uint16_t bandSize = seglen / NUM_BANDS;
+
+  for(uint8_t i=0; i<NUM_BANDS; i++) {
+#if USE_RANDOM_DATA
+    int randomData = vuMeterBands[i] + ws2812fx.random8(32) - ws2812fx.random8(32);
+    vuMeterBands[i] = (randomData < 0 || randomData > 255) ? 128 : randomData;
+#endif
+
+    uint8_t scaledBand = (vuMeterBands[i] * bandSize) / 256;
+    for(uint16_t j=0; j<bandSize; j++) {
+      uint16_t index = seg->start + (i * bandSize) + j;
+      if(j <= scaledBand) {
+        if(j < bandSize - 4) ws2812fx.setPixelColor(index, seg->colors[0]);
+        else if(j < bandSize - 2) ws2812fx.setPixelColor(index, seg->colors[1]);
+        else ws2812fx.setPixelColor(index, seg->colors[2]);
+      } else {
+        ws2812fx.setPixelColor(index, BLACK);
+      }
+    }
   }
-  uint32_t color = ws2812fx.getPixelColor(seg->start + 1);
-  int r = random(6) != 0 ? (color >> 16 & 0xFF) : random(256);
-  int g = random(6) != 0 ? (color >> 8  & 0xFF) : random(256);
-  int b = random(6) != 0 ? (color       & 0xFF) : random(256);
-  ws2812fx.setPixelColor(seg->start, r, g, b);
+
   return seg->speed;
 }
 

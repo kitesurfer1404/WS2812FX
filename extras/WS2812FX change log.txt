@@ -1,6 +1,54 @@
 WS2182FX Change Log
 
 
+v1.1.0 changes 9/12/2018
+------------------------
+
+1) Potential breaking change! The two getSegment functions,
+	getSegment() and getSegmentRuntime(), have been changed to return
+	pointers to their respective data structures rather then references.
+	This allows the segment data to be updated, rather then be read-only.
+	I don't think these	functions are used by the vast majority of
+	WS2812FX users, since they're intended for advanced developers that
+	have a need to dynamically manipulate the inner workings of the
+	library. They're primarily used to create custom effects. Since
+	the functions now return pointers the syntax for using them changes
+	from this:
+		WS2812FX::Segment seg = ws2812fx.getSegment();
+  		int seglen = seg.stop - seg.start + 1;
+	to this:
+		WS2812FX::Segment* seg = ws2812fx.getSegment();
+  		int seglen = seg->stop - seg->start + 1;
+	All of the custom effects in the src/custom folder have been
+	updated to accommodate this change.
+
+2) Another potential breaking change! The AUX_PARAM variables in the
+	segment_runtime struct have been refactored to allow some additional
+	flexibility in their use. Again this is an advanced feature that no
+	one probably uses unless you're writing custom effects, so in all
+	likelihood doesn't affect many users. The AUX_PARAM definition
+	changed from this:
+		uint16_t aux_param;
+		uint16_t aux_param2;
+	to this:
+		uint8_t aux_param;
+		uint8_t aux_param2;
+		uint16_t aux_param3;
+	If you're using aux_param, then you may have to take into
+	consideration the new data types.
+
+3) add two new functions, isFrame() and isCycle(), to provide feedback
+	about the state of an effect to the user's sketch. isFrame() returns
+	true when the LEDs in a	segment	have changed (think of it as a
+	"frame" of animation) and isCycle() returns true when a repetitive
+	effect starts a cycle. See the ws2812fx_soundfx example sketch for
+	an example of how these functions might be used.
+
+4) Three new custom effects: BlockDissolve, RainbowLarson and VUMeter.
+
+5) Created a new example sketch which shows how to add sound effects
+	to your light show. See ws2812fx_soundfx.
+
 v1.0.9 changes 8/3/2018
 ------------------------
 

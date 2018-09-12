@@ -1,6 +1,10 @@
 /*
-  Demo sketch for creating multiple custom effects.
+  Custom effect that changes random pixels to transition between colors
   
+  Important! You MUST set brightness=255, otherwise when the getPixelColor()
+  function tries to scale the stored (decimated) color values, you'll get
+  errors and the part of the algorithm that compares color values may fail.
+
   Keith Lord - 2018
 
   LICENSE
@@ -28,42 +32,36 @@
   THE SOFTWARE.
   
   CHANGELOG
-  2018-07-19 initial version
+  2018-08-19 initial version
 */
+
+#ifndef BlockDissolve_h
+#define BlockDissolve_h
 
 #include <WS2812FX.h>
 
-// include the custom effects
-// #include "custom/BlockDissolve.h"
-#include "custom/DualLarson.h"
-// #include "custom/MultiComet.h"
-// #include "custom/Oscillate.h"
-// #include "custom/RainbowLarson.h"
-// #include "custom/RandomChase.h"
-// #include "custom/TriFade.h"
-// #include "custom/VUMeter.h"
+extern WS2812FX ws2812fx;
 
-#define LED_COUNT 30
-#define LED_PIN 5
+uint16_t blockDissolve(void) {
+  WS2812FX::Segment* seg = ws2812fx.getSegment();
+  WS2812FX::Segment_runtime* segrt = ws2812fx.getSegmentRuntime();
+  int seglen = seg->stop - seg->start + 1;
 
-WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+  uint32_t color = seg->colors[segrt->aux_param];
+  for(uint16_t i=0; i<seglen; i++) {
+    int index = seg->start + ws2812fx.random8(seglen);
+    if(ws2812fx.getPixelColor(index) != color) {
+      ws2812fx.setPixelColor(index, color);
+      return seg->speed;
+    }
+  }
 
-void setup() {
-  Serial.begin(115200);
-  
-  ws2812fx.init();
-  ws2812fx.setBrightness(255);
+  for(uint16_t i=seg->start; i<seg->stop; i++) {
+    ws2812fx.setPixelColor(i, color);
+  }
 
-  // setup the custom effects
-  uint8_t dualLarsonMode  = ws2812fx.setCustomMode(F("Dual Larson"), dualLarson);
-
-  uint32_t colors[] = {RED, BLUE, WHITE};
-
-  ws2812fx.setSegment(0, 0, LED_COUNT - 1, dualLarsonMode, colors, 2000, FADE_SLOW);
-
-  ws2812fx.start();
+  segrt->aux_param = (segrt->aux_param + 1) % NUM_COLORS;
+  return seg->speed;
 }
 
-void loop() {
-  ws2812fx.service();
-}
+#endif

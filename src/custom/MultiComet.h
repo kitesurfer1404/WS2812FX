@@ -1,5 +1,5 @@
 /*
-  Custom effect that creates a random comets
+  Custom effect that creates random comets
   
   Keith Lord - 2018
 
@@ -39,10 +39,10 @@
 extern WS2812FX ws2812fx;
 
 uint16_t multiComet(void) {
-  WS2812FX::Segment seg = ws2812fx.getSegment(); // get the current segment
-  int seglen = seg.stop - seg.start + 1;
+  WS2812FX::Segment* seg = ws2812fx.getSegment(); // get the current segment
+  int seglen = seg->stop - seg->start + 1;
 
-  bool isReverse = (seg.options & REVERSE) == REVERSE;
+  bool isReverse = (seg->options & REVERSE) == REVERSE;
 
   ws2812fx.fade_out();
 
@@ -52,9 +52,9 @@ uint16_t multiComet(void) {
   for(uint8_t i=0; i < numComets; i++) {
     if(comets[i] < seglen) {
       if(isReverse) {
-        ws2812fx.setPixelColor(seg.stop - comets[i],  i % 2 ? seg.colors[0] : seg.colors[2]);
+        ws2812fx.setPixelColor(seg->stop - comets[i],  i % 2 ? seg->colors[0] : seg->colors[2]);
       } else {
-        ws2812fx.setPixelColor(seg.start + comets[i], i % 2 ? seg.colors[0] : seg.colors[2]);
+        ws2812fx.setPixelColor(seg->start + comets[i], i % 2 ? seg->colors[0] : seg->colors[2]);
       }
       comets[i]++;
     } else {
@@ -64,7 +64,7 @@ uint16_t multiComet(void) {
     }
   }
 
-  return (seg.speed / seglen);
+  return (seg->speed / seglen);
 }
 
 #endif
