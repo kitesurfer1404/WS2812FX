@@ -3,7 +3,8 @@
   A pattern is a collection of segments. Each pattern plays for a specific
   duration and you can setup an array of patterns that play in a continuous loop.
   A web API is included which receives and stores pattern data in JSON format.
-  It's the companion sketch for the LEDfx Android app.
+  It's the companion sketch for the LEDfx Android app available in the Google Play
+  app store: https://play.google.com/store/apps/details?id=com.champlainsystems.ledfx
   
   Keith Lord - 2018
 

@@ -3,25 +3,52 @@ char index_html[] PROGMEM = R"=====(
 <!DOCTYPE html>
 <html>
 <head>
-  <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-  <link type="text/css" rel="stylesheet" href="http://champlainsystems.com/css/nouislider.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <!-- we're using the standard noUiSlider plugin, not the customized one in the materialize extras folder -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/11.1.0/nouislider.min.css">
 
+  <style>
+    body { /* materialize sticky footer CSS */
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    main { /* materialize sticky footer CSS */
+      flex: 1 0 auto;
+    }
+    .modal { /* make the modal a little wider */
+      width: 80% !important;
+    }
+    .noUi-tooltip { /* only show slider tooltips when the slider is being moved */
+      display: none;
+    }
+    .noUi-active .noUi-tooltip {
+      display: block;
+    }
+  </style>
+
+  <meta charset="UTF-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 
 <body>
+  <header>
   <nav class="grey" role="navigation">
     <div class="nav-wrapper container">
       <a id="logo-container" href="#" class="brand-logo">WS2812FX Web Interface</a>
     </div>
   </nav>
+  </header>
 
+  <main>
   <div class="container">
     <div class="row">
       <div class="col s12">
         <h5>Num Pixels</h5>
         <div id="numPixelsSlider"></div>
+        <h5>Brightness</h5>
+        <div id="brightnessSlider"></div>
       </div>
     </div><br>
 
@@ -67,12 +94,14 @@ char index_html[] PROGMEM = R"=====(
       </div>
     </div>
   </div>
+  </main>
 
-  <br><br>
   <footer class="grey page-footer">
     <div class="grey footer-copyright">
-      <div class="container">
-        Made by <a class="black-text" href="http://materializecss.com">Materialize</a>
+      <div class="container">&copy; 2018
+        <span class="right">Made with
+          <a class="black-text" href="http://materializecss.com">Materialize</a>
+        </span>
       </div>
     </div>
   </footer>
@@ -81,7 +110,9 @@ char index_html[] PROGMEM = R"=====(
   <div id="codeModal" class="modal">
     <div class="modal-content">
       <h4>ESP8266/Arduino Code</h4>
-      <textarea id="codeModalContent" class="materialize-textarea" data-length="120"></textarea>
+      <div class="input-field">
+        <textarea id="codeModalContent" class="materialize-textarea" data-length="120"></textarea>
+      </div>
     </div>
     <div class="modal-footer">
       <a class="waves-effect waves-light btn left" onclick="code2clipboard()">
@@ -96,14 +127,15 @@ char index_html[] PROGMEM = R"=====(
   <!-- 
     javascript goes here
   -->
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-  <script type="text/javascript" src="http://champlainsystems.com/js/nouislider.min.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/11.1.0/nouislider.min.js"></script>
   
   <script type="text/javascript">
     // global variables
     var pin = "?";
     var numPixels = 30;
+    var brightness = 255;
     var segmentIndex = 0;
     var segments = [
       {start: 0, stop: 9, mode:0, speed:1000, reverse:false, colors:['#ff0000','#00ff00','#0000ff']}
@@ -120,17 +152,20 @@ char index_html[] PROGMEM = R"=====(
     function initSliders() {
       noUiSlider.create(document.getElementById('rangeSlider'), {
         start: [0, 99],
+        tooltips: [true, true],
         connect: [false, true, false],
         range: {
           'min': 0,
           'max': numPixels - 1
         },
-        format: wNumb({
-          decimals: 0,
-          encoder: function (a) {
-            return Math.round(a);
+        format: {
+          to: function(value) {
+            return value.toFixed(0);
+          },
+          from: function(value) {
+            return parseInt(value, 10);
           }
-        })
+        }
       });
       document.getElementById('rangeSlider').noUiSlider.on('end', function(){
         updateSegment();
@@ -138,42 +173,69 @@ char index_html[] PROGMEM = R"=====(
 
       noUiSlider.create(document.getElementById('numPixelsSlider'), {
         start: numPixels,
+        tooltips: true,
         connect: [true, false],
         range: {
           'min': 1,
           'max': 600
         },
-        format: wNumb({
-          decimals: 0,
-          encoder: function (a) {
-            return Math.round(a);
+        format: {
+          to: function(value) {
+            return value.toFixed(0);
+          },
+          from: function(value) {
+            return parseInt(value, 10);
           }
-        })
+        }
       });
       document.getElementById('numPixelsSlider').noUiSlider.on('update', function(){
         numPixels = document.getElementById('numPixelsSlider').noUiSlider.get();
         rangeSlider.noUiSlider.updateOptions({
           range: {
             'min': 0,
-            'max': numPixels - 1
+            'max': Math.max(1, numPixels - 1)
           }
         });
       });
 
+      noUiSlider.create(document.getElementById('brightnessSlider'), {
+        start: 255,
+        tooltips: true,
+        connect: [true, false],
+        range: {
+          'min': 0,
+          'max': 255
+        },
+        format: {
+          to: function(value) {
+            return value.toFixed(0);
+          },
+          from: function(value) {
+            return parseInt(value, 10);
+          }
+        }
+      });
+      document.getElementById('brightnessSlider').noUiSlider.on('end', function(){
+        brightness = document.getElementById('brightnessSlider').noUiSlider.get();
+      });
+
       noUiSlider.create(document.getElementById('speedSlider'), {
         start: 1000,
+        tooltips: true,
         connect: [true, false],
         step: 10,
         range: {
           'min': 20,
           'max': 2000
         },
-        format: wNumb({
-          decimals: 0,
-          encoder: function (a) {
-            return Math.round(a);
+        format: {
+          to: function(value) {
+            return value.toFixed(0);
+          },
+          from: function(value) {
+            return parseInt(value, 10);
           }
-        })
+        }
       });
       document.getElementById('speedSlider').noUiSlider.on('end', function(){
         updateSegment();
@@ -191,8 +253,9 @@ char index_html[] PROGMEM = R"=====(
       event.stopPropagation();
       if(segments.length > 9) return; // max 10 segments
 
+      // calc the new segment's start led by adding one to the maximum stop led
       var start = 0;
-      for (var i = 0; i < segments.length; i++) {
+      for (var i=0; i<segments.length; i++) {
         if(segments[i].stop >= start) start = segments[i].stop + 1;
       }
       if(start > numPixels - 1) start = numPixels - 1;
@@ -202,7 +265,7 @@ char index_html[] PROGMEM = R"=====(
       updateWidgets();
     }
 
-    function deleteSegment(index) {
+    function deleteSegment(event, index) {
       event.preventDefault();
       event.stopPropagation();
       segments.splice(index, 1);
@@ -225,21 +288,24 @@ char index_html[] PROGMEM = R"=====(
     // update GUI widgets
     function updateWidgets() {
       numPixelsSlider.noUiSlider.set(numPixels);
+      brightnessSlider.noUiSlider.set(brightness);
 
+      // recreate the segment list HTML
       $("#segmentList").empty();
       for (var i = 0; i < segments.length; i++) {
         $("#segmentList").append('<li class="collection-item" onclick="changeSegment($(this))">'+
           segments[i].start + ' - '+ segments[i].stop + ' : ' + getModeName(segments[i].mode)+
-          '<i class="material-icons right" style="cursor: pointer" onclick="deleteSegment('+i+')">delete</i>'+
+          '<i class="material-icons right" style="cursor: pointer" onclick="deleteSegment(event, '+i+')">delete</i>'+
           '</li>');
       }
       $("#segmentList li").eq(segmentIndex).addClass('active');
 
+      // update the materialize widgets with the current segment's data
       if(segments.length > 0) {
         rangeSlider.noUiSlider.set([segments[segmentIndex].start, segments[segmentIndex].stop]);
         speedSlider.noUiSlider.set(segments[segmentIndex].speed);
         $('#modes').val(segments[segmentIndex].mode);
-        $('#modes').material_select(); // re-initialize material-select
+        $('#modes').formSelect();
         $('#reverse').prop('checked', segments[segmentIndex].reverse);
         $('#color0').val(segments[segmentIndex].colors[0]);
         $('#color1').val(segments[segmentIndex].colors[1]);
@@ -252,10 +318,11 @@ char index_html[] PROGMEM = R"=====(
       $.getJSON("getsegments", function(data) {
         pin = data.pin;
         numPixels = data.numPixels;
+        brightness = data.brightness;
 
         segments.length = 0;
         segmentIndex = 0;
-        $.each(data.segments, function (i, item) {
+        $.each(data.segments, function(i, item) {
           segments.push({
             start: item.start,
             stop: item.stop,
@@ -279,8 +346,9 @@ char index_html[] PROGMEM = R"=====(
     function save() {
       json = '{';
       json += '"numPixels":' + numPixels;
+      json += ',"brightness":' + brightness;
       json += ',"segments":[';
-      $.each(segments, function (i, item) {
+      $.each(segments, function(i, item) {
         if(i != 0) json += ',';
         json += '{';
         json += '"start":'+item.start;
@@ -300,15 +368,15 @@ char index_html[] PROGMEM = R"=====(
 //      $.post("setsegments", json, function(data){
 //        console.log(data);
 //      });
-      jQuery.ajax ({
+      jQuery.ajax({
         url: "setsegments",
         type: "POST",
         data: JSON.stringify(json),
         dataType: "json",
         contentType: "application/json; charset=utf-8",
 //      contentType: "application/x-www-form-urlencoded; charset=utf-8",
-        success: function(){
-        console.log(data);
+        success: function() {
+          console.log(data);
         }
       });
     }
@@ -324,43 +392,51 @@ char index_html[] PROGMEM = R"=====(
     }
 
     function getModeName(index) {
-      name = "";
+      var name = "";
       $("#modes option").each(function(i, item) {
         if(index == item.value) {
           name = item.text;
-          return false;
+          return false; // exit the each loop
         }
       });
       return name;
     }
 
     function buildCode() {
-      var code = '#define LED_PIN ' + pin + '\n';
+      var code = '#include <WS2812FX.h>\n\n'
+      code += '#define LED_PIN ' + pin + '\n';
       code += '#define LED_COUNT ' + numPixels + '\n\n';
       code += 'WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);\n\n';
       code += 'void setup() {\n';
-      $.each(segments, function( index, segment ) {
-// ws2812fx.setSegment(0, 0, 9, 53, (const uint32_t[]) {0xff0000, 0, 0}, 240, false);
+      code += '  ws2812fx.setBrightness(' + brightness + ');\n\n';
+
+      $.each(segments, function(index, segment) {
+//  uint32_t colors0[] = {0xff0000, 0x000000, 0x000000};
+        code += '  uint32_t colors' + index + '[] = {'+
+          segment.colors[0].replace('#','0x') + ', ' +
+          segment.colors[1].replace('#','0x') + ', ' +
+          segment.colors[2].replace('#','0x') + '};\n';
+
+// ws2812fx.setSegment(0, 0, 9, 53, colors0, 240, false);
         code += '  ws2812fx.setSegment('+
           index + ', ' +
           segment.start + ', ' +
           segment.stop + ', ' +
-          segment.mode + ', (const uint32_t[]) {' +
-          segment.colors[0].replace('#','0x') + ', ' +
-          segment.colors[1].replace('#','0x') + ', ' +
-          segment.colors[2].replace('#','0x') + '}, ' +
+          segment.mode + ', ' +
+          'colors' + index + ', ' +
           segment.speed + ', ' +
           segment.reverse +
-          ');\n';
+          '); // ' + getModeName(segment.mode) + '\n\n';
       });
-      code += '  ws2812fx.start();\n'
-      code += '}\n\n'
-      code += 'void loop() {\n'
-      code += '  ws2812fx.service();\n'
-      code += '}\n\n'
+
+      code += '  ws2812fx.start();\n';
+      code += '}\n\n';
+      code += 'void loop() {\n';
+      code += '  ws2812fx.service();\n';
+      code += '}';
 
       $("#codeModalContent").html(code);
-      $('#codeModalContent').trigger('autoresize');
+      M.textareaAutoResize($('#codeModalContent'));
 
       $('#codeModal').modal('open');
     }

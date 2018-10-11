@@ -56,7 +56,6 @@ ESP8266WebServer server(80);
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("\r\n");
 
   // init WiFi
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -67,7 +66,7 @@ void setup() {
     delay(500);
     Serial.print(".");
   }
-  Serial.print("\nPoint your browser to ");
+  Serial.print("\r\nPoint your browser to ");
   Serial.println(WiFi.localIP());
 
   /* init OTA */
@@ -111,6 +110,7 @@ void setup() {
     JsonObject& root = jsonBuffer.createObject();
     root["pin"] = ws2812fx.getPin();
     root["numPixels"] = ws2812fx.numPixels();
+    root["brightness"] = ws2812fx.getBrightness();
     root["numSegments"] = ws2812fx.getNumSegments();
     JsonArray& jsonSegments = root.createNestedArray("segments");
 
@@ -150,9 +150,10 @@ void setup() {
       ws2812fx.stop();
       ws2812fx.setLength(root["numPixels"]);
       ws2812fx.stop(); // reset strip again in case length was increased
+      ws2812fx.setBrightness(root["brightness"]);
       ws2812fx.setNumSegments(1); // reset number of segments
       JsonArray& segments = root["segments"];
-      for (int i = 0; i< segments.size(); i++){
+      for (int i=0; i<segments.size(); i++){
         JsonObject& seg = segments[i];
         JsonArray& colors = seg["colors"];
         // the web interface sends three color values
@@ -187,11 +188,11 @@ void setup() {
   // start the web server
   server.begin();
 
-  // init LED strip with some default segments
+  // init LED strip with a default segment
   ws2812fx.init();
   ws2812fx.setBrightness(127);
-  // parameters:  index, start,        stop,         mode,                              colors, speed, reverse
-  ws2812fx.setSegment(0,     0, LED_COUNT-1, FX_MODE_SCAN, (const uint32_t[]) {0xff0000, 0, 0},  1000, false);
+  // parameters: seg index, start led, stop led, mode, color, speed, reverse
+  ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_SCAN, RED, 1000, false);
   ws2812fx.start();
 }
 
