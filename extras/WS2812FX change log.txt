@@ -1,6 +1,28 @@
 WS2182FX Change Log
 
 
+v1.1.1 changes 10/10/2018
+------------------------
+
+1) Fixed a bug introduced in v1.1.0 of the ws2812fx_custom_effect
+	example sketch.
+
+2) Updated the ws2812fx_segments_web example sketch to use the
+	latest version (v1.0.0) of the materialize UI framework
+	(https://materializecss.com/). Also added a brightness slider.
+
+3) added resetSegmentRuntimes() and getSegmentRuntimes() functions.
+
+4) added get and set functions for segment mode, speed, colors and options.
+
+5) Fixed the getLength() function so it would return the number
+	of LEDs in the strip, not just the number of LEDs in the first
+	segment.
+
+6) Added the ws2812fx_msgeq7 example sketch to show how to use
+	WS2812FX with a MSGEQ7 chip to create a spectrum analyzer.
+
+
 v1.1.0 changes 9/12/2018
 ------------------------
 

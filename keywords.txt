@@ -41,11 +41,13 @@ setSpeed	KEYWORD2
 increaseSpeed	KEYWORD2
 decreaseSpeed	KEYWORD2
 setColor	KEYWORD2
+setColors	KEYWORD2
 setBrightness	KEYWORD2
 setLength	KEYWORD2
 getLength	KEYWORD2
 setSegment	KEYWORD2
 resetSegments	KEYWORD2
+resetSegmentRuntimes	KEYWORD2
 increaseBrightness	KEYWORD2
 decreaseBrightness	KEYWORD2
 increaseLength	KEYWORD2
@@ -59,11 +61,15 @@ getBrightness	KEYWORD2
 getModeCount	KEYWORD2
 getModeName	KEYWORD2
 getColor	KEYWORD2
+getColors	KEYWORD2
+getOptions	KEYWORD2
+setOptions	KEYWORD2
 getNumSegments	KEYWORD2
 setNumSegments	KEYWORD2
 getSegment	KEYWORD2
-getSegmentRuntime	KEYWORD2
 getSegments	KEYWORD2
+getSegmentRuntime	KEYWORD2
+getSegmentRuntimes	KEYWORD2
 color_wheel	KEYWORD2
 get_random_wheel_index	KEYWORD2
 

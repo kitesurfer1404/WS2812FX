@@ -55,7 +55,7 @@
 #include "WS2812FX.h"
 
 void WS2812FX::init() {
-  RESET_RUNTIME;
+  resetSegmentRuntimes();
   Adafruit_NeoPixel::begin();
   setBrightness(_brightness);
   show();
@@ -130,7 +130,7 @@ void WS2812FX::show(void) {
 }
 
 void WS2812FX::start() {
-  RESET_RUNTIME;
+  resetSegmentRuntimes();
   _running = true;
 }
 
@@ -144,14 +144,26 @@ void WS2812FX::trigger() {
 }
 
 void WS2812FX::setMode(uint8_t m) {
-  RESET_RUNTIME;
-  _segments[0].mode = constrain(m, 0, MODE_COUNT - 1);
+  setMode(0, m);
+}
+
+void WS2812FX::setMode(uint8_t seg, uint8_t m) {
+  resetSegmentRuntimes();
+  _segments[seg].mode = constrain(m, 0, MODE_COUNT - 1);
   setBrightness(_brightness);
 }
 
+void WS2812FX::setOptions(uint8_t seg, uint8_t o) {
+  _segments[seg].options = o;
+}
+
 void WS2812FX::setSpeed(uint16_t s) {
-  RESET_RUNTIME;
-  _segments[0].speed = constrain(s, SPEED_MIN, SPEED_MAX);
+  setSpeed(0, s);
+}
+
+void WS2812FX::setSpeed(uint8_t seg, uint16_t s) {
+  resetSegmentRuntimes();
+  _segments[seg].speed = constrain(s, SPEED_MIN, SPEED_MAX);
 }
 
 void WS2812FX::increaseSpeed(uint8_t s) {
@@ -169,8 +181,20 @@ void WS2812FX::setColor(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 void WS2812FX::setColor(uint32_t c) {
-  RESET_RUNTIME;
-  _segments[0].colors[0] = c;
+  setColor(0, c);
+}
+
+void WS2812FX::setColor(uint8_t seg, uint32_t c) {
+  resetSegmentRuntimes();
+  _segments[seg].colors[0] = c;
+  setBrightness(_brightness);
+}
+
+void WS2812FX::setColors(uint8_t seg, uint32_t* c) {
+  resetSegmentRuntimes();
+  for(uint8_t i=0; i<NUM_COLORS; i++) {
+    _segments[seg].colors[i] = c[i];
+  }
   setBrightness(_brightness);
 }
 
@@ -192,7 +216,7 @@ void WS2812FX::decreaseBrightness(uint8_t s) {
 }
 
 void WS2812FX::setLength(uint16_t b) {
-  RESET_RUNTIME;
+  resetSegmentRuntimes();
   if (b < 1) b = 1;
 
   // Decrease numLEDs to maximum available memory
@@ -243,11 +267,24 @@ boolean WS2812FX::isCycle(uint8_t segIndex) {
 }
 
 uint8_t WS2812FX::getMode(void) {
-  return _segments[0].mode;
+  return getMode(0);
+}
+
+uint8_t WS2812FX::getMode(uint8_t seg) {
+  return _segments[seg].mode;
 }
 
 uint16_t WS2812FX::getSpeed(void) {
-  return _segments[0].speed;
+  return getSpeed(0);
+}
+
+uint16_t WS2812FX::getSpeed(uint8_t seg) {
+  return _segments[seg].speed;
+}
+
+
+uint8_t WS2812FX::getOptions(uint8_t seg) {
+  return _segments[seg].options;
 }
 
 uint8_t WS2812FX::getBrightness(void) {
@@ -255,7 +292,7 @@ uint8_t WS2812FX::getBrightness(void) {
 }
 
 uint16_t WS2812FX::getLength(void) {
-  return _segments[0].stop - _segments[0].start + 1;
+  return numPixels();
 }
 
 uint8_t WS2812FX::getModeCount(void) {
@@ -271,19 +308,31 @@ void WS2812FX::setNumSegments(uint8_t n) {
 }
 
 uint32_t WS2812FX::getColor(void) {
-  return _segments[0].colors[0];
+  return getColor(0);
+}
+
+uint32_t WS2812FX::getColor(uint8_t seg) {
+  return _segments[seg].colors[0];
+}
+
+uint32_t* WS2812FX::getColors(uint8_t seg) {
+  return _segments[seg].colors;
 }
 
 WS2812FX::Segment* WS2812FX::getSegment(void) {
   return &_segments[_segment_index];
 }
 
+WS2812FX::Segment* WS2812FX::getSegments(void) {
+  return _segments;
+}
+
 WS2812FX::Segment_runtime* WS2812FX::getSegmentRuntime(void) {
   return &_segment_runtimes[_segment_index];
 }
 
-WS2812FX::Segment* WS2812FX::getSegments(void) {
-  return _segments;
+WS2812FX::Segment_runtime* WS2812FX::getSegmentRuntimes(void) {
+  return _segment_runtimes;
 }
 
 const __FlashStringHelper* WS2812FX::getModeName(uint8_t m) {
@@ -319,11 +368,15 @@ void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode
 }
 
 void WS2812FX::resetSegments() {
+  resetSegmentRuntimes();
   memset(_segments, 0, sizeof(_segments));
-  memset(_segment_runtimes, 0, sizeof(_segment_runtimes));
   _segment_index = 0;
   _num_segments = 1;
   setSegment(0, 0, 7, FX_MODE_STATIC, (const uint32_t[]){DEFAULT_COLOR, 0, 0}, DEFAULT_SPEED, NO_OPTIONS);
+}
+
+void WS2812FX::resetSegmentRuntimes() {
+  memset(_segment_runtimes, 0, sizeof(_segment_runtimes));
 }
 
 /* #####################################################
