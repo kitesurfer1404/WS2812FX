@@ -139,6 +139,13 @@ void WS2812FX::stop() {
   strip_off();
 }
 
+void WS2812FX::pause() {
+  _running = false;
+}
+void WS2812FX::resume() {
+  _running = true;
+}
+
 void WS2812FX::trigger() {
   _triggered = true;
 }
