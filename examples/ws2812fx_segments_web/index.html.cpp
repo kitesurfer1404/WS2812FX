@@ -91,6 +91,14 @@ char index_html[] PROGMEM = R"=====(
           <i class="material-icons left">cloud_upload</i>Save</a>
         <a class="waves-effect waves-light btn" onclick="buildCode()">
           <i class="material-icons left">code</i>Code</a>
+        <a class="waves-effect waves-light btn" onclick="LED_pause()">
+          <i class="material-icons left">pause</i>Pause</a>          
+        <a class="waves-effect waves-light btn" onclick="LED_resume()">
+          <i class="material-icons left">replay</i>Play</a>
+        <a class="waves-effect waves-light btn" onclick="LED_on()">
+          <i class="material-icons left">blur_on</i>ON</a>  
+        <a class="waves-effect waves-light btn" onclick="LED_off()">
+          <i class="material-icons left">blur_off</i>OFF</a> 
       </div>
     </div>
   </div>
@@ -339,6 +347,66 @@ char index_html[] PROGMEM = R"=====(
         });
 
         updateWidgets();
+      });
+    }
+
+    // PAUSE
+    function LED_pause() {
+      jQuery.ajax({
+        url: "runcontrol",
+        type: "POST",
+        data: "pause",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+//      contentType: "application/x-www-form-urlencoded; charset=utf-8",
+        success: function() {
+          console.log(data);
+        }
+      });
+    }
+
+    // Resume after Pause
+    function LED_resume() {
+      jQuery.ajax({
+        url: "runcontrol",
+        type: "POST",
+        data: "resume",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+//      contentType: "application/x-www-form-urlencoded; charset=utf-8",
+        success: function() {
+          console.log(data);
+        }
+      });
+    }
+
+    // Switch strip on
+    function LED_on() {
+      jQuery.ajax({
+        url: "runcontrol",
+        type: "POST",
+        data: "run",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+//      contentType: "application/x-www-form-urlencoded; charset=utf-8",
+        success: function() {
+          console.log(data);
+        }
+      });
+    }
+
+     // Switch Strip off
+    function LED_off() {
+      jQuery.ajax({
+        url: "runcontrol",
+        type: "POST",
+        data: "stop",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+//      contentType: "application/x-www-form-urlencoded; charset=utf-8",
+        success: function() {
+          console.log(data);
+        }
       });
     }
 
