@@ -28,6 +28,8 @@ init	KEYWORD2
 service	KEYWORD2
 start	KEYWORD2
 stop	KEYWORD2
+pause	KEYWORD2
+resume	KEYWORD2
 speed	KEYWORD2
 mode	KEYWORD2
 options	KEYWORD2

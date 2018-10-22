@@ -409,6 +409,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       service(void),
       start(void),
       stop(void),
+      pause(void),
+      resume(void),
       strip_off(void),
       fade_out(void),
       setMode(uint8_t m),
