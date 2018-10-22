@@ -68,9 +68,9 @@ wires, resistors, capacitors and an LED or two are also handy.
     strips with 30/60/144 LEDs per meter or arranged in circles, squares and
     even 3D cubes.
     
-    - Strongly suggest adding a resistor between the ESP and WS2812B input to reduce
-    and improve signal reliability. If struggling still, try adding a large capacitor
-    (1000uF upwards) between Vin and GND.
+    - Strongly suggest adding a 300-500Ω resistor between the ESP and WS2812B input
+    to reduce and improve signal reliability. If struggling still, try adding a
+    large capacitor (1000uF upwards) between Vin and GND.
 
 1.  The Development Environment  
       
