@@ -142,6 +142,7 @@ void WS2812FX::stop() {
 void WS2812FX::pause() {
   _running = false;
 }
+
 void WS2812FX::resume() {
   _running = true;
 }
