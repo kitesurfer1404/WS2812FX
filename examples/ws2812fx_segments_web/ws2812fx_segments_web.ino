@@ -137,6 +137,25 @@ void setup() {
     server.send(200, "application/json", json);
     free(json);
   });
+  
+  // control Run / stop / pause / resume
+  server.on("/runcontrol", HTTP_POST, [](){
+String data = server.arg("plain");
+    //Serial.println(data);
+    if (data == "pause"){
+     ws2812fx.pause(); 
+    }
+    if (data == "resume"){
+     ws2812fx.resume(); 
+    }
+    if (data == "run"){
+     ws2812fx.start(); 
+    }
+    if (data == "stop"){
+     ws2812fx.stop(); 
+    }
+    server.send(200, "text/plain", "OK");
+  });
 
   // receive the segment info in JSON format and setup the WS2812 strip
   server.on("/setsegments", HTTP_POST, [](){
