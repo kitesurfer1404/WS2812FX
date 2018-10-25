@@ -156,7 +156,7 @@ void WS2812FX::setMode(uint8_t m) {
 }
 
 void WS2812FX::setMode(uint8_t seg, uint8_t m) {
-  resetSegmentRuntimes();
+  resetSegmentRuntime(seg);
   _segments[seg].mode = constrain(m, 0, MODE_COUNT - 1);
   setBrightness(_brightness);
 }
@@ -170,7 +170,7 @@ void WS2812FX::setSpeed(uint16_t s) {
 }
 
 void WS2812FX::setSpeed(uint8_t seg, uint16_t s) {
-  resetSegmentRuntimes();
+  resetSegmentRuntime(seg);
   _segments[seg].speed = constrain(s, SPEED_MIN, SPEED_MAX);
 }
 
@@ -193,13 +193,13 @@ void WS2812FX::setColor(uint32_t c) {
 }
 
 void WS2812FX::setColor(uint8_t seg, uint32_t c) {
-  resetSegmentRuntimes();
+  resetSegmentRuntime(seg);
   _segments[seg].colors[0] = c;
   setBrightness(_brightness);
 }
 
 void WS2812FX::setColors(uint8_t seg, uint32_t* c) {
-  resetSegmentRuntimes();
+  resetSegmentRuntime(seg);
   for(uint8_t i=0; i<NUM_COLORS; i++) {
     _segments[seg].colors[i] = c[i];
   }
@@ -256,6 +256,10 @@ void WS2812FX::decreaseLength(uint16_t s) {
 
 boolean WS2812FX::isRunning() {
   return _running;
+}
+
+boolean WS2812FX::isTriggered() {
+  return _triggered;
 }
 
 boolean WS2812FX::isFrame() {
@@ -331,12 +335,20 @@ WS2812FX::Segment* WS2812FX::getSegment(void) {
   return &_segments[_segment_index];
 }
 
+WS2812FX::Segment* WS2812FX::getSegment(uint8_t seg) {
+  return &_segments[seg];
+}
+
 WS2812FX::Segment* WS2812FX::getSegments(void) {
   return _segments;
 }
 
 WS2812FX::Segment_runtime* WS2812FX::getSegmentRuntime(void) {
   return &_segment_runtimes[_segment_index];
+}
+
+WS2812FX::Segment_runtime* WS2812FX::getSegmentRuntime(uint8_t seg) {
+  return &_segment_runtimes[seg];
 }
 
 WS2812FX::Segment_runtime* WS2812FX::getSegmentRuntimes(void) {
@@ -385,6 +397,10 @@ void WS2812FX::resetSegments() {
 
 void WS2812FX::resetSegmentRuntimes() {
   memset(_segment_runtimes, 0, sizeof(_segment_runtimes));
+}
+
+void WS2812FX::resetSegmentRuntime(uint8_t seg) {
+  memset(&_segment_runtimes[seg], 0, sizeof(_segment_runtimes[0]));
 }
 
 /* #####################################################
@@ -897,8 +913,8 @@ void WS2812FX::fade_out() {
       int gdelta = g2 - g1;
       int bdelta = b2 - b1;
 
-      // if the current and target colors are almost the same, jump right to the target color,
-      // otherwise calculate an intermediate color. (fixes rounding issues)
+      // if the current and target colors are almost the same, jump right to the target
+      // color, otherwise calculate an intermediate color. (fixes rounding issues)
       wdelta = abs(wdelta) < 3 ? wdelta : (wdelta >> rateH) + (wdelta >> rateL);
       rdelta = abs(rdelta) < 3 ? rdelta : (rdelta >> rateH) + (rdelta >> rateL);
       gdelta = abs(gdelta) < 3 ? gdelta : (gdelta >> rateH) + (gdelta >> rateL);

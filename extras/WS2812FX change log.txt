@@ -1,6 +1,20 @@
 WS2182FX Change Log
 
 
+v1.1.2 changes 10/25/2018
+------------------------
+
+1) Various enhancements to the ws2812fx_segments_web example sketch.
+
+2) Minor enhancement to the DualLarson custom effect.
+
+3) Added pause() and resume() functions.
+
+4) Added resetSegmentRuntime() and isTriggered() functions.
+
+5) Minor updates to the documentation.
+
+
 v1.1.1 changes 10/10/2018
 ------------------------
 
