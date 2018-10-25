@@ -439,6 +439,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options),
       resetSegments(),
       resetSegmentRuntimes(),
+      resetSegmentRuntime(uint8_t),
       setPixelColor(uint16_t n, uint32_t c),
       setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b),
       setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w),
@@ -446,6 +447,7 @@ class WS2812FX : public Adafruit_NeoPixel {
 
     boolean
       isRunning(void),
+      isTriggered(void),
       isFrame(void),
       isFrame(uint8_t),
       isCycle(void),
@@ -479,17 +481,17 @@ class WS2812FX : public Adafruit_NeoPixel {
     const __FlashStringHelper*
       getModeName(uint8_t m);
 
-    WS2812FX::Segment*
-      getSegment(void);
+    WS2812FX::Segment* getSegment(void);
 
-    WS2812FX::Segment*
-      getSegments(void);
+    WS2812FX::Segment* getSegment(uint8_t);
 
-    WS2812FX::Segment_runtime*
-      getSegmentRuntime(void);
+    WS2812FX::Segment* getSegments(void);
 
-    WS2812FX::Segment_runtime*
-      getSegmentRuntimes(void);
+    WS2812FX::Segment_runtime* getSegmentRuntime(void);
+
+    WS2812FX::Segment_runtime* getSegmentRuntime(uint8_t);
+
+    WS2812FX::Segment_runtime* getSegmentRuntimes(void);
 
     // mode helper functions
     uint16_t

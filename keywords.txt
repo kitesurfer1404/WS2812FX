@@ -50,11 +50,13 @@ getLength	KEYWORD2
 setSegment	KEYWORD2
 resetSegments	KEYWORD2
 resetSegmentRuntimes	KEYWORD2
+resetSegmentRuntime	KEYWORD2
 increaseBrightness	KEYWORD2
 decreaseBrightness	KEYWORD2
 increaseLength	KEYWORD2
 decreaseLength	KEYWORD2
 isRunning	KEYWORD2
+isTriggered	KEYWORD2
 isFrame	KEYWORD2
 isCycle	KEYWORD2
 getMode	KEYWORD2

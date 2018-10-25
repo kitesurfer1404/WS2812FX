@@ -1,5 +1,8 @@
 /*
-  Custom effect that creates two Larson scanners moving in opposite directions
+  Custom effect that creates two Larson scanners moving in opposite directions.
+  If you set the REVERSE option, an offset will be added to the comet after each
+  cycle (so if the LEDs are arranged in a circle, the animation will appear to
+  "walk" around the circle.)
   
   Keith Lord - 2018
 
@@ -42,15 +45,21 @@ uint16_t dualLarson(void) {
   WS2812FX::Segment* seg = ws2812fx.getSegment(); // get the current segment
   int seglen = seg->stop - seg->start + 1;
 
-  static int16_t index = 0, dir = 1;
+  static int16_t index = 0, dir = 1, offset = 0;
   index += dir;
 
   ws2812fx.fade_out();
 
-  ws2812fx.setPixelColor(seg->start + index, seg->colors[0]);
-  ws2812fx.setPixelColor(seg->stop  - index, seg->colors[2]);
+  int16_t startOffset = (seg->start + index + offset) % seglen;
+  int16_t stopOffset = (seg->stop - index + offset) % seglen;
 
-  if(index >= (seg->stop - seg->start) || index <= 0) dir = -dir; 
+  ws2812fx.setPixelColor(startOffset, seg->colors[0]);
+  ws2812fx.setPixelColor(stopOffset,  seg->colors[2]);
+
+  if(index >= (seg->stop - seg->start) || index <= 0) {
+    dir = -dir;
+    if(seg->options & REVERSE) offset = (offset + 1) % seglen;
+  }
 
   return (seg->speed / (seglen * 2));
 }

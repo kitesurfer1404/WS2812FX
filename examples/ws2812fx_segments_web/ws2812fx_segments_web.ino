@@ -42,6 +42,7 @@
 #include <ESP8266WebServer.h>
 #include <ArduinoJson.h>
 #include <ArduinoOTA.h>
+#include <EEPROM.h>
 
 extern const char index_html[];
 
@@ -56,6 +57,7 @@ ESP8266WebServer server(80);
 
 void setup() {
   Serial.begin(115200);
+  EEPROM.begin(256); // for ESP8266 (comment out if using an Arduino)
 
   // init WiFi
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -90,11 +92,11 @@ void setup() {
   });
   ArduinoOTA.onError([](ota_error_t error) {
     Serial.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-    else if (error == OTA_END_ERROR) Serial.println("End Failed");
+    if(error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+    else if(error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+    else if(error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+    else if(error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+    else if(error == OTA_END_ERROR) Serial.println("End Failed");
   });
   ArduinoOTA.begin();
 
@@ -122,7 +124,7 @@ void setup() {
       jsonSegment["stop"] = seg.stop;
       jsonSegment["mode"] = seg.mode;
       jsonSegment["speed"] = seg.speed;
-      jsonSegment["reverse"] = seg.options & REVERSE ? true: false;
+      jsonSegment["options"] = seg.options;
       JsonArray& jsonColors = jsonSegment.createNestedArray("colors");
       jsonColors.add(seg.colors[0]); // the web interface expects three color values
       jsonColors.add(seg.colors[1]);
@@ -140,18 +142,18 @@ void setup() {
   
   // control Run / stop / pause / resume
   server.on("/runcontrol", HTTP_POST, [](){
-String data = server.arg("plain");
+    String data = server.arg("plain");
     //Serial.println(data);
-    if (data == "pause"){
+    if(data == "pause"){
      ws2812fx.pause(); 
     }
-    if (data == "resume"){
+    if(data == "resume"){
      ws2812fx.resume(); 
     }
-    if (data == "run"){
+    if(data == "run"){
      ws2812fx.start(); 
     }
-    if (data == "stop"){
+    if(data == "stop"){
      ws2812fx.stop(); 
     }
     server.send(200, "text/plain", "OK");
@@ -165,7 +167,7 @@ String data = server.arg("plain");
 //Serial.println(data);
     DynamicJsonBuffer jsonBuffer(1000);
     JsonObject& root = jsonBuffer.parseObject(data);
-    if (root.success()) {
+    if(root.success()) {
       ws2812fx.stop();
       ws2812fx.setLength(root["numPixels"]);
       ws2812fx.stop(); // reset strip again in case length was increased
@@ -177,9 +179,10 @@ String data = server.arg("plain");
         JsonArray& colors = seg["colors"];
         // the web interface sends three color values
         uint32_t _colors[NUM_COLORS] = {colors[0], colors[1], colors[2]};
-        bool reverse = seg["reverse"];
-        ws2812fx.setSegment(i, seg["start"], seg["stop"], seg["mode"], _colors, seg["speed"], reverse ? REVERSE : NO_OPTIONS);
+        uint8_t _options = seg["options"];
+        ws2812fx.setSegment(i, seg["start"], seg["stop"], seg["mode"], _colors, seg["speed"], _options);
       }
+      saveToEEPROM(); // save segment data to EEPROM
       ws2812fx.start();
     }
     server.send(200, "text/plain", "OK");
@@ -212,6 +215,10 @@ String data = server.arg("plain");
   ws2812fx.setBrightness(127);
   // parameters: seg index, start led, stop led, mode, color, speed, reverse
   ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_SCAN, RED, 1000, false);
+
+  // if segment data had been previously saved to eeprom, load that data
+  restoreFromEEPROM();
+
   ws2812fx.start();
 }
 
@@ -219,4 +226,41 @@ void loop() {
   ws2812fx.service();
   server.handleClient();
   ArduinoOTA.handle();
+}
+
+#define EEPROM_MAGIC_NUMBER 0x010e0d05
+void saveToEEPROM() {
+  WS2812FX::segment tmpSegments[MAX_NUM_SEGMENTS]; // tmp space for segment data
+  Serial.println("saving to EEPROM");
+  EEPROM.put(sizeof(int) * 0, (int)EEPROM_MAGIC_NUMBER);
+  EEPROM.put(sizeof(int) * 1, (int)ws2812fx.getPin());
+  EEPROM.put(sizeof(int) * 2, (int)ws2812fx.numPixels());
+  EEPROM.put(sizeof(int) * 3, (int)ws2812fx.getBrightness());
+  EEPROM.put(sizeof(int) * 4, (int)ws2812fx.getNumSegments());
+  memcpy(&tmpSegments, ws2812fx.getSegments(), sizeof(tmpSegments));
+  EEPROM.put(sizeof(int) * 5, tmpSegments);
+  EEPROM.commit(); // for ESP8266 (comment out if using an Arduino)
+}
+
+void restoreFromEEPROM() {
+  int magicNumber = 0;
+  int pin;
+  int length;
+  int brightness;
+  int numSegments;
+  WS2812FX::segment tmpSegments[MAX_NUM_SEGMENTS]; // tmp space for segment data
+  EEPROM.get(sizeof(int) * 0, magicNumber);
+  if(magicNumber == EEPROM_MAGIC_NUMBER) {
+    Serial.println("restoring from EEPROM");
+    EEPROM.get(sizeof(int) * 1, pin);
+    ws2812fx.setPin(pin);
+    EEPROM.get(sizeof(int) * 2, length);
+    ws2812fx.setLength(length);
+    EEPROM.get(sizeof(int) * 3, brightness);
+    ws2812fx.setBrightness(brightness);
+    EEPROM.get(sizeof(int) * 4, numSegments);
+    ws2812fx.setNumSegments(numSegments);
+    EEPROM.get(sizeof(int) * 5, tmpSegments);
+    memcpy(ws2812fx.getSegments(), &tmpSegments, sizeof(tmpSegments));
+  }
 }
