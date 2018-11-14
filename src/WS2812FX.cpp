@@ -57,8 +57,6 @@
 void WS2812FX::init() {
   resetSegmentRuntimes();
   Adafruit_NeoPixel::begin();
-  setBrightness(_brightness);
-  show();
 }
 
 // void WS2812FX::timer() {
@@ -158,7 +156,6 @@ void WS2812FX::setMode(uint8_t m) {
 void WS2812FX::setMode(uint8_t seg, uint8_t m) {
   resetSegmentRuntime(seg);
   _segments[seg].mode = constrain(m, 0, MODE_COUNT - 1);
-  setBrightness(_brightness);
 }
 
 void WS2812FX::setOptions(uint8_t seg, uint8_t o) {
@@ -195,7 +192,6 @@ void WS2812FX::setColor(uint32_t c) {
 void WS2812FX::setColor(uint8_t seg, uint32_t c) {
   resetSegmentRuntime(seg);
   _segments[seg].colors[0] = c;
-  setBrightness(_brightness);
 }
 
 void WS2812FX::setColors(uint8_t seg, uint32_t* c) {
@@ -203,23 +199,21 @@ void WS2812FX::setColors(uint8_t seg, uint32_t* c) {
   for(uint8_t i=0; i<NUM_COLORS; i++) {
     _segments[seg].colors[i] = c[i];
   }
-  setBrightness(_brightness);
 }
 
 void WS2812FX::setBrightness(uint8_t b) {
-  _brightness = constrain(b, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
-  Adafruit_NeoPixel::setBrightness(_brightness);
+  b = constrain(b, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
+  Adafruit_NeoPixel::setBrightness(b);
   show();
-//delay(1);
 }
 
 void WS2812FX::increaseBrightness(uint8_t s) {
-  s = constrain(_brightness + s, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
+  s = constrain(getBrightness() + s, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
   setBrightness(s);
 }
 
 void WS2812FX::decreaseBrightness(uint8_t s) {
-  s = constrain(_brightness - s, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
+  s = constrain(getBrightness() - s, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
   setBrightness(s);
 }
 
@@ -297,10 +291,6 @@ uint16_t WS2812FX::getSpeed(uint8_t seg) {
 
 uint8_t WS2812FX::getOptions(uint8_t seg) {
   return _segments[seg].options;
-}
-
-uint8_t WS2812FX::getBrightness(void) {
-  return _brightness;
 }
 
 uint16_t WS2812FX::getLength(void) {
@@ -933,22 +923,52 @@ uint32_t WS2812FX::color_blend(uint32_t color1, uint32_t color2, uint8_t blend) 
   if(blend == 0)   return color1;
   if(blend == 255) return color2;
 
-  int w1 = (color1 >> 24) & 0xff;
-  int r1 = (color1 >> 16) & 0xff;
-  int g1 = (color1 >>  8) & 0xff;
-  int b1 =  color1        & 0xff;
+  uint8_t w1 = (color1 >> 24) & 0xff;
+  uint8_t r1 = (color1 >> 16) & 0xff;
+  uint8_t g1 = (color1 >>  8) & 0xff;
+  uint8_t b1 =  color1        & 0xff;
 
-  int w2 = (color2 >> 24) & 0xff;
-  int r2 = (color2 >> 16) & 0xff;
-  int g2 = (color2 >>  8) & 0xff;
-  int b2 =  color2        & 0xff;
+  uint8_t w2 = (color2 >> 24) & 0xff;
+  uint8_t r2 = (color2 >> 16) & 0xff;
+  uint8_t g2 = (color2 >>  8) & 0xff;
+  uint8_t b2 =  color2        & 0xff;
 
-  uint32_t w3 = ((w2 * blend) + (w1 * (255 - blend))) / 256;
-  uint32_t r3 = ((r2 * blend) + (r1 * (255 - blend))) / 256;
-  uint32_t g3 = ((g2 * blend) + (g1 * (255 - blend))) / 256;
-  uint32_t b3 = ((b2 * blend) + (b1 * (255 - blend))) / 256;
+  uint32_t w3 = ((w2 * blend) + (w1 * (255U - blend))) / 256U;
+  uint32_t r3 = ((r2 * blend) + (r1 * (255U - blend))) / 256U;
+  uint32_t g3 = ((g2 * blend) + (g1 * (255U - blend))) / 256U;
+  uint32_t b3 = ((b2 * blend) + (b1 * (255U - blend))) / 256U;
 
   return ((w3 << 24) | (r3 << 16) | (g3 << 8) | (b3));
+}
+
+// Return the sum of all LED intensities (can be used for
+// rudimentary power calculations)
+uint32_t WS2812FX::intensitySum() {
+  uint8_t *pixels = getPixels();
+  uint32_t sum = 0;
+  for(uint16_t i=0; i <numBytes; i++) {
+    sum+= pixels[i];
+  }
+  return sum;
+}
+
+// Return the sum of each color's intensity. Note, the order of
+// intensities in the returned array depends on the type of WS2812
+// LEDs you have. NEO_GRB LEDs will return an array with entries
+// in a different order then NEO_RGB LEDs.
+uint32_t* WS2812FX::intensitySums() {
+  static uint32_t intensities[] = { 0, 0, 0, 0 };
+  memset(intensities, 0, sizeof(intensities));
+
+  uint8_t *pixels = getPixels();
+  uint8_t bytesPerPixel = (wOffset == rOffset) ? 3 : 4; // 3=RGB, 4=RGBW
+  for(uint16_t i=0; i <numBytes; i += bytesPerPixel) {
+    intensities[0] += pixels[i];
+    intensities[1] += pixels[i + 1];
+    intensities[2] += pixels[i + 2];
+    if(bytesPerPixel == 4) intensities[3] += pixels[i + 3]; // for RGBW LEDs
+  }
+  return intensities;
 }
 
 
