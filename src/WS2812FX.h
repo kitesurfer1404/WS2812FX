@@ -79,6 +79,7 @@
 #define ORANGE     (uint32_t)0xFF3000
 #define PINK       (uint32_t)0xFF1493
 #define ULTRAWHITE (uint32_t)0xFFFFFFFF
+#define DARK(c)    (uint32_t)((c >> 4) & 0x0f0f0f0f)
 
 // segment options
 // bit    8: reverse animation
@@ -100,14 +101,14 @@
 #define IS_GAMMA     ((SEGMENT.options & GAMMA) == GAMMA)
 
 // segment runtime options (aux_param2)
-#define FRAME      (uint8_t)0x80
-#define SET_FRAME  (SEGMENT_RUNTIME.aux_param2 |=  FRAME)
-#define CLR_FRAME  (SEGMENT_RUNTIME.aux_param2 &= ~FRAME)
+#define FRAME     (uint8_t)0x80
+#define SET_FRAME (SEGMENT_RUNTIME.aux_param2 |=  FRAME)
+#define CLR_FRAME (SEGMENT_RUNTIME.aux_param2 &= ~FRAME)
 #define CYCLE     (uint8_t)0x40
 #define SET_CYCLE (SEGMENT_RUNTIME.aux_param2 |=  CYCLE)
 #define CLR_CYCLE (SEGMENT_RUNTIME.aux_param2 &= ~CYCLE)
 
-#define MODE_COUNT  (sizeof(_names)/sizeof(_names[0]))
+#define MODE_COUNT (sizeof(_names)/sizeof(_names[0]))
 
 #define FX_MODE_STATIC                   0
 #define FX_MODE_BLINK                    1
@@ -392,7 +393,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_CUSTOM_2]                = &WS2812FX::mode_custom_2;
       _mode[FX_MODE_CUSTOM_3]                = &WS2812FX::mode_custom_3;
 
-      _brightness = DEFAULT_BRIGHTNESS;
+      brightness = DEFAULT_BRIGHTNESS + 1; // Adafruit_NeoPixel internally offsets brightness by 1
       _running = false;
       _num_segments = 1;
       _segments[0].mode = DEFAULT_MODE;
@@ -434,7 +435,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       decreaseLength(uint16_t s),
       trigger(void),
       setNumSegments(uint8_t n),
-      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color,   uint16_t speed, bool reverse),
+      setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed, bool reverse),
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse),
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options),
       resetSegments(),
@@ -456,7 +457,6 @@ class WS2812FX : public Adafruit_NeoPixel {
     uint8_t
       random8(void),
       random8(uint8_t),
-      getBrightness(void),
       getMode(void),
       getMode(uint8_t),
       getModeCount(void),
@@ -473,13 +473,13 @@ class WS2812FX : public Adafruit_NeoPixel {
     uint32_t
       color_wheel(uint8_t),
       getColor(void),
-      getColor(uint8_t);
+      getColor(uint8_t),
+      intensitySum(void);
 
-    uint32_t*
-      getColors(uint8_t);
+    uint32_t* getColors(uint8_t);
+    uint32_t* intensitySums(void);
 
-    const __FlashStringHelper*
-      getModeName(uint8_t m);
+    const __FlashStringHelper* getModeName(uint8_t m);
 
     WS2812FX::Segment* getSegment(void);
 
@@ -573,7 +573,6 @@ class WS2812FX : public Adafruit_NeoPixel {
 
   private:
     uint16_t _rand16seed;
-    uint8_t _brightness;
     uint8_t _custom_mode_index = FX_MODE_CUSTOM_0; // index of the first custom mode
     uint16_t (*customMode0)(void) = [] () {return (uint16_t)1000;};
     uint16_t (*customMode1)(void) = [] () {return (uint16_t)1000;};
