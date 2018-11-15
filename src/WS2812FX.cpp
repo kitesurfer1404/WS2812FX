@@ -353,6 +353,15 @@ const __FlashStringHelper* WS2812FX::getModeName(uint8_t m) {
   }
 }
 
+void WS2812FX::moveSegment(uint8_t n,uint16_t start){
+	if(n < (sizeof(_segments) / sizeof(_segments[0]))) {
+		if(n + 1 > _num_segments) _num_segments = n + 1;
+			int len = _segments[n].stop-_segments[n].start;
+			_segments[n].start = start;
+		    _segments[n].stop = start+len;
+	}	
+}
+
 void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed, bool reverse) {
   uint32_t colors[] = {color, 0, 0};
   setSegment(n, start, stop, mode, colors, speed, reverse);

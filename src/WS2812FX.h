@@ -438,6 +438,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed, bool reverse),
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse),
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options),
+	  moveSegment(uint8_t n,uint16_t start),
       resetSegments(),
       resetSegmentRuntimes(),
       resetSegmentRuntime(uint8_t),

@@ -69,6 +69,7 @@ getColor	KEYWORD2
 getColors	KEYWORD2
 getOptions	KEYWORD2
 setOptions	KEYWORD2
+moveSegment	KEYWORD2
 getNumSegments	KEYWORD2
 setNumSegments	KEYWORD2
 getSegment	KEYWORD2
