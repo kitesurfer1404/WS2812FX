@@ -337,13 +337,26 @@ WS2812FX::Segment_runtime* WS2812FX::getSegmentRuntime(void) {
   return &_segment_runtimes[_segment_index];
 }
 
+void WS2812FX::setSegmentRuntime(WS2812FX::Segment_runtime* segment_runtime) {
+  _segment_runtimes[_segment_index] = *segment_runtime;
+}
+
 WS2812FX::Segment_runtime* WS2812FX::getSegmentRuntime(uint8_t seg) {
   return &_segment_runtimes[seg];
+}
+
+void WS2812FX::setSegmentRuntime(WS2812FX::Segment_runtime* segment_runtime, uint8_t seg) {
+  _segment_runtimes[seg] = *segment_runtime;
 }
 
 WS2812FX::Segment_runtime* WS2812FX::getSegmentRuntimes(void) {
   return _segment_runtimes;
 }
+
+void WS2812FX::setSegmentRuntimes(WS2812FX::Segment_runtime* segment_runtimes) {
+  memcpy(_segment_runtimes, segment_runtimes, MAX_NUM_SEGMENTS);
+}
+
 
 const __FlashStringHelper* WS2812FX::getModeName(uint8_t m) {
   if(m < MODE_COUNT) {
