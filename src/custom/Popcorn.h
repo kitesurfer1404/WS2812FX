@@ -55,11 +55,12 @@ uint16_t popcorn(void) {
   uint32_t popcornColor = seg->colors[0];
   uint32_t bgColor = seg->colors[1];
   if(popcornColor == bgColor) popcornColor = ws2812fx.color_wheel(ws2812fx.random8());
+  bool isReverse = (seg->options & REVERSE) != 0;
 
   static kernel popcorn[MAX_NUM_POPCORN];
-  static float coeff = 0.0;
-  if(coeff == 0.0) { // calculate the velocity coeff once (the secret sauce)
-    coeff = pow(seglen, 0.5223324) * 0.3944296;
+  static float coeff = 0.0f;
+  if(coeff == 0.0f) { // calculate the velocity coeff once (the secret sauce)
+    coeff = pow((float)seglen, 0.5223324f) * 0.3944296f;
   }
 
   // reset all LEDs to background color
@@ -67,19 +68,23 @@ uint16_t popcorn(void) {
     ws2812fx.setPixelColor(i, bgColor);
   }
 
+  uint16_t ledIndex;
   for(int8_t i=0; i < MAX_NUM_POPCORN; i++) {
-    if(popcorn[i].position <= 0.0 && ws2812fx.random8() < 2) { // random POP!!!
-      popcorn[i].position = 1.0;
-      popcorn[i].velocity = coeff * (random(66, 100) / 100.0f);
-      popcorn[i].color = popcornColor;
-    }
+    bool isActive = popcorn[i].position >= 0.0f;
 
-    if(popcorn[i].position > 0.0) { // if a kernal is active, update it's position
+    if(isActive) { // if kernel is active, update its position
       popcorn[i].position += popcorn[i].velocity;
       popcorn[i].velocity -= GRAVITY;
-//    uint16_t ledIndex = seg->start + min((uint16_t)popcorn[i].position, (uint16_t)(seglen - 1));
-      uint16_t ledIndex = seg->start + popcorn[i].position;
-      ws2812fx.setPixelColor(ledIndex, popcorn[i].color);
+      ledIndex = isReverse ? seg->stop - popcorn[i].position : seg->start + popcorn[i].position;
+      if(ledIndex >= seg->start && ledIndex <= seg->stop) ws2812fx.setPixelColor(ledIndex, popcorn[i].color);
+    } else { // if kernel is inactive, randomly pop it
+      if(ws2812fx.random8() < 2) { // POP!!!
+        popcorn[i].position = 0.0f;
+        popcorn[i].velocity = coeff * (random(66, 100) / 100.0f);
+        popcorn[i].color = popcornColor;
+        ledIndex = isReverse ? seg->stop : seg->start;
+        ws2812fx.setPixelColor(ledIndex, popcorn[i].color);
+      }
     }
   }
 

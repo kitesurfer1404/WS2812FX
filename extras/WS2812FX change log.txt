@@ -1,6 +1,34 @@
 WS2182FX Change Log
 
 
+v1.1.4 changes 12/1/2018
+------------------------
+
+1) Refactored the custom effect code to make it more flexible. You
+	can now dynamically assign custom effects to any one of the
+	four _mode 'slots' by using the setCustomMode(index, name, *p)
+	function.
+
+2) Fixed a bug in the DualLarson custom effect that caused it to
+	misbehave if it was assigned to a segment that didn't span
+	the entire LED strip.
+
+3) refactored the Popcorn custom effect to fix a bug with pixels
+	spilling over into adjacent segments and to implement the REVERSE
+	option.
+
+4) added getNumBytes() function to retrieve the number of bytes
+	allocated to the Adafruit_NeoPixel pixels[] array. Handy to
+	know if you want to directly manipulate the array data.
+
+5) refactored the ws2812fx_patterns_web example sketch to accommodate
+	upcoming enhancements to it's companion Android app, LEDfx.
+	https://play.google.com/store/apps/details?id=com.champlainsystems.ledfx
+
+6) Updated the Users Guide to add some additional information about
+	custom effects.
+
+
 v1.1.3 changes 11/10/2018
 ------------------------
 
@@ -28,7 +56,7 @@ v1.1.3 changes 11/10/2018
 	FX_MODE_FADE effect to misbehave when run on an Arduino that
 	uses 16-bit integers.
 
-7) Added the Popcorn custom effects.
+7) Added the Popcorn custom effect.
 
 
 v1.1.2 changes 10/25/2018

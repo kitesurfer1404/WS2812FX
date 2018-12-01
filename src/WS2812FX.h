@@ -62,6 +62,7 @@
   insufficient memory, decreasing MAX_NUM_SEGMENTS may help */
 #define MAX_NUM_SEGMENTS 10
 #define NUM_COLORS        3 /* number of colors per segment */
+#define MAX_CUSTOM_MODES  4
 #define SEGMENT          _segments[_segment_index]
 #define SEGMENT_RUNTIME  _segment_runtimes[_segment_index]
 #define SEGMENT_LENGTH   (SEGMENT.stop - SEGMENT.start + 1)
@@ -167,7 +168,7 @@
 #define FX_MODE_TRICOLOR_CHASE          54
 #define FX_MODE_ICU                     55
 #define FX_MODE_CUSTOM                  56  // keep this for backward compatiblity
-#define FX_MODE_CUSTOM_0                56
+#define FX_MODE_CUSTOM_0                56  // custom modes need to go at the end
 #define FX_MODE_CUSTOM_1                57
 #define FX_MODE_CUSTOM_2                58
 #define FX_MODE_CUSTOM_3                59
@@ -230,7 +231,7 @@ const char name_52[] PROGMEM = "Halloween";
 const char name_53[] PROGMEM = "Bicolor Chase";
 const char name_54[] PROGMEM = "Tricolor Chase";
 const char name_55[] PROGMEM = "ICU";
-const char name_56[] PROGMEM = "Custom 0";
+const char name_56[] PROGMEM = "Custom 0"; // custom modes need to go at the end
 const char name_57[] PROGMEM = "Custom 1";
 const char name_58[] PROGMEM = "Custom 2";
 const char name_59[] PROGMEM = "Custom 3";
@@ -461,6 +462,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       getMode(uint8_t),
       getModeCount(void),
       setCustomMode(const __FlashStringHelper* name, uint16_t (*p)()),
+      setCustomMode(uint8_t i, const __FlashStringHelper* name, uint16_t (*p)()),
       getNumSegments(void),
       get_random_wheel_index(uint8_t),
       getOptions(uint8_t);
@@ -468,7 +470,8 @@ class WS2812FX : public Adafruit_NeoPixel {
     uint16_t
       getSpeed(void),
       getSpeed(uint8_t),
-      getLength(void);
+      getLength(void),
+      getNumBytes(void);
 
     uint32_t
       color_wheel(uint8_t),
@@ -573,11 +576,12 @@ class WS2812FX : public Adafruit_NeoPixel {
 
   private:
     uint16_t _rand16seed;
-    uint8_t _custom_mode_index = FX_MODE_CUSTOM_0; // index of the first custom mode
-    uint16_t (*customMode0)(void) = [] () {return (uint16_t)1000;};
-    uint16_t (*customMode1)(void) = [] () {return (uint16_t)1000;};
-    uint16_t (*customMode2)(void) = [] () {return (uint16_t)1000;};
-    uint16_t (*customMode3)(void) = [] () {return (uint16_t)1000;};
+    uint16_t (*customModes[MAX_CUSTOM_MODES])(void) {
+      []{return (uint16_t)1000;},
+      []{return (uint16_t)1000;},
+      []{return (uint16_t)1000;},
+      []{return (uint16_t)1000;}
+    };
     void (*customShow)(void) = NULL;
 
     boolean

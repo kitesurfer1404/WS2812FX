@@ -36,6 +36,7 @@ mode	KEYWORD2
 options	KEYWORD2
 colors	KEYWORD2
 reverse	KEYWORD2
+gamma	KEYWORD2
 trigger	KEYWORD2
 setMode	KEYWORD2
 strip_off	KEYWORD2
@@ -47,7 +48,6 @@ setColor	KEYWORD2
 setColors	KEYWORD2
 setBrightness	KEYWORD2
 setLength	KEYWORD2
-getLength	KEYWORD2
 setSegment	KEYWORD2
 resetSegments	KEYWORD2
 resetSegmentRuntimes	KEYWORD2
@@ -60,6 +60,8 @@ isRunning	KEYWORD2
 isTriggered	KEYWORD2
 isFrame	KEYWORD2
 isCycle	KEYWORD2
+getLength	KEYWORD2
+getNumBytes	KEYWORD2
 getMode	KEYWORD2
 getSpeed	KEYWORD2
 getBrightness	KEYWORD2

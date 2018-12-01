@@ -34,14 +34,16 @@
   
   CHANGELOG
   2018-02-21 initial version
+  2018-11-30 added custom aux functions and OTA update
 */
 
 #include <WS2812FX.h>
 #include <ESP8266WebServer.h>
 #include <ArduinoJson.h>
 #include <EEPROM.h>
+#include <ArduinoOTA.h>
 
-#define VERSION "1.0.1"
+#define VERSION "2.0.0"
 
 uint8_t  dataPin = D1; // default digital pin used to drive the LED strip
 uint16_t numLeds = 30; // default number of LEDs on the strip
@@ -62,8 +64,8 @@ typedef struct Pattern { // 208 bytes/pattern
 // setup a couple default patterns
 Pattern patterns[MAX_NUM_PATTERNS] = {
   // duration, brightness, numSegments, [ { first, last, speed, mode, options, colors[] } ]
-  {10, 128, 1, { {0, numLeds-1, 3000, FX_MODE_LARSON_SCANNER, NO_OPTIONS, {RED,  0, 0}} }},
-  {10,  32, 1, { {0, numLeds-1, 3000, FX_MODE_LARSON_SCANNER, NO_OPTIONS, {BLUE, 0, 0}} }}
+  {10, 128, 1, { {0, numLeds-1, 3000, FX_MODE_LARSON_SCANNER, NO_OPTIONS, {RED,  BLACK, BLACK}} }},
+  {10,  32, 1, { {0, numLeds-1, 3000, FX_MODE_LARSON_SCANNER, NO_OPTIONS, {BLUE, BLACK, BLACK}} }}
 };
 
 int numPatterns = 2;
@@ -73,8 +75,15 @@ unsigned long lastTime = 0;
 WS2812FX ws2812fx = WS2812FX(numLeds, dataPin, NEO_GRB + NEO_KHZ800);
 ESP8266WebServer server(HTTP_PORT);
 
+void (*customAuxFunc[])(void) { // define custom auxiliary functions here
+  []{ Serial.println("running customAuxFunc[0]"); },
+  []{ Serial.println("running customAuxFunc[1]"); },
+  []{ Serial.println("running customAuxFunc[2]"); }
+};
+
 void setup() {
   Serial.begin(115200);
+  delay(500);
   Serial.println("\r\n");
 
   EEPROM.begin(2048); // for ESP8266 (comment out if using an Arduino)
@@ -90,6 +99,26 @@ void setup() {
   }
   Serial.print("\nServer IP is ");
   Serial.println(WiFi.localIP());
+
+  // init OTA
+  ArduinoOTA.onStart([]() {
+    Serial.println("OTA start");
+  });
+  ArduinoOTA.onEnd([]() {
+    Serial.println("\nOTA end");
+  });
+  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+  });
+  ArduinoOTA.onError([](ota_error_t error) {
+    Serial.printf("Error[%u]: ", error);
+    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+    else if (error == OTA_END_ERROR) Serial.println("End Failed");
+  });
+  ArduinoOTA.begin();
 
   // config and start the web server
   configServer();
@@ -108,6 +137,7 @@ void setup() {
 void loop() {
   ws2812fx.service();
   server.handleClient();
+  ArduinoOTA.handle();
 
   // if it's time to change pattern, do it
   unsigned long now = millis();
@@ -131,13 +161,22 @@ void configServer() {
     server.send(404, "text/plain", "Page not found");
   });
 
-  // return the WS2812FX status (optionally set the running state)
+  // return the WS2812FX status
+  // optionally set the running state or run custom auxiliary functions
   server.on("/status", [](){
     server.sendHeader("Access-Control-Allow-Origin", "*");
     String running = server.arg("running");
     if (running.length() > 0) {
       if (running == "true") ws2812fx.start();
       else ws2812fx.stop();
+    }
+
+    String auxFunc = server.arg("auxFunc");
+    if (auxFunc.length() > 0) {
+      int auxFuncIndex = auxFunc.toInt();
+      if(auxFuncIndex >=0 && auxFuncIndex < sizeof(customAuxFunc) / sizeof(customAuxFunc[0])) {
+        customAuxFunc[auxFuncIndex]();
+      }
     }
 
     char status[50] = "{\"version\":\"";
