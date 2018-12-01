@@ -445,6 +445,22 @@ ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_CUSTOM, RED, 300, NO_OPTIONS);
 ```
 ***
 
+## More About Custom Effects
+
+The custom effect feature has evolved to the point where several pre-built
+custom effects are included in WS2812FX's src/custom folder. These effects
+tend to be more complex then the standard set of effects, and fitting them
+all in an Arduino's limited flash memory would be a problem. So they're
+broken out into separate files so users can pick and choose which custom
+effects to include in their project.
+
+Note, there are four custom effect 'slots' available. A custom effect is
+assigned to a slot by calling the setCustomMode(name, *p) or
+setCustomMode(index, name, *p) functions. For guidance, see
+the ws2812fx_custom_effect2 example sketch.
+
+***
+
 ## Custom Show() function
 
 Another of WS2812FX's more advanced features is it's support for a custom show()

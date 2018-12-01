@@ -297,6 +297,10 @@ uint16_t WS2812FX::getLength(void) {
   return numPixels();
 }
 
+uint16_t WS2812FX::getNumBytes(void) {
+  return numBytes;
+}
+
 uint8_t WS2812FX::getModeCount(void) {
   return MODE_COUNT;
 }
@@ -1557,35 +1561,36 @@ uint16_t WS2812FX::mode_icu(void) {
  * Custom modes
  */
 uint16_t WS2812FX::mode_custom_0() {
-  return customMode0();
+  return customModes[0]();
 }
 uint16_t WS2812FX::mode_custom_1() {
-  return customMode1();
+  return customModes[1]();
 }
 uint16_t WS2812FX::mode_custom_2() {
-  return customMode2();
+  return customModes[2]();
 }
 uint16_t WS2812FX::mode_custom_3() {
-  return customMode3();
+  return customModes[3]();
 }
 
 /*
  * Custom mode helpers
  */
 void WS2812FX::setCustomMode(uint16_t (*p)()) {
-  customMode0 = p;
+  customModes[0] = p;
 }
 
 uint8_t WS2812FX::setCustomMode(const __FlashStringHelper* name, uint16_t (*p)()) {
-  if(_custom_mode_index < MODE_COUNT) {
-    _names[_custom_mode_index] = name; // store the custom mode name
-    if(_custom_mode_index == FX_MODE_CUSTOM_0) customMode0 = p; // store the custom mode
-    if(_custom_mode_index == FX_MODE_CUSTOM_1) customMode1 = p;
-    if(_custom_mode_index == FX_MODE_CUSTOM_2) customMode2 = p;
-    if(_custom_mode_index == FX_MODE_CUSTOM_3) customMode3 = p;
+  static uint8_t custom_mode_index = 0;
+  return setCustomMode(custom_mode_index++, name, p);
+}
 
-    _custom_mode_index++;
-    return (_custom_mode_index - 1);
+uint8_t WS2812FX::setCustomMode(uint8_t index, const __FlashStringHelper* name, uint16_t (*p)()) {
+  if((FX_MODE_CUSTOM_0 + index) < MODE_COUNT) {
+    _names[FX_MODE_CUSTOM_0 + index] = name; // store the custom mode name
+    customModes[index] = p; // store the custom mode
+
+    return (FX_MODE_CUSTOM_0 + index);
   }
   return 0;
 }

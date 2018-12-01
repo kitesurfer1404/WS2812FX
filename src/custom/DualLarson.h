@@ -50,11 +50,11 @@ uint16_t dualLarson(void) {
 
   ws2812fx.fade_out();
 
-  int16_t startOffset = (seg->start + index + offset) % seglen;
-  int16_t stopOffset = (seg->stop - index + offset) % seglen;
+  int16_t startOffset = (index + offset) % seglen;
+  int16_t stopOffset = (index + offset) % seglen;
 
-  ws2812fx.setPixelColor(startOffset, seg->colors[0]);
-  ws2812fx.setPixelColor(stopOffset,  seg->colors[2]);
+  ws2812fx.setPixelColor(seg->start + startOffset, seg->colors[0]);
+  ws2812fx.setPixelColor(seg->stop - stopOffset,  seg->colors[2]);
 
   if(index >= (seg->stop - seg->start) || index <= 0) {
     dir = -dir;
