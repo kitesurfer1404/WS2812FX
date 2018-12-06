@@ -267,6 +267,9 @@ void configServer() {
             int fadeRate = seg["fadeRate"];
             if(fadeRate > 0) patterns[i].segments[j].options |= (fadeRate & 0x7) << 4;
 
+            int size = seg["size"];
+            if(size > 0) patterns[i].segments[j].options |= (size & 0x3) << 1;
+
             JsonArray& colors = seg["colors"]; // the web interface sends three color values
             // convert colors from strings ('#ffffff') to uint32_t
             patterns[i].segments[j].colors[0] = strtoul(colors[0].as<char*>() + 1, 0, 16);

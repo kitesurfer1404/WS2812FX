@@ -83,29 +83,35 @@
 #define DARK(c)    (uint32_t)((c >> 4) & 0x0f0f0f0f)
 
 // segment options
-// bit    8: reverse animation
-// bits 5-7: fade rate (0-7)
-// bit    4: gamma correction
-// bits 1-3: TBD
-#define NO_OPTIONS   (uint8_t)0x00
-#define REVERSE      (uint8_t)0x80
+// bit    7: reverse animation
+// bits 4-6: fade rate (0-7)
+// bit    3: gamma correction
+// bits 1-2: size
+// bits   0: TBD
+#define NO_OPTIONS   (uint8_t)B00000000
+#define REVERSE      (uint8_t)B10000000
 #define IS_REVERSE   ((SEGMENT.options & REVERSE) == REVERSE)
-#define FADE_XFAST   (uint8_t)0x10
-#define FADE_FAST    (uint8_t)0x20
-#define FADE_MEDIUM  (uint8_t)0x30
-#define FADE_SLOW    (uint8_t)0x40
-#define FADE_XSLOW   (uint8_t)0x50
-#define FADE_XXSLOW  (uint8_t)0x60
-#define FADE_GLACIAL (uint8_t)0x70
-#define FADE_RATE    ((SEGMENT.options & 0x70) >> 4)
-#define GAMMA        (uint8_t)0x08
+#define FADE_XFAST   (uint8_t)B00010000
+#define FADE_FAST    (uint8_t)B00100000
+#define FADE_MEDIUM  (uint8_t)B00110000
+#define FADE_SLOW    (uint8_t)B01000000
+#define FADE_XSLOW   (uint8_t)B01010000
+#define FADE_XXSLOW  (uint8_t)B01100000
+#define FADE_GLACIAL (uint8_t)B01110000
+#define FADE_RATE    ((SEGMENT.options >> 4) & 7)
+#define GAMMA        (uint8_t)B00001000
 #define IS_GAMMA     ((SEGMENT.options & GAMMA) == GAMMA)
+#define SIZE_SMALL   (uint8_t)B00000000
+#define SIZE_MEDIUM  (uint8_t)B00000010
+#define SIZE_LARGE   (uint8_t)B00000100
+#define SIZE_XLARGE  (uint8_t)B00000110
+#define SIZE_OPTION  ((SEGMENT.options >> 1) & 3)
 
 // segment runtime options (aux_param2)
-#define FRAME     (uint8_t)0x80
+#define FRAME     (uint8_t)B10000000
 #define SET_FRAME (SEGMENT_RUNTIME.aux_param2 |=  FRAME)
 #define CLR_FRAME (SEGMENT_RUNTIME.aux_param2 &= ~FRAME)
-#define CYCLE     (uint8_t)0x40
+#define CYCLE     (uint8_t)B01000000
 #define SET_CYCLE (SEGMENT_RUNTIME.aux_param2 |=  CYCLE)
 #define CLR_CYCLE (SEGMENT_RUNTIME.aux_param2 &= ~CYCLE)
 
@@ -468,6 +474,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       getOptions(uint8_t);
 
     uint16_t
+      random16(void),
+      random16(uint16_t),
       getSpeed(void),
       getSpeed(uint8_t),
       getLength(void),
@@ -500,14 +508,14 @@ class WS2812FX : public Adafruit_NeoPixel {
     uint16_t
       blink(uint32_t, uint32_t, bool strobe),
       color_wipe(uint32_t, uint32_t, bool),
-      theater_chase(uint32_t, uint32_t),
       twinkle(uint32_t, uint32_t),
       twinkle_fade(uint32_t),
       chase(uint32_t, uint32_t, uint32_t),
       running(uint32_t, uint32_t),
       fireworks(uint32_t),
       fire_flicker(int),
-      tricolor_chase(uint32_t, uint32_t, uint32_t);
+      tricolor_chase(uint32_t, uint32_t, uint32_t),
+      scan(uint32_t, uint32_t, bool);
     uint32_t
       color_blend(uint32_t, uint32_t, uint8_t);
 

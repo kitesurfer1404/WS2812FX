@@ -43,21 +43,21 @@ extern WS2812FX ws2812fx;
 
 uint16_t dualLarson(void) {
   WS2812FX::Segment* seg = ws2812fx.getSegment(); // get the current segment
+  WS2812FX::Segment_runtime* segrt = ws2812fx.getSegmentRuntime();
   int seglen = seg->stop - seg->start + 1;
 
-  static int16_t index = 0, dir = 1, offset = 0;
-  index += dir;
+  static int16_t offset = 0;
+  int8_t dir = segrt->aux_param ? -1 : 1;
+  segrt->aux_param3 += dir;
 
   ws2812fx.fade_out();
 
-  int16_t startOffset = (index + offset) % seglen;
-  int16_t stopOffset = (index + offset) % seglen;
+  int16_t segIndex = (segrt->aux_param3 + offset) % seglen;
+  ws2812fx.setPixelColor(seg->start + segIndex, seg->colors[0]);
+  ws2812fx.setPixelColor(seg->stop  - segIndex, seg->colors[2]);
 
-  ws2812fx.setPixelColor(seg->start + startOffset, seg->colors[0]);
-  ws2812fx.setPixelColor(seg->stop - stopOffset,  seg->colors[2]);
-
-  if(index >= (seg->stop - seg->start) || index <= 0) {
-    dir = -dir;
+  if(segrt->aux_param3 >= (seg->stop - seg->start) || segrt->aux_param3 <= 0) {
+    segrt->aux_param = !segrt->aux_param;
     if(seg->options & REVERSE) offset = (offset + 1) % seglen;
   }
 
