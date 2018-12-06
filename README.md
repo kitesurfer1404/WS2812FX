@@ -125,7 +125,10 @@ Effects
 53. **Bicolor Chase** - Two LEDs running on a background color (set three colors).
 54. **Tricolor Chase** - Alternating three color pixels running (set three colors).
 55. **ICU** - Two eyes looking around.
-56. **Custom** - User created custom effect. 
+56. **Custom** - Up to four user created custom effects.
+57. **Custom**
+58. **Custom**
+59. **Custom**
 
 Projects using WS2812FX
 -----------------------

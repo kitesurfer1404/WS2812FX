@@ -1,9 +1,5 @@
 /*
   Custom effect that changes random pixels to transition between colors
-  
-  Important! You MUST set brightness=255, otherwise when the getPixelColor()
-  function tries to scale the stored (decimated) color values, you'll get
-  errors and the part of the algorithm that compares color values may fail.
 
   Keith Lord - 2018
 
@@ -48,9 +44,14 @@ uint16_t blockDissolve(void) {
   int seglen = seg->stop - seg->start + 1;
 
   uint32_t color = seg->colors[segrt->aux_param];
+  ws2812fx.setPixelColor(seg->start, color);
+  // get the decimated color after setPixelColor() has mangled it
+  // in accordance to the brightness setting
+  uint32_t desColor = ws2812fx.getPixelColor(seg->start);
+
   for(uint16_t i=0; i<seglen; i++) {
-    int index = seg->start + ws2812fx.random8(seglen);
-    if(ws2812fx.getPixelColor(index) != color) {
+    int index = seg->start + ws2812fx.random16(seglen);
+    if(ws2812fx.getPixelColor(index) != desColor) {
       ws2812fx.setPixelColor(index, color);
       return seg->speed;
     }

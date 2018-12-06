@@ -327,8 +327,8 @@ ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_FADE, colors, 2000, NO_OPTIONS);
 ```
 The new options parameter takes the place of the boolean reverse parameter.
 Options is an 8-bit value where each bit in the byte enables an animation
-alternative. As of this writing there are three options: reverse, gamma
-correction, and fade rate.
+alternative. As of this writing there are four options: reverse, gamma
+correction, fade rate and size.
 
 - reverse – like the boolean reverse parameter, just a new way of selecting
     the reverse animation direction.  
@@ -344,7 +344,7 @@ correction, and fade rate.
     gamma trickery.  
     ws2812fx.setSegment(0, 0, 9, FX_MODE_FADE, colors, 2000, GAMMA);
 
--   fade rate – several of the WS2812FX modes use a fade function to gradually
+- fade rate – several of the WS2812FX modes use a fade function to gradually
     reduce the intensity of LEDs, essentially fading the LED to black. This is
     easily seen in the FX_MODE_COMET mode, where the “tail” of the comet
     gradually fades away. Before WS2812FX v1.0.3 the fade rate (speed) was fixed
@@ -359,36 +359,42 @@ correction, and fade rate.
     ws2812fx.setSegment(0, 0, 9, FX_MODE_COMET, colors, 2000, FADE_XSLOW);
     ```
 
-    The new fade option can be used with the following modes:
-    ```
-    FX_MODE_TWINKLE_FADE
-    FX_MODE_TWINKLE_FADE_RANDOM
-    FX_MODE_LARSON_SCANNER
-    FX_MODE_COMET
-    FX_MODE_FIREWORKS
-    FX_MODE_FIREWORKS_RANDOM
+- size – several of the WS2812FX modes create pixel patterns that move across
+    the length of the LED strip. SCAN is a good example that shows one pixel
+    moving across a background color. This works fine for relatively short
+    strips of LEDs, but with longer lengths, the lone pixel tends to get lost
+    in the sea of background pixels. So the SIZE option was introduced in
+    WS2812FX v1.1.5 to allow you to adjust the size of the block of moving
+    pixels. The default SIZE_SMALL option would show the usual one pixel moving
+    across the background, while SIZE_XLARGE would show a block of eight pixels.
+    The following code would create a red block of 4 pixels 'scanning' across
+    a green background.
+
+    ```c++
+    uint32_t colors[] = {RED, GREEN, BLACK};
+    ws2812fx.setSegment(0, 0, 9, FX_MODE_SCAN, colors, 2000, SIZE_LARGE);
     ```
 
 The options are spelled out in the ws2812fx.h file.
 ```c++
-// options
-// bit 8: reverse animation
-// bits 5-7: fade rate
-// bits 4: gamma correction
-// bits 1-3: TBD
-#define NO_OPTIONS   (uint8_t)0x00
-#define REVERSE      (uint8_t)0x80
-#define FADE_XFAST   (uint8_t)0x10
-#define FADE_FAST    (uint8_t)0x20
-#define FADE_MEDIUM  (uint8_t)0x30
-#define FADE_SLOW    (uint8_t)0x40
-#define FADE_XSLOW   (uint8_t)0x50
-#define FADE_XXSLOW  (uint8_t)0x60
-#define FADE_GLACIAL (uint8_t)0x70
-#define GAMMA        (uint8_t)0x08
+#define NO_OPTIONS   (uint8_t)B00000000
+#define REVERSE      (uint8_t)B10000000
+#define FADE_XFAST   (uint8_t)B00010000
+#define FADE_FAST    (uint8_t)B00100000
+#define FADE_MEDIUM  (uint8_t)B00110000
+#define FADE_SLOW    (uint8_t)B01000000
+#define FADE_XSLOW   (uint8_t)B01010000
+#define FADE_XXSLOW  (uint8_t)B01100000
+#define FADE_GLACIAL (uint8_t)B01110000
+#define GAMMA        (uint8_t)B00001000
+#define SIZE_SMALL   (uint8_t)B00000000
+#define SIZE_MEDIUM  (uint8_t)B00000010
+#define SIZE_LARGE   (uint8_t)B00000100
+#define SIZE_XLARGE  (uint8_t)B00000110
 ```
-If you wanted to create a segment with both reverse direction and gamma
-correction, you would add the options like so:
+
+Options can be combined. If you wanted to create a segment with both reverse
+direction and gamma correction, you would add the options like so:
 ```c++
 uint8_t options = REVERSE + GAMMA;
 ws2812fx.setSegment(0, 0, 9, FX_MODE_COMET, colors, 2000, options);

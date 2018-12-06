@@ -1,6 +1,33 @@
 WS2182FX Change Log
 
 
+v1.1.5 changes 12/6/2018
+------------------------
+
+1) Added a SIZE option. It works similar to the FADE_RATE
+	option, affecting the size of blocks of pixels in some
+	of the effects. See the Users Guide for details,
+
+2) Added random16() function to generate 16-bit random numbers.
+
+3) Fixed several bugs with the Block Dissolve custom effect.
+
+4) Fixed a bug with the RUNNING_RANDOM effect that would cause
+	it to misbehave when used with very long segments.
+
+5) Refactored the THEATER_CHASE and SCAN effects to make them
+	more efficient and reduce their overall memory footprint.
+
+6) Refactored the DUAL_LARSON custom effect to replace static
+	variables with run-time variables. You can now have more
+	then one segment assigned to the DUAL_LARSON effect.
+
+7) Updated the library version number in the library.json and
+	library.properties files. Forgot to do this in v1.1.4,
+	so that version never got pushed out to the Arduino IDE
+	Library	Manager. Oops, sorry.
+
+
 v1.1.4 changes 12/1/2018
 ------------------------
 
