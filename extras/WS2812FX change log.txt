@@ -1,6 +1,27 @@
 WS2182FX Change Log
 
 
+v1.1.6 changes 12/14/2018
+------------------------
+
+1) A couple changes to the ws2812fx_patterns_web example sketch
+	to make it more robust and implement a new feature that allows
+	patterns to be individually enabled/disabled.
+
+2) Added a copyPixels() function to make it easier to create
+	scrolling effects.
+
+3) Added the rain custom effect, which makes use of copyPixels().
+
+4) My apologies for the rapid pace of changes to WS2812FX lately.
+	The library gets a fair amount of attention in prep for my
+	Christmas display. These updates have been pushed out every
+	couple of weeks, which I admit is excessive, but it's easier
+	for me to manage a few small updates rather then one ginormous
+	one. Happily, I think this should be it for a while. :)
+	Happy holidays everyone.
+
+
 v1.1.5 changes 12/6/2018
 ------------------------
 
