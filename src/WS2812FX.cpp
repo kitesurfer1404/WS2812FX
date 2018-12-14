@@ -118,6 +118,13 @@ void WS2812FX::setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_
   }
 }
 
+void WS2812FX::copyPixels(uint16_t dest, uint16_t src, uint16_t count) {
+  uint8_t *pixels = getPixels();
+  uint8_t bytesPerPixel = (wOffset == rOffset) ? 3 : 4; // 3=RGB, 4=RGBW
+
+  memmove(pixels + (dest * bytesPerPixel), pixels + (src * bytesPerPixel), count * bytesPerPixel);
+}
+
 // overload show() functions so we can use custom show()
 void WS2812FX::show(void) {
   if(customShow == NULL) {
@@ -1314,18 +1321,10 @@ uint16_t WS2812FX::mode_halloween(void) {
  * Random colored pixels running.
  */
 uint16_t WS2812FX::mode_running_random(void) {
-  // use memmove to copy part of the pixels[] array to avoid the
-  // colors being decimated by running getPixelColor()/setPixelColor()
-  // over and over again
-  uint8_t *pixels = getPixels();
-  uint8_t bytesPerPixel = (wOffset == rOffset) ? 3 : 4; // 3=RGB, 4=RGBW
-  uint8_t *segStart = pixels + (SEGMENT.start * bytesPerPixel);
-  int numBytes = (SEGMENT.stop - SEGMENT.start) * bytesPerPixel;
-
   if(IS_REVERSE) {
-    memmove(segStart, segStart + bytesPerPixel, numBytes);
+    copyPixels(SEGMENT.start, SEGMENT.start + 1, SEGMENT_LENGTH - 1);
   } else {
-    memmove(segStart + bytesPerPixel, segStart, numBytes);
+    copyPixels(SEGMENT.start + 1, SEGMENT.start, SEGMENT_LENGTH - 1);
   }
 
   if(SEGMENT_RUNTIME.counter_mode_step == 0) {
