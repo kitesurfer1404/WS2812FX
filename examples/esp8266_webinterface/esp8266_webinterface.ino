@@ -223,14 +223,14 @@ void srv_handle_modes() {
 void srv_handle_set() {
   for (uint8_t i=0; i < server.args(); i++){
     if(server.argName(i) == "c") {
-      uint32_t tmp = (uint32_t) strtol(&server.arg(i)[0], NULL, 16);
+      uint32_t tmp = (uint32_t) strtol(server.arg(i).c_str(), NULL, 16);
       if(tmp >= 0x000000 && tmp <= 0xFFFFFF) {
         ws2812fx.setColor(tmp);
       }
     }
 
     if(server.argName(i) == "m") {
-      uint8_t tmp = (uint8_t) strtol(&server.arg(i)[0], NULL, 10);
+      uint8_t tmp = (uint8_t) strtol(server.arg(i).c_str(), NULL, 10);
       ws2812fx.setMode(tmp % ws2812fx.getModeCount());
       Serial.print("mode is "); Serial.println(ws2812fx.getModeName(ws2812fx.getMode()));
     }
@@ -241,7 +241,7 @@ void srv_handle_set() {
       } else if(server.arg(i)[0] == ' ') {
         ws2812fx.setBrightness(min(max(ws2812fx.getBrightness(), 5) * 1.2, 255));
       } else { // set brightness directly
-        uint8_t tmp = (uint8_t) strtol(&server.arg(i)[0], NULL, 10);
+        uint8_t tmp = (uint8_t) strtol(server.arg(i).c_str(), NULL, 10);
         ws2812fx.setBrightness(tmp);
       }
       Serial.print("brightness is "); Serial.println(ws2812fx.getBrightness());
