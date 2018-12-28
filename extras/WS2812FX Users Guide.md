@@ -7,7 +7,7 @@ WS2812FX is a library of lighting effects, which allows
 [ESP8266](https://en.wikipedia.org/wiki/ESP8266) microcontrollers to control
 [WS2812](http://www.world-semi.com/products/details-178.html) programmable LEDs.
 WS2812FX has over 50 pre-programmed effects, which can be used to create dazzling
-lightshows.
+light shows.
 ***
 
 ## Disclaimer
@@ -24,8 +24,8 @@ use of these circuits, software, or information.
 
 The authors have used reasonable care in preparing the information included in
 this document, but we do not warrant that such information is error free. We
-assume no liability whatsoever for any damages incurred by you resulting from
-errors in or omissions from the information included herein.
+assume no liability whatsoever for any damages resulting from errors in or
+omissions from the information included herein.
 ***
 
 ## What you need
@@ -53,11 +53,11 @@ wires, resistors, capacitors and an LED or two are also handy.
 
     WS2812FX supports several variants of WS2812-type LEDs, including the
     WS2811, WS2812 and WS2812B. These LEDs are sometimes referred to
-    collectively as NeoPixels, which is Adafruit’s brand of programmable LEDs.
-    The LEDs have several nice features:
+    collectively as [NeoPixels](https://www.adafruit.com/category/168), which
+    is Adafruit’s brand of programmable LEDs. The LEDs have several nice features:
 
     - Powered by a 5V supply. If you only have a few, they can be powered by
-    the same USB cable use to power and program the ESP8266 dev board.
+    the same USB cable use to power and program the Arduino or ESP8266 dev board.
 
     - Data transfer is done using a simple 1-wire serial interface. When the
     LEDs are wired in cascade, you drive the first LED from the microcontroller
@@ -68,9 +68,11 @@ wires, resistors, capacitors and an LED or two are also handy.
     strips with 30/60/144 LEDs per meter or arranged in circles, squares and
     even 3D cubes.
     
-    - Strongly suggest adding a 300-500Ω resistor between the ESP and WS2812B input
-    to reduce and improve signal reliability. If struggling still, try adding a
-    large capacitor (1000uF upwards) between Vin and GND.
+    - Strongly suggest adding a 300-500Ω resistor between the microcontroller and
+    WS2812 DI pin to reduce noise and improve signal reliability. It's also strongly
+    advised to connect a large electrolytic capacitor (say 1000uF) between the
+    WS2812 VDD and VSS pins to reduce voltage spikes and noise on the power supply
+    rail.
 
 1.  The Development Environment  
       
@@ -78,11 +80,11 @@ wires, resistors, capacitors and an LED or two are also handy.
     we’ll be using the [Arduino IDE](https://www.arduino.cc/en/Main/Software) to
     create our LED programs. If you don’t have it installed already, download
     and install the IDE as described on the arduino.cc website. If you’re
-    totally new to Arduino, you should read over the [Getting
-    Started](https://www.arduino.cc/en/Guide/HomePage) guide to get familiar
-    with the general programming concepts and IDE workflow, and try a few of the
-    [tutorials](https://www.arduino.cc/en/Tutorial/HomePage). You should be able
-    to load and run the ubiquitous
+    totally new to Arduino, you should read over the
+    [Getting Started](https://www.arduino.cc/en/Guide/HomePage) guide to get
+    familiar with the general programming concepts and IDE workflow, and try
+    a few of the [tutorials](https://www.arduino.cc/en/Tutorial/HomePage). You
+    should be able to load and run the ubiquitous
     [blink](https://www.arduino.cc/en/Tutorial/Blink) example before diving into
     programming with the WS2812FX library.
 
@@ -94,8 +96,8 @@ wires, resistors, capacitors and an LED or two are also handy.
 
     If you’re using an Arduino microcontroller, you’re good to go. But if you’re
     using an ESP8266, you’ll need to install the ESP8266 core platform package
-    using Boards Manager as described on the [ESP8266
-    platform](https://github.com/esp8266/Arduino#installing-with-boards-manager)
+    using Boards Manager as described on the
+    [ESP8266 platform](https://github.com/esp8266/Arduino#installing-with-boards-manager)
     GitHub site. There’s a wealth of information about programming the ESP8266
     at the platform’s
     [documentation](https://arduino-esp8266.readthedocs.io/en/latest/) web site.
@@ -152,10 +154,10 @@ accordingly.
 
 Speaking of hardware design, the good folks at Adafruit have put a lot of time
 and energy into their NeoPixel products and have written some excellent hardware
-guides. Of special interest is their [NeoPixel
-UberGuide](https://learn.adafruit.com/adafruit-neopixel-uberguide). It is full
-of great tips and best practices that will save you time and aggravation. Go
-read it.
+guides. Of special interest is their
+[NeoPixel UberGuide](https://learn.adafruit.com/adafruit-neopixel-uberguide).
+It is full of great tips and best practices that will save you time and
+aggravation. Go read it.
 ***
 
 ## WS281FX Basics
@@ -181,7 +183,8 @@ strip of LEDs. A basic sketch looks like this:
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() {
-    ws2812fx.init(); // Initialize the strip
+    // Initialize the strip
+    ws2812fx.init();
 
     // Set the LED’s overall brightness. 0=strip off, 255=strip at full intensity
     ws2812fx.setBrightness(255);
@@ -189,18 +192,21 @@ void setup() {
     // Set the animation speed. 10=very fast, 5000=very slow
     ws2812fx.setSpeed(2000);
 
-    ws2812fx.setColor(RED); // Set the color of the LEDs
+    // Set the color of the LEDs
+    ws2812fx.setColor(RED);
 
     // Select an animation effect/mode. 0=static color, 1=blink, etc. You
     // can specify a number here, or there some handy keywords defined in
     // the WS2812FX.h file that are more descriptive and easier to remember.
     ws2812fx.setMode(FX_MODE_BLINK);
 
-    ws2812fx.start(); // Start the animation
+    // Start the animation
+    ws2812fx.start();
 }
 
 void loop() {
-    ws2812fx.service(); // continually run the animation service
+    // continually run the animation service
+    ws2812fx.service();
 }
 ```
 
@@ -331,8 +337,10 @@ alternative. As of this writing there are four options: reverse, gamma
 correction, fade rate and size.
 
 - reverse – like the boolean reverse parameter, just a new way of selecting
-    the reverse animation direction.  
+    the reverse animation direction.
+    ```c++
     ws2812fx.setSegment(0, 0, 9, FX_MODE_FADE, colors, 2000, REVERSE);
+    ```
 
 - gamma correction – our eyes have evolved to respond in a non-linear way to
     the intensity of light in the visible spectrum. In a nutshell, we do not
@@ -341,8 +349,10 @@ correction, fade rate and size.
     correction](https://learn.adafruit.com/led-tricks-gamma-correction/the-issue)
     article has a good explanation of this non-linear relationship and provides
     a technique to compensate for it. Setting this option enables the Adafruit
-    gamma trickery.  
+    gamma trickery.
+    ```c++
     ws2812fx.setSegment(0, 0, 9, FX_MODE_FADE, colors, 2000, GAMMA);
+    ```
 
 - fade rate – several of the WS2812FX modes use a fade function to gradually
     reduce the intensity of LEDs, essentially fading the LED to black. This is
@@ -431,20 +441,24 @@ uint16_t myCustomEffect(void) {
   uint32_t colors[] = {BLUE, GREEN, 0x002080, 0x008020, 0x002020,  0x002000, 0x000020};
 
   // get the current segment
-  WS2812FX::Segment seg = ws2812fx.getSegment();
+  WS2812FX::Segment* seg = ws2812fx.getSegment();
 
   // loop through the segment's LEDs, updating each LED in some way
-  for(uint16_t i=seg.start; i<seg.stop; i++) {
+  for(uint16_t i=seg->start; i<=seg->stop; i++) {
     ws2812fx.setPixelColor(i, colors[random(numColors)]); // random colors from the pallette
   }
-  return seg.speed; // return the segment's speed
+  return seg->speed; // return the segment's speed
 }
 ```
 2.  Call the WS2812FX setCustomEffect() function, passing the name of your
 custom effect function.
-```c++
-ws2812fx.setCustomMode(myCustomEffect);
-```
+    ```c++
+    ws2812fx.setCustomMode(myCustomEffect);
+    ```
+    or if you want to assign a name to your custom effect, use this syntax:
+    ```c++
+    ws2812fx.setCustomMode(F("My Custom Effect"), myCustomEffect);
+    ```
 3.  Create a segment using the FX_MODE_CUSTOM mode.
 ```c++
 ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_CUSTOM, RED, 300, NO_OPTIONS);
@@ -463,7 +477,7 @@ effects to include in their project.
 Note, there are four custom effect 'slots' available. A custom effect is
 assigned to a slot by calling the setCustomMode(name, *p) or
 setCustomMode(index, name, *p) functions. For guidance, see
-the ws2812fx_custom_effect2 example sketch.
+the **ws2812fx_custom_effect2** example sketch.
 
 ***
 
@@ -514,7 +528,10 @@ controls. The **serial_control** sketch shows how you might control your lights
 with a serial interface, like the Serial Monitor built into the Arduino IDE. If
 you’re using an ESP8266, you’ve got network (Wi-Fi) connectivity built-in! The
 **esp8266_webinterface** and **ws2812fx_segments_web** example sketches are good
-starting points if you’re trying to create a web interface.
+starting points if you’re trying to create a web interface. Have a look at the
+***ws2812fx_alexa*** example sketch if you want to use an Amazon Echo device to
+control your LEDs. The ***ws2812fx_soundfx*** example sketch can get you started
+if you want to add sound to your project.
 
 If you’re looking for inspiration, check out
 [McLighting](https://github.com/toblum/McLighting), an easy-to-use web interface
