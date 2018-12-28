@@ -369,6 +369,11 @@ void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode
   setSegment(n, start, stop, mode, colors, speed, reverse);
 }
 
+void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed, uint8_t options) {
+  uint32_t colors[] = {color, 0, 0};
+  setSegment(n, start, stop, mode, colors, speed, options);
+}
+
 void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse) {
   setSegment(n, start, stop, mode, colors, speed, (uint8_t)(reverse ? REVERSE : NO_OPTIONS));
 }
@@ -1354,17 +1359,22 @@ uint16_t WS2812FX::mode_larson_scanner(void) {
       setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.counter_mode_step, SEGMENT.colors[0]);
     }
   } else {
+    uint16_t index = (SEGMENT_LENGTH * 2) - SEGMENT_RUNTIME.counter_mode_step - 2;
     if(IS_REVERSE) {
-      setPixelColor(SEGMENT.stop - ((SEGMENT_LENGTH * 2) - SEGMENT_RUNTIME.counter_mode_step) + 2, SEGMENT.colors[0]);
+      setPixelColor(SEGMENT.stop - index, SEGMENT.colors[0]);
     } else {
-      setPixelColor(SEGMENT.start + ((SEGMENT_LENGTH * 2) - SEGMENT_RUNTIME.counter_mode_step) - 2, SEGMENT.colors[0]);
+      setPixelColor(SEGMENT.start + index, SEGMENT.colors[0]);
     }
   }
 
   if(SEGMENT_RUNTIME.counter_mode_step % SEGMENT_LENGTH == 0) SET_CYCLE;
   else CLR_CYCLE;
 
-  SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % ((SEGMENT_LENGTH * 2) - 2);
+  SEGMENT_RUNTIME.counter_mode_step++;
+  if(SEGMENT_RUNTIME.counter_mode_step >= ((SEGMENT_LENGTH * 2) - 2)) {
+    SEGMENT_RUNTIME.counter_mode_step = 0;
+  }
+
   return (SEGMENT.speed / (SEGMENT_LENGTH * 2));
 }
 

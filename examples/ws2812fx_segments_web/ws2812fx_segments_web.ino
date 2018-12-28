@@ -40,7 +40,7 @@
 
 #include <WS2812FX.h>
 #include <ESP8266WebServer.h>
-#include <ArduinoJson.h>
+#include <ArduinoJson.h> // use ArduinoJson v5. ArduinoJson v6 will not work.
 #include <ArduinoOTA.h>
 #include <EEPROM.h>
 
