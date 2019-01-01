@@ -43,7 +43,7 @@
 #include <EEPROM.h>
 #include <ArduinoOTA.h>
 
-#define VERSION "2.0.7"
+#define VERSION "2.0.8"
 
 uint8_t  dataPin = D1; // default digital pin used to drive the LED strip
 uint16_t numLeds = 30; // default number of LEDs on the strip
@@ -215,8 +215,9 @@ void configServer() {
     String data = server.arg("plain");
     Serial.println(data);
 
-    json2patterns(data.c_str());
-    if (numPatterns > 0) {
+    bool isParseOk = json2patterns(data.c_str());
+
+    if (isParseOk && numPatterns > 0) {
       ws2812fx.stop();
       ws2812fx.clear();
       ws2812fx.resetSegments();
@@ -275,7 +276,7 @@ int modeName2Index(const char* name) {
 
 #if ARDUINOJSON_VERSION_MAJOR == 5
 //#pragma message("Compiling for ArduinoJson v5")
-void json2patterns(const char* json) {
+bool json2patterns(const char* json) {
   DynamicJsonBuffer jsonBuffer(2000);
   JsonObject& deviceJson = jsonBuffer.parseObject(json);
   if (deviceJson.success()) {
@@ -341,18 +342,21 @@ void json2patterns(const char* json) {
         if (numPatterns >= MAX_NUM_PATTERNS) break;
       }
     } else {
-      Serial.println("JSON contains no pattern data");
+      Serial.println(F("JSON contains no pattern data"));
+      return false;
     }
   } else {
-    Serial.println("Could not parse JSON payload");
+    Serial.println(F("Could not parse JSON payload"));
+    return false;
   }
+  return true;
 }
 #endif
 
 #if ARDUINOJSON_VERSION_MAJOR == 6
 //#pragma message("Compiling for ArduinoJson v6")
-void json2patterns(const char* json) {
-  DynamicJsonDocument doc;
+bool json2patterns(const char* json) {
+  DynamicJsonDocument doc(2000);
   DeserializationError error = deserializeJson(doc, json);
   if (!error) {
     JsonObject deviceJson = doc.as<JsonObject>();
@@ -419,10 +423,14 @@ void json2patterns(const char* json) {
         if (numPatterns >= MAX_NUM_PATTERNS)  break;
       }
     } else {
-      Serial.println("JSON contains no pattern data");
+      Serial.println(F("JSON contains no pattern data"));
+      return false;
     }
   } else {
-    Serial.println("Could not parse JSON payload");
+    Serial.print(F("Could not parse JSON payload: "));
+    Serial.println(error.c_str());
+    return false;
   }
+  return true;
 }
 #endif
