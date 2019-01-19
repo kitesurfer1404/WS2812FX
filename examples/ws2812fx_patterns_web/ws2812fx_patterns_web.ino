@@ -288,8 +288,8 @@ bool json2patterns(const char* json) {
       numPatterns = 0;
       for (int i = 0; i < patternsJson.size(); i++) {
         JsonObject& patt = patternsJson[i];
-        bool isEnabled = patt["isEnabled"];
-        if (! isEnabled) continue; // disabled patterns are not stored
+//      bool isEnabled = patt["isEnabled"];
+//      if (! isEnabled) continue; // disabled patterns are not stored
 
         JsonArray& segmentsJson = patt["segments"];
         if (segmentsJson.size() == 0 ) continue;
@@ -368,8 +368,8 @@ bool json2patterns(const char* json) {
       numPatterns = 0;
       for (int i = 0; i < patternsJson.size(); i++) {
         JsonObject patt = patternsJson[i];
-        bool isEnabled = patt["isEnabled"];
-        if (! isEnabled) continue; // disabled patterns are not stored
+//      bool isEnabled = patt["isEnabled"];
+//      if (! isEnabled) continue; // disabled patterns are not stored
 
         JsonArray segmentsJson = patt["segments"];
         if (segmentsJson.size() == 0 ) continue;
