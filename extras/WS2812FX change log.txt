@@ -1,13 +1,15 @@
 WS2182FX Change Log
 
 
-v1.1.7 changes 12/27/2018
+v1.1.7 changes 1/18/2018
 ------------------------
 
 1) Updated the User Guide
 
 2) Updated the ws2812fx_patterns_web example sketch so that it
 	could use version 5 or version 6 of the ArduinoJson library.
+	(as I write this, ArduinoJson v6 is beta software and has some
+	issues, so please stick with v5 if you can)
 
 3) Added another variant of the setSegment() function with this
 	parameter signature:
@@ -27,6 +29,9 @@ v1.1.7 changes 12/27/2018
 	uint32_t tmp = (uint32_t) strtol(&server.arg(i)[0], NULL, 16);
 	which was changed to this:
 	uint32_t tmp = (uint32_t) strtol(server.arg(i).c_str(), NULL, 16);
+
+7) fixed a bug in the ws2812fx_patterns_web example sketch that made
+	it incompatible with LEDfx v1.0.1. Thanks Niklas.
 
 
 v1.1.6 changes 12/14/2018
