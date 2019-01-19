@@ -18,6 +18,8 @@ Features
 Download, Install and Example
 -----------------------------
 
+[![arduino-library-badge](https://www.ardu-badge.com/badge/WS2812FX.svg)](https://www.ardu-badge.com/WS2812FX)
+
 You can **search for WS2812FX in the Arduino IDE Library Manager** or install the latest (or development) version manually:
 
 
