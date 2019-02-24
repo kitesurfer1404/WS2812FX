@@ -480,13 +480,13 @@ uint8_t WS2812FX::random8(uint8_t lim) {
 }
 
 uint16_t WS2812FX::random16() {
-    return random8() * 256 + random8();
+    return (uint16_t)random8() * 256 + random8();
 }
 
 // note random16(lim) generates numbers in the range 0 to (lim - 1)
 uint16_t WS2812FX::random16(uint16_t lim) {
     uint16_t r = random16();
-    r = (r * lim) >> 16;
+    r = ((uint32_t)r * lim) >> 16;
     return r;
 }
 
