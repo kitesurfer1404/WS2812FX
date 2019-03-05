@@ -43,7 +43,7 @@
 #include <EEPROM.h>
 #include <ArduinoOTA.h>
 
-#define VERSION "2.0.8"
+#define VERSION "2.1.0"
 
 uint8_t  dataPin = D1; // default digital pin used to drive the LED strip
 uint16_t numLeds = 30; // default number of LEDs on the strip
@@ -124,7 +124,7 @@ void setup() {
 
   // if not rebooting due to catastrophic error, restore pattern data from eeprom
   struct  rst_info  *rstInfo = system_get_rst_info();
-  Serial.print("rstInfo->reason:"); Serial.println(rstInfo->reason);
+  //Serial.print("rstInfo->reason:"); Serial.println(rstInfo->reason);
   if (rstInfo->reason !=  REASON_EXCEPTION_RST) { // not reason 2
     restoreFromEEPROM();
   }
@@ -215,7 +215,7 @@ void configServer() {
     String data = server.arg("plain");
     Serial.println(data);
 
-    bool isParseOk = json2patterns(data.c_str());
+    bool isParseOk = json2patterns(data);
 
     if (isParseOk && numPatterns > 0) {
       ws2812fx.stop();
@@ -276,7 +276,7 @@ int modeName2Index(const char* name) {
 
 #if ARDUINOJSON_VERSION_MAJOR == 5
 //#pragma message("Compiling for ArduinoJson v5")
-bool json2patterns(const char* json) {
+bool json2patterns(String &json) {
   DynamicJsonBuffer jsonBuffer(2000);
   JsonObject& deviceJson = jsonBuffer.parseObject(json);
   if (deviceJson.success()) {
@@ -355,8 +355,13 @@ bool json2patterns(const char* json) {
 
 #if ARDUINOJSON_VERSION_MAJOR == 6
 //#pragma message("Compiling for ArduinoJson v6")
-bool json2patterns(const char* json) {
-  DynamicJsonDocument doc(2000);
+bool json2patterns(String &json) {
+  // in ArduinoJson v6 a DynamicJsonDocument does not expand as needed
+  // like it did in ArduinoJson v5. So rather then try to compute the
+  // optimum heap size, we'll just allocated a bunch of space on the
+  // heap and hope it's enough.
+  int freeHeap = ESP.getFreeHeap();
+  DynamicJsonDocument doc(freeHeap - 3096); // allocate all of the available heap except 3kB
   DeserializationError error = deserializeJson(doc, json);
   if (!error) {
     JsonObject deviceJson = doc.as<JsonObject>();
