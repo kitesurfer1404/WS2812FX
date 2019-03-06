@@ -1,7 +1,25 @@
 WS2182FX Change Log
 
 
-v1.1.7 changes 1/18/2018
+v1.1.8 changes 3/6/2019
+------------------------
+
+1) Added ArduBadge to README.md
+
+2) Added fade_out(uint32_t) and setColor(uint8_t, uint8_t, uint8_t, uint8_t)
+	functions for more flexibility
+
+3) fixed random16() bug that was causing incorrect results when run on
+	Arduino. See https://github.com/kitesurfer1404/WS2812FX/issues/161
+
+4) Enhancement to ws2812fx_patterns_web example sketch to make it
+	more compatible with ArduinoJson v6. The current production
+	version of ArduinoJson v6 (v6.9.1) works well.
+
+5) Added fillerup custom effect
+
+
+v1.1.7 changes 1/18/2019
 ------------------------
 
 1) Updated the User Guide
