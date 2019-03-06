@@ -903,9 +903,13 @@ uint16_t WS2812FX::mode_twinkle_random(void) {
 
 
 /*
- * fade out function
+ * fade out functions
  */
 void WS2812FX::fade_out() {
+  return fade_out(SEGMENT.colors[1]);
+}
+
+void WS2812FX::fade_out(uint32_t targetColor) {
   static const uint8_t rateMapH[] = {0, 1, 1, 1, 2, 3, 4, 6};
   static const uint8_t rateMapL[] = {0, 2, 3, 8, 8, 8, 8, 8};
 
@@ -913,18 +917,18 @@ void WS2812FX::fade_out() {
   uint8_t rateH = rateMapH[rate];
   uint8_t rateL = rateMapL[rate];
 
-  uint32_t color = SEGMENT.colors[1]; // target color
+  uint32_t color = targetColor;
   int w2 = (color >> 24) & 0xff;
   int r2 = (color >> 16) & 0xff;
   int g2 = (color >>  8) & 0xff;
   int b2 =  color        & 0xff;
 
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
-    color = getPixelColor(i);
+    color = getPixelColor(i); // current color
     if(rate == 0) { // old fade-to-black algorithm
       setPixelColor(i, (color >> 1) & 0x7F7F7F7F);
     } else { // new fade-to-color algorithm
-      int w1 = (color >> 24) & 0xff; // current color
+      int w1 = (color >> 24) & 0xff;
       int r1 = (color >> 16) & 0xff;
       int g1 = (color >>  8) & 0xff;
       int b1 =  color        & 0xff;

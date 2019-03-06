@@ -421,6 +421,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       resume(void),
       strip_off(void),
       fade_out(void),
+      fade_out(uint32_t),
       setMode(uint8_t m),
       setMode(uint8_t seg, uint8_t m),
       setOptions(uint8_t seg, uint8_t o),
