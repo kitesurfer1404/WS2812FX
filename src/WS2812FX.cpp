@@ -120,7 +120,7 @@ void WS2812FX::setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_
 
 void WS2812FX::copyPixels(uint16_t dest, uint16_t src, uint16_t count) {
   uint8_t *pixels = getPixels();
-  uint8_t bytesPerPixel = (wOffset == rOffset) ? 3 : 4; // 3=RGB, 4=RGBW
+  uint8_t bytesPerPixel = getNumBytesPerPixel(); // 3=RGB, 4=RGBW
 
   memmove(pixels + (dest * bytesPerPixel), pixels + (src * bytesPerPixel), count * bytesPerPixel);
 }
@@ -310,6 +310,10 @@ uint16_t WS2812FX::getLength(void) {
 
 uint16_t WS2812FX::getNumBytes(void) {
   return numBytes;
+}
+
+uint8_t WS2812FX::getNumBytesPerPixel(void) {
+  return (wOffset == rOffset) ? 3 : 4; // 3=RGB, 4=RGBW
 }
 
 uint8_t WS2812FX::getModeCount(void) {
@@ -510,7 +514,7 @@ uint32_t* WS2812FX::intensitySums() {
   memset(intensities, 0, sizeof(intensities));
 
   uint8_t *pixels = getPixels();
-  uint8_t bytesPerPixel = (wOffset == rOffset) ? 3 : 4; // 3=RGB, 4=RGBW
+  uint8_t bytesPerPixel = getNumBytesPerPixel(); // 3=RGB, 4=RGBW
   for(uint16_t i=0; i <numBytes; i += bytesPerPixel) {
     intensities[0] += pixels[i];
     intensities[1] += pixels[i + 1];
@@ -852,7 +856,8 @@ uint16_t WS2812FX::mode_running_lights(void) {
   uint8_t g = ((SEGMENT.colors[0] >>  8) & 0xFF);
   uint8_t b =  (SEGMENT.colors[0]        & 0xFF);
 
-  uint8_t sineIncr = max(1, (256 / SEGMENT_LENGTH));
+  uint8_t size = 1 << SIZE_OPTION;
+  uint8_t sineIncr = max(1, (256 / SEGMENT_LENGTH) * size);
   for(uint16_t i=0; i < SEGMENT_LENGTH; i++) {
     int lum = (int)sine8(((i + SEGMENT_RUNTIME.counter_mode_step) * sineIncr));
     if(IS_REVERSE) {
@@ -1412,7 +1417,7 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
 
 // for better performance, manipulate the Adafruit_NeoPixels pixels[] array directly
   uint8_t *pixels = getPixels();
-  uint8_t bytesPerPixel = (wOffset == rOffset) ? 3 : 4; // 3=RGB, 4=RGBW
+  uint8_t bytesPerPixel = getNumBytesPerPixel(); // 3=RGB, 4=RGBW
   uint16_t startPixel = SEGMENT.start * bytesPerPixel + bytesPerPixel;
   uint16_t stopPixel = SEGMENT.stop * bytesPerPixel ;
   for(uint16_t i=startPixel; i <stopPixel; i++) {

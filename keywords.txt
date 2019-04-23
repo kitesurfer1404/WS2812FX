@@ -45,6 +45,7 @@ trigger	KEYWORD2
 setMode	KEYWORD2
 strip_off	KEYWORD2
 setCustomMode	KEYWORD2
+setCustomShow	KEYWORD2
 setSpeed	KEYWORD2
 increaseSpeed	KEYWORD2
 decreaseSpeed	KEYWORD2
@@ -68,6 +69,7 @@ random8	KEYWORD2
 random16	KEYWORD2
 getLength	KEYWORD2
 getNumBytes	KEYWORD2
+getNumBytesPerPixel	KEYWORD2
 getMode	KEYWORD2
 getSpeed	KEYWORD2
 getBrightness	KEYWORD2
