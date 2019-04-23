@@ -475,7 +475,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       setCustomMode(uint8_t i, const __FlashStringHelper* name, uint16_t (*p)()),
       getNumSegments(void),
       get_random_wheel_index(uint8_t),
-      getOptions(uint8_t);
+      getOptions(uint8_t),
+      getNumBytesPerPixel(void);
 
     uint16_t
       random16(void),
