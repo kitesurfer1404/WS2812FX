@@ -174,7 +174,7 @@ void WS2812FX::setSpeed(uint16_t s) {
 }
 
 void WS2812FX::setSpeed(uint8_t seg, uint16_t s) {
-  resetSegmentRuntime(seg);
+//  resetSegmentRuntime(seg);
   _segments[seg].speed = constrain(s, SPEED_MIN, SPEED_MAX);
 }
 
@@ -201,12 +201,12 @@ void WS2812FX::setColor(uint32_t c) {
 }
 
 void WS2812FX::setColor(uint8_t seg, uint32_t c) {
-  resetSegmentRuntime(seg);
+//  resetSegmentRuntime(seg);
   _segments[seg].colors[0] = c;
 }
 
 void WS2812FX::setColors(uint8_t seg, uint32_t* c) {
-  resetSegmentRuntime(seg);
+//  resetSegmentRuntime(seg);
   for(uint8_t i=0; i<NUM_COLORS; i++) {
     _segments[seg].colors[i] = c[i];
   }
@@ -1452,7 +1452,11 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
  * Firework sparks.
  */
 uint16_t WS2812FX::mode_fireworks(void) {
-  return fireworks(SEGMENT.colors[0]);
+  uint32_t color = BLACK;
+  do { // randomly choose a non-BLACK color from the colors array
+    color = SEGMENT.colors[random8(NUM_COLORS)];
+  } while (color == BLACK);
+  return fireworks(color);
 }
 
 /*

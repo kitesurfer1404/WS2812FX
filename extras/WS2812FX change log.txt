@@ -1,6 +1,16 @@
 WS2182FX Change Log
 
 
+v1.2.0 changes 6/11/2019
+------------------------
+
+1) Removed segment reset when changing effect color or speed
+
+2) Updated the fireworks effect to use all three segment colors
+
+3) Added rainbowFireworks custom effect
+
+
 v1.1.9 changes 4/22/2019
 ------------------------
 
