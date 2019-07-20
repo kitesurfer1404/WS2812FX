@@ -12,7 +12,7 @@
     "include": "WS2812FX-master"
   },
   "frameworks": "arduino",
-  "platforms": "espressif8266",
+  "platforms": "*",
   "repository": {
     "type": "git",
     "url": "https://github.com/kitesurfer1404/WS2812FX.git"
