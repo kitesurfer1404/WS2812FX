@@ -1,8 +1,7 @@
 /*
-  Custom effect that looks like popcorn.
-  The 'popcorn' is color[0] and the background color is color[1].
-  If color[0] is the same as color[1], the 'popcorn' will be a random color.
-  
+  Custom effect that adapts the fireworks effect so each burst is a rainbow
+  of colors
+
   Keith Lord - 2018
 
   LICENSE

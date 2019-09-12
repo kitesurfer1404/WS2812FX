@@ -9,7 +9,7 @@ Features
 --------
 
 * 55 different effects. And counting.
-* Tested on Arduino Nano, Uno, Micro and ESP8266.
+* Tested on Arduino Uno/Micro/Nano/Leonardo and ESP8266/ESP32.
 * All effects with printable names - easy to use in user interfaces.
 * FX, speed and brightness controllable on the fly.
 * Ready for sound-to-light (see external trigger example)
