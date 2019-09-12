@@ -42,17 +42,17 @@
 
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
-// create a DMA instance
-// first parameter is number of LEDs, second paramter is number of bytes per LED (3 for RGB, 4 for RGBW)
-NeoEsp8266Dma800KbpsMethod dma = NeoEsp8266Dma800KbpsMethod(LED_COUNT, 3);
+// create a NeoPixelBus instance
+NeoPixelBus<NeoGrbFeature, NeoEsp8266Dma800KbpsMethod> strip(LED_COUNT);
 
 void setup() {
   Serial.begin(115200);
 
   ws2812fx.init();
 
-  // MUST init dma after ws2812fx.init(), so GPIO3 is initalized properly
-  dma.Initialize();
+  // MUST run strip.Begin() after ws2812fx.init(), so GPIO3 is initalized properly
+  strip.Begin();
+  strip.Show();
 
   // set the custom show function
   ws2812fx.setCustomShow(myCustomShow);
@@ -69,10 +69,11 @@ void loop() {
 }
 
 void myCustomShow(void) {
-  if(dma.IsReadyToUpdate()) {
-    // copy the ws2812fx pixel data to the dma pixel data
-    memcpy(dma.getPixels(), ws2812fx.getPixels(), dma.getPixelsSize());
-    dma.Update();
+  if(strip.CanShow()) {
+    // copy the WS2812FX pixel data to the NeoPixelBus instance
+    memcpy(strip.Pixels(), ws2812fx.getPixels(), strip.PixelsSize());
+    strip.Dirty();
+    strip.Show();
   }
 }
 

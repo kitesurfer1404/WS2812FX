@@ -38,11 +38,11 @@ wires, resistors, capacitors and an LED or two are also handy.
 1.  The Microcontroller  
       
     WS2812FX supports most variants of the Arduino microcontroller, as well as
-    the newer ESP8266 processor. An Arduino is adequate for creating a basic
-    lighting project, but it suffers from a relatively small amount of memory
-    and has no built-in network connectivity. The ESP8266 has much more memory
-    as well as built-in Wi-Fi and is quite inexpensive, so it’s usually a better
-    choice. If you’re just starting out, I’d suggest buying an ESP8266
+    the newer ESP8266 and ESP32 processors. An Arduino is adequate for creating
+    a basic lighting project, but it suffers from a relatively small amount of
+    memory and has no built-in network connectivity. The ESPs have much more
+    memory as well as built-in Wi-Fi and is quite inexpensive, so it’s usually
+    a better choice. If you’re just starting out, I’d suggest buying an ESP8266
     development board, such as the
     [NodeMCU](https://en.wikipedia.org/wiki/NodeMCU), which includes the ESP8266
     and some helpful support circuitry (like a 3.3V regulator and USB-TTL
@@ -68,11 +68,6 @@ wires, resistors, capacitors and an LED or two are also handy.
     strips with 30/60/144 LEDs per meter or arranged in circles, squares and
     even 3D cubes.
     
-    - Strongly suggest adding a 300-500Ω resistor between the microcontroller and
-    WS2812 DI pin to reduce noise and improve signal reliability. It's also strongly
-    advised to connect a large electrolytic capacitor (say 1000uF) between the
-    WS2812 VDD and VSS pins to reduce voltage spikes and noise on the power supply
-    rail.
 
 1.  The Development Environment  
       
@@ -101,6 +96,10 @@ wires, resistors, capacitors and an LED or two are also handy.
     GitHub site. There’s a wealth of information about programming the ESP8266
     at the platform’s
     [documentation](https://arduino-esp8266.readthedocs.io/en/latest/) web site.
+
+    Similarly, if you're using an ESP32, you'll need to install the ESP32 core
+    platform package using Boards Manager as described on the
+    [ESP32 platform](https://github.com/espressif/arduino-esp32) Github site.
 
     Now you’re ready to go.
 ***
@@ -158,6 +157,12 @@ guides. Of special interest is their
 [NeoPixel UberGuide](https://learn.adafruit.com/adafruit-neopixel-uberguide).
 It is full of great tips and best practices that will save you time and
 aggravation. Go read it.
+
+Note, as mentioned in Adafruit's guide, it's recommended that a 300-500Ω
+resistor be connected between the microcontroller GPIO pin and WS2812 DI pin
+to reduce noise and improve signal reliability. It's also strongly advised
+to connect a large capacitor (say 1000uF) between the WS2812 VDD and VSS pins
+to minimize power supply noise.
 ***
 
 ## WS281FX Basics
@@ -299,8 +304,8 @@ indexes:
 ```c++
 // divide a strip of LEDs into thirds
 int size = LED_COUNT/3; // calc the size of each segment
-ws2812fx.setSegment(0, 0,       size-1,     FX_MODE_FADE,  RED,   2000, false);
-ws2812fx.setSegment(1, size,    size*2-1,   FX_MODE_SCAN,  BLUE,  2000, true);
+ws2812fx.setSegment(0, 0,      size-1,      FX_MODE_FADE,  RED,   2000, false);
+ws2812fx.setSegment(1, size,   size*2-1,    FX_MODE_SCAN,  BLUE,  2000, true);
 ws2812fx.setSegment(2, size*2, LED_COUNT-1, FX_MODE_COMET, GREEN, 2000, true);
 ```
 This allows your project to accommodate strips of different lengths just by
@@ -502,7 +507,7 @@ and create you're own completely different way of updating the LED colors. For
 example, a custom show() function could be used to communicate the LED state
 over a network to a collection of remote devices. Or the **ws2812fx_dma**
 example sketch uses a custom show() function and the NeoPixelBus library's
-DMA class to drive the LEDs without disabling interrupts. To be sure, this
+DMA feature to drive the LEDs without disabling interrupts. To be sure, this
 is an advanced feature, not for the faint of heart. It requires a healthy
 knowledge of the WS2812 Din timing requirements and probably a deeper
 understanding of WS2812FX's inner workings. But if you have a project that needs
@@ -529,8 +534,8 @@ with a serial interface, like the Serial Monitor built into the Arduino IDE. If
 you’re using an ESP8266, you’ve got network (Wi-Fi) connectivity built-in! The
 **esp8266_webinterface** and **ws2812fx_segments_web** example sketches are good
 starting points if you’re trying to create a web interface. Have a look at the
-***ws2812fx_alexa*** example sketch if you want to use an Amazon Echo device to
-control your LEDs. The ***ws2812fx_soundfx*** example sketch can get you started
+**ws2812fx_alexa** example sketch if you want to use an Amazon Echo device to
+control your LEDs. The **ws2812fx_soundfx** example sketch can get you started
 if you want to add sound to your project.
 
 If you’re looking for inspiration, check out
