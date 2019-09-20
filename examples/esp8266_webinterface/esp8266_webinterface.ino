@@ -250,8 +250,11 @@ void srv_handle_set() {
     if(server.argName(i) == "s") {
       if(server.arg(i)[0] == '-') {
         ws2812fx.setSpeed(max(ws2812fx.getSpeed(), 5) * 1.2);
-      } else {
+      } else if(server.arg(i)[0] == ' ') {
         ws2812fx.setSpeed(ws2812fx.getSpeed() * 0.8);
+      } else {
+        uint16_t tmp = (uint16_t) strtol(server.arg(i).c_str(), NULL, 10);
+        ws2812fx.setSpeed(tmp);
       }
       Serial.print("speed is "); Serial.println(ws2812fx.getSpeed());
     }
