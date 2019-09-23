@@ -4,21 +4,29 @@ char index_html[] PROGMEM = R"=====(
 <html>
 <head>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-  <!-- we're using the standard noUiSlider plugin, not the customized one in the materialize extras folder -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/11.1.0/nouislider.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/material-components-web@3.2.0/dist/material-components-web.min.css">
 
   <style>
-    body { /* materialize sticky footer CSS */
-      display: flex;
-      min-height: 100vh;
-      flex-direction: column;
+    body {
+      margin: 0; /* remove the default 8px body margin to fix MDC top-app-bar placement */
+      --mdc-theme-primary: #3fb8af; /* change MDC color theme to match noUiSlide's theme */
     }
-    main { /* materialize sticky footer CSS */
-      flex: 1 0 auto;
+    main, .mdc-switch {
+      margin: 0px 8px; /* noUiSliders look a little cramped, so add horizontal margin to main content */
     }
-    .modal { /* make the modal a little wider */
-      width: 80% !important;
+    footer {
+      margin: 4px 16px; /* add a little margin to the footer content */
+    }
+    .mdc-select:not(.mdc-select--disabled).mdc-select--focused .mdc-floating-label {
+      color: var(--mdc-theme-primary, #3fb8af) /* MDC select label is hardcoded to purple??? reset to primary color */
+    }
+    .mdc-list { /* add border around MDC lists */
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 0px;
+    }
+    .mdc-button { /* add margin-bottom to buttons so they wrap properly on small screens */
+      margin-bottom: 8px;
     }
     .noUi-tooltip { /* only show slider tooltips when the slider is being moved */
       display: none;
@@ -32,143 +40,232 @@ char index_html[] PROGMEM = R"=====(
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 
-<body>
-  <header>
-    <nav class="grey" role="navigation">
-      <div class="nav-wrapper container">
-        <a id="logo-container" href="#" class="brand-logo">WS2812FX Web Interface</a>
-      </div>
-    </nav>
+<body class="mdc-typography">
+
+  <header class="mdc-top-app-bar" data-mdc-auto-init="MDCTopAppBar">
+    <div class="mdc-top-app-bar__row">
+      <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+<!--    <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu</button> -->
+        <span class="mdc-top-app-bar__title">WS2812FX Web Interface</span>
+      </section>
+    </div>
   </header>
 
-  <main>
-    <div class="container">
-      <div class="row">
-        <div class="col s12">
-          <h5>Num Pixels</h5>
-          <div id="numPixelsSlider"></div>
+  <main class="mdc-top-app-bar--fixed-adjust">
 
-          <h5>Brightness</h5>
+    <div class="mdc-layout-grid">
+      <div class="mdc-layout-grid__inner">
+        <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+          <h3 class="mdc-typography--subtitle1">Number of Pixels</h3>
+          <div id="numPixelsSlider"></div>
+        </div>
+
+        <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+          <h3 class="mdc-typography--subtitle1">Brightness</h3>
           <div id="brightnessSlider"></div>
         </div>
-      </div><br>
 
-      <div class="row">
-        <div class="col s6">
-          <h5>Segments <a href="#" onclick="addSegment(event)"><i class="material-icons">add_box</i></a></h5>
-          <ul id="segmentList" class="collection"></ul>
+        <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-5">
+          <h3 class="mdc-typography--subtitle1" style="display: inline-block">Segments</h3>
+          <button class="mdc-icon-button material-icons" onclick="onAddSegment(event)">add_box</button>
+          <ul id="segmentList" class="mdc-list" data-mdc-auto-init="MDCList"></ul>
         </div>
 
-        <div class="col s6">
-          <h6>Segment Range</h6>
-          <div id="rangeSlider"></div><br>
-
-          <h6>Segment Speed</h6>
-          <div id="speedSlider"></div><br>
-
-          <h6>Segment Mode</h6>
-          <div>
-            <select id="modes" onchange="updateSegment()"></select>
-          </div>
-
-          <div class="row">
-            <div class="col s6">
-              <h6>Colors</h6>
-              <input type="color" id="color0" onchange="updateSegment()">
-              <input type="color" id="color1" onchange="updateSegment()">
-              <input type="color" id="color2" onchange="updateSegment()">
+        <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-7">
+          <div class="mdc-layout-grid__inner">
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+              <h3 class="mdc-typography--subtitle1">Segment Range</h3>
+              <div id="rangeSlider"></div>
             </div>
 
-            <div class="col s6">
-              <h6>Reverse</h6>
-              <div class="switch">
-                <label>Off<input id="reverse" type="checkbox" onchange="updateSegment()"><span class="lever"></span>On</label>
-              </div><br>
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+              <h3 class="mdc-typography--subtitle1">Segment Speed</h3>
+              <div id="speedSlider"></div>
+            </div>
 
-              <h6>Gamma Correction</h6>
-              <div class="switch">
-                <label>Off<input id="gamma" type="checkbox" onchange="updateSegment()"><span class="lever"></span>On</label>
-              </div><br>
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
+              <div class="mdc-layout-grid__inner">
+                
+                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                  <h3 class="mdc-typography--subtitle1" style="display: inline-block">Colors</h3>
+                  <input type="color" id="color0" onchange="updateSegment()">
+                  <input type="color" id="color1" onchange="updateSegment()">
+                  <input type="color" id="color2" onchange="updateSegment()">
+                </div>
 
-              <h6>Fade Rate</h6>
-              <div>
-                <select id="fade" onchange="updateSegment()">
-                  <option value="0" selected>Default</option>
-                  <option value="1">XFAST</option>
-                  <option value="2">FAST</option>
-                  <option value="3">MEDIUM</option>
-                  <option value="4">SLOW</option>
-                  <option value="5">XSLOW</option>
-                  <option value="6">XXSLOW</option>
-                  <option value="7">GLACIAL</option>
-                </select>
+                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                  <h3 class="mdc-typography--subtitle1" style="display: inline-block">Reverse</h3>
+                  <div id="reverseSwitch" class="mdc-switch" data-mdc-auto-init="MDCSwitch">
+                    <div class="mdc-switch__track"></div>
+                    <div class="mdc-switch__thumb-underlay">
+                      <div class="mdc-switch__thumb">
+                        <input type="checkbox" id="reverse" class="mdc-switch__native-control" role="switch" onchange="updateSegment()">
+                      </div>
+                    </div>
+                  </div>
+                  <label for="reverse">off/on</label>
+                </div>
+
+                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                  <h3 class="mdc-typography--subtitle1" style="display: inline-block">Gamma Correction</h3>
+                  <div id="gammaSwitch" class="mdc-switch" data-mdc-auto-init="MDCSwitch">
+                    <div class="mdc-switch__track"></div>
+                    <div class="mdc-switch__thumb-underlay">
+                      <div class="mdc-switch__thumb">
+                        <input type="checkbox" id="gamma" class="mdc-switch__native-control" role="switch" onchange="updateSegment()">
+                      </div>
+                    </div>
+                  </div>
+                  <label for="gamma">off/on</label>
+                </div>
+
               </div>
             </div>
+
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
+              <div class="mdc-layout-grid__inner">
+
+                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                  <div class="mdc-select mdc-select--outlined" data-mdc-auto-init="MDCSelect">
+                    <i class="mdc-select__dropdown-icon"></i>
+                    <select id="modes" class="mdc-select__native-control" onchange="updateSegment()">
+                      <option value="0">Static</option>
+                    </select>
+                    <div class="mdc-notched-outline">
+                      <div class="mdc-notched-outline__leading"></div>
+                      <div class="mdc-notched-outline__notch">
+                        <label class="mdc-floating-label mdc-floating-label--float-above">Segment Mode</label>
+                      </div>
+                      <div class="mdc-notched-outline__trailing"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                  <div class="mdc-select mdc-select--outlined" data-mdc-auto-init="MDCSelect">
+                    <i class="mdc-select__dropdown-icon"></i>
+                    <select id="fade" class="mdc-select__native-control" onchange="updateSegment()">
+                      <option value="0" selected>Default</option>
+                      <option value="1">XFAST</option>
+                      <option value="2">FAST</option>
+                      <option value="3">MEDIUM</option>
+                      <option value="4">SLOW</option>
+                      <option value="5">XSLOW</option>
+                      <option value="6">XXSLOW</option>
+                      <option value="7">GLACIAL</option>
+                    </select>
+                    <div class="mdc-notched-outline">
+                      <div class="mdc-notched-outline__leading"></div>
+                      <div class="mdc-notched-outline__notch">
+                        <label class="mdc-floating-label mdc-floating-label--float-above">Fade Rate</label>
+                      </div>
+                      <div class="mdc-notched-outline__trailing"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                  <div class="mdc-select mdc-select--outlined" data-mdc-auto-init="MDCSelect">
+                    <i class="mdc-select__dropdown-icon"></i>
+                    <select id="size" class="mdc-select__native-control" onchange="updateSegment()">
+                      <option value="0" selected>SMALL</option>
+                      <option value="1">MEDIUM</option>
+                      <option value="2">LARGE</option>
+                      <option value="3">XLARGE</option>
+                    </select>
+                    <div class="mdc-notched-outline">
+                      <div class="mdc-notched-outline__leading"></div>
+                      <div class="mdc-notched-outline__notch">
+                        <label class="mdc-floating-label mdc-floating-label--float-above">Size</label>
+                      </div>
+                      <div class="mdc-notched-outline__trailing"></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
           </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col s12">
-          <a class="waves-effect waves-light btn" onclick="load()">
-            <i class="material-icons left">cloud_download</i>Load</a>
+        <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+          <button class="mdc-button mdc-button--raised" onclick="onLoad()" data-mdc-auto-init="MDCRipple">
+            <i class="material-icons mdc-button__icon" aria-hidden="true">cloud_download</i>
+            <span class="mdc-button__label">Load</span>
+          </button>
 
-          <a class="waves-effect waves-light btn" onclick="save()">
-            <i class="material-icons left">cloud_upload</i>Save</a>
+          <button class="mdc-button mdc-button--raised" onclick="onSave()" data-mdc-auto-init="MDCRipple">
+            <i class="material-icons mdc-button__icon" aria-hidden="true">cloud_upload</i>
+            <span class="mdc-button__label">Save</span>
+          </button>
 
-          <a class="waves-effect waves-light btn" onclick="buildCode()">
-            <i class="material-icons left">code</i>Code</a>
+          <button class="mdc-button mdc-button--raised" onclick="onBuildCode()" data-mdc-auto-init="MDCRipple">
+            <i class="material-icons mdc-button__icon" aria-hidden="true">code</i>
+            <span class="mdc-button__label">Code</span>
+          </button>
 
-          <a class="waves-effect waves-light btn" onclick="LED_pause()">
-            <i class="material-icons left">pause</i>Pause</a>
+          <button class="mdc-button mdc-button--raised" onclick="onPause()" data-mdc-auto-init="MDCRipple">
+            <i class="material-icons mdc-button__icon" aria-hidden="true">pause</i>
+            <span class="mdc-button__label">Pause</span>
+          </button>
 
-          <a class="waves-effect waves-light btn" onclick="LED_resume()">
-            <i class="material-icons left">replay</i>Play</a>
+          <button class="mdc-button mdc-button--raised" onclick="onResume()" data-mdc-auto-init="MDCRipple">
+            <i class="material-icons mdc-button__icon" aria-hidden="true">play_arrow</i>
+            <span class="mdc-button__label">Play</span>
+          </button>
 
-          <a class="waves-effect waves-light btn" onclick="LED_on()">
-            <i class="material-icons left">blur_on</i>ON</a>
+          <button class="mdc-button mdc-button--raised" onclick="onStart()" data-mdc-auto-init="MDCRipple">
+            <i class="material-icons mdc-button__icon" aria-hidden="true">blur_on</i>
+            <span class="mdc-button__label">On</span>
+          </button>
 
-          <a class="waves-effect waves-light btn" onclick="LED_off()">
-            <i class="material-icons left">blur_off</i>OFF</a>
+          <button class="mdc-button mdc-button--raised" onclick="onStop()" data-mdc-auto-init="MDCRipple">
+            <i class="material-icons mdc-button__icon" aria-hidden="true">blur_off</i>
+            <span class="mdc-button__label">Off</span>
+          </button>
         </div>
       </div>
     </div>
+
   </main>
 
-  <footer class="grey page-footer">
-    <div class="grey footer-copyright">
-      <div class="container">&copy; 2018
-        <span class="right">Made with
-          <a class="black-text" href="http://materializecss.com">Materialize</a>
-        </span>
-      </div>
-    </div>
+  <footer>&copy; 2019
+    <span>Made with
+      <a href="https://material.io/develop/web/">Material Components for the Web</a>
+    </span>
   </footer>
 
-  <!-- Code Modal  -->
-  <div id="codeModal" class="modal">
-    <div class="modal-content">
-      <h4>ESP8266/Arduino Code</h4>
-      <div class="input-field">
-        <textarea id="codeModalContent" class="materialize-textarea" data-length="120"></textarea>
+  <!-- Code dialog  -->
+  <div id="codeDialog" class="mdc-dialog" role="alertdialog" aria-modal="true"
+    aria-labelledby="code-dialog-title" aria-describedby="code-dialog-content" data-mdc-auto-init="MDCDialog">
+    <div class="mdc-dialog__container">
+      <div class="mdc-dialog__surface">
+        <h2 class="mdc-dialog__title" id="code-dialog-title">ESP8266/Arduino Code</h2>
+        <section class="mdc-dialog__content" id="code-dialog-content">
+          <textarea id="codeDialogContent" rows="15" cols="60"></textarea>
+        </section>
+        <footer class="mdc-dialog__actions">
+          <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised" data-mdc-dialog-action="copy" onclick="onCopy()">
+            <span class="mdc-button__label">Copy</span>
+          </button>
+          <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised" data-mdc-dialog-action="close">
+            <span class="mdc-button__label">Close</span>
+          </button>
+        </footer>
       </div>
     </div>
-    <div class="modal-footer">
-      <a class="waves-effect waves-light btn left" onclick="code2clipboard()">
-        <i class="material-icons left">content_copy</i>Copy</a>
-      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
-    </div>
+    <div class="mdc-dialog__scrim"></div>
   </div>
-
 
 
 
   <!--
     javascript goes here
   -->
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/11.1.0/nouislider.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.js"></script>
+  <script src="https://unpkg.com/material-components-web@3.2.0/dist/material-components-web.min.js"></script>
 
   <script type="text/javascript">
     // global variables
@@ -180,15 +277,16 @@ char index_html[] PROGMEM = R"=====(
       { start: 0, stop: 9, mode: 0, speed: 1000, options: 0, colors: ['#ff0000', '#00ff00', '#0000ff'] }
     ];
 
+    mdc.autoInit(); // auto-init all of the Material Components for the Web components
+
     // onready function
     $(document).ready(function() {
       console.log("ready!");
       initSliders();
-      $('.modal').modal(); // init materialize modals
       getModes(); // get WS2812FX modes (callback execs updateWidgets())
     });
 
-    function initSliders() {
+    function initSliders() { // init all the noUiSliders
       noUiSlider.create(document.getElementById('rangeSlider'), {
         start: [0, 99],
         tooltips: [true, true],
@@ -264,8 +362,11 @@ char index_html[] PROGMEM = R"=====(
         connect: [true, false],
         step: 10,
         range: {
-          'min': 20,
-          'max': 2000
+          'min': [20, 1],
+          '25%': [100, 10],
+          '50%': [1000, 100],
+          '75%': [10000, 500],
+          'max': [30000]
         },
         format: {
           to: function(value) {
@@ -281,13 +382,24 @@ char index_html[] PROGMEM = R"=====(
       });
     }
 
-    function changeSegment(elem) {
-      elem.addClass("active").siblings().removeClass('active');
-      segmentIndex = elem.index();
-      updateWidgets();
+    // retrieve the mode info from the web server in JSON format
+    function getModes() {
+      $("#modes").empty();
+      $.getJSON("getmodes", function(data) {
+        const modes = data.map(function (item, i) {
+          return {'name':item, 'index':i};
+        });
+        // sort the modes so the UI has them in alphabetical order
+        modes.sort((a, b) => a.name.localeCompare(b.name));
+
+        $.each(modes, function (i, item) {
+          $('#modes').append(new Option(item.name, item.index));
+        });
+        updateWidgets();
+      });
     }
 
-    function addSegment(event) {
+    function onAddSegment(event) {
       event.preventDefault();
       event.stopPropagation();
       if(segments.length > 9) return; // max 10 segments
@@ -304,11 +416,17 @@ char index_html[] PROGMEM = R"=====(
       updateWidgets();
     }
 
-    function deleteSegment(event, index) {
+    function onDeleteSegment(event, index) {
       event.preventDefault();
       event.stopPropagation();
       segments.splice(index, 1);
       if(segmentIndex >= segments.length) segmentIndex = segments.length - 1;
+      updateWidgets();
+    }
+    
+    function onChangeSegment(elem) {
+      elem.addClass("active").siblings().removeClass('active');
+      segmentIndex = elem.index();
       updateWidgets();
     }
 
@@ -321,6 +439,7 @@ char index_html[] PROGMEM = R"=====(
       segments[segmentIndex].options = $('#reverse').prop('checked') ? 0x80 : 0;
       segments[segmentIndex].options |= $('#gamma').prop('checked')  ? 0x08 : 0;
       segments[segmentIndex].options |= $('#fade').val() ? $('#fade').val() << 4 : 0;
+      segments[segmentIndex].options |= $('#size').val() ? $('#size').val() << 1 : 0;
 
       segments[segmentIndex].colors[0] = $('#color0').val();
       segments[segmentIndex].colors[1] = $('#color1').val();
@@ -336,23 +455,27 @@ char index_html[] PROGMEM = R"=====(
       // recreate the segment list HTML
       $("#segmentList").empty();
       for (var i = 0; i < segments.length; i++) {
-        $("#segmentList").append('<li class="collection-item" onclick="changeSegment($(this))">' +
-          segments[i].start + ' - ' + segments[i].stop + ' : ' + getModeName(segments[i].mode) +
-          '<i class="material-icons right" style="cursor: pointer" onclick="deleteSegment(event, ' + i + ')">delete</i>' +
+        $("#segmentList").append('<li class="mdc-list-item" onclick="onChangeSegment($(this))" data-mdc-auto-init="MDCRipple">' +
+          '<span class="mdc-list-item__text">' + segments[i].start + ' - ' + segments[i].stop + ' : ' + getModeName(segments[i].mode) + '</span>' +
+          '<span class="mdc-list-item__meta material-icons" aria-hidden="true" onclick="onDeleteSegment(event, ' + i + ')">delete</span>' +
           '</li>');
       }
-      $("#segmentList li").eq(segmentIndex).addClass('active');
+      $("#segmentList li").eq(segmentIndex).addClass('mdc-list-item--selected');
+      mdc.autoInit(document.getElementById('segmentList')); // reinit the list items to enable the ripple effect
 
-      // update the materialize widgets with the current segment's data
+      // update the UI widgets with the current segment's data
       if(segments.length > 0) {
         rangeSlider.noUiSlider.set([segments[segmentIndex].start, segments[segmentIndex].stop]);
         speedSlider.noUiSlider.set(segments[segmentIndex].speed);
         $('#modes').val(segments[segmentIndex].mode);
-        $('#modes').formSelect();
         $('#fade').val((segments[segmentIndex].options & 0x70) >> 4);
-        $('#fade').formSelect();
-        $('#reverse').prop('checked', Boolean(segments[segmentIndex].options & 0x80));
-        $('#gamma').prop('checked',   Boolean(segments[segmentIndex].options & 0x08));
+        $('#size').val((segments[segmentIndex].options & 0x06) >> 1);
+
+//      $('#reverse').prop('checked', Boolean(segments[segmentIndex].options & 0x80));
+//      $('#gamma').prop('checked',   Boolean(segments[segmentIndex].options & 0x08));
+        document.getElementById('reverseSwitch').MDCSwitch.checked = Boolean(segments[segmentIndex].options & 0x80);
+        document.getElementById('gammaSwitch').MDCSwitch.checked = Boolean(segments[segmentIndex].options & 0x08);
+        
         $('#color0').val(segments[segmentIndex].colors[0]);
         $('#color1').val(segments[segmentIndex].colors[1]);
         $('#color2').val(segments[segmentIndex].colors[2]);
@@ -360,7 +483,7 @@ char index_html[] PROGMEM = R"=====(
     }
 
     // retrieve the segment info from the web server in JSON format
-    function load() {
+    function onLoad() {
       $.getJSON("getsegments", function(data) {
         pin = data.pin;
         numPixels = data.numPixels;
@@ -388,68 +511,8 @@ char index_html[] PROGMEM = R"=====(
       });
     }
 
-    // PAUSE
-    function LED_pause() {
-      jQuery.ajax({
-        url: "runcontrol",
-        type: "POST",
-        data: "pause",
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-//      contentType: "application/x-www-form-urlencoded; charset=utf-8",
-        success: function() {
-          console.log(data);
-        }
-      });
-    }
-
-    // Resume after Pause
-    function LED_resume() {
-      jQuery.ajax({
-        url: "runcontrol",
-        type: "POST",
-        data: "resume",
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-//      contentType: "application/x-www-form-urlencoded; charset=utf-8",
-        success: function() {
-          console.log(data);
-        }
-      });
-    }
-
-    // Switch strip on
-    function LED_on() {
-      jQuery.ajax({
-        url: "runcontrol",
-        type: "POST",
-        data: "run",
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-//      contentType: "application/x-www-form-urlencoded; charset=utf-8",
-        success: function() {
-          console.log(data);
-        }
-      });
-    }
-
-     // Switch Strip off
-    function LED_off() {
-      jQuery.ajax({
-        url: "runcontrol",
-        type: "POST",
-        data: "stop",
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-//      contentType: "application/x-www-form-urlencoded; charset=utf-8",
-        success: function() {
-          console.log(data);
-        }
-      });
-    }
-
     // send the segment info to the web server in JSON format
-    function save() {
+    function onSave() {
       json = '{';
       json += '"numPixels":' + numPixels;
       json += ',"brightness":' + brightness;
@@ -471,44 +534,19 @@ char index_html[] PROGMEM = R"=====(
       });
       json += "]}";
 
-//    $.post("setsegments", json, function(data){
-//      console.log(data);
-//    });
       jQuery.ajax({
         url: "setsegments",
         type: "POST",
         data: JSON.stringify(json),
         dataType: "json",
         contentType: "application/json; charset=utf-8",
-//      contentType: "application/x-www-form-urlencoded; charset=utf-8",
         success: function() {
           console.log(data);
         }
       });
     }
 
-    // retrieve the mode info from the web server in JSON format
-    function getModes() {
-      $.getJSON("getmodes", function(data) {
-        $.each(data, function (i, item) {
-          $('#modes').append(new Option(item, i));
-        });
-        updateWidgets();
-      });
-    }
-
-    function getModeName(index) {
-      var name = "";
-      $("#modes option").each(function(i, item) {
-        if(index == item.value) {
-          name = item.text;
-          return false; // exit the each loop
-        }
-      });
-      return name;
-    }
-
-    function buildCode() {
+    function onBuildCode() {
       var code = '#include <WS2812FX.h>\n\n'
       code += '#define LED_PIN ' + pin + '\n';
       code += '#define LED_COUNT ' + numPixels + '\n\n';
@@ -541,19 +579,81 @@ char index_html[] PROGMEM = R"=====(
       code += '  ws2812fx.service();\n';
       code += '}';
 
-      $("#codeModalContent").html(code);
-      M.textareaAutoResize($('#codeModalContent'));
+      $("#codeDialogContent").html(code);
 
-      $('#codeModal').modal('open');
+      document.getElementById('codeDialog').MDCDialog.open();
     }
 
-    function code2clipboard() {
-      var content = document.getElementById("codeModalContent");
+    function onCopy() { // copy code snippet to clipboard
+      var content = document.getElementById("codeDialogContent");
       content.focus();
       content.select();
       document.execCommand('copy');
       window.getSelection().removeAllRanges();
       content.blur();
+    }
+
+    function onPause() { // pause the animation
+      jQuery.ajax({
+        url: "runcontrol",
+        type: "POST",
+        data: "pause",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function() {
+          console.log(data);
+        }
+      });
+    }
+
+    function onResume() { // resume from pause
+      jQuery.ajax({
+        url: "runcontrol",
+        type: "POST",
+        data: "resume",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function() {
+          console.log(data);
+        }
+      });
+    }
+
+    function onStop() { // stop animation
+      jQuery.ajax({
+        url: "runcontrol",
+        type: "POST",
+        data: "stop",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function() {
+          console.log(data);
+        }
+      });
+    }
+
+    function onStart() { // start animation
+      jQuery.ajax({
+        url: "runcontrol",
+        type: "POST",
+        data: "run",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function() {
+          console.log(data);
+        }
+      });
+    }
+
+    function getModeName(index) {
+      var name = "";
+      $("#modes option").each(function(i, item) {
+        if(index == item.value) {
+          name = item.text;
+          return false; // exit the each loop
+        }
+      });
+      return name;
     }
   </script>
 </body>
