@@ -40,7 +40,7 @@
 
 #include <WS2812FX.h>
 #include <ESP8266WebServer.h>
-#include <ArduinoJson.h> // use ArduinoJson v5. ArduinoJson v6 will not work.
+#include <ArduinoJson.h>
 #include <ArduinoOTA.h>
 #include <EEPROM.h>
 
@@ -107,9 +107,11 @@ void setup() {
   });
 
   // send the segment info in JSON format
+#if ARDUINOJSON_VERSION_MAJOR == 5
   server.on("/getsegments", [](){
     DynamicJsonBuffer jsonBuffer(1000);
     JsonObject& root = jsonBuffer.createObject();
+
     root["pin"] = ws2812fx.getPin();
     root["numPixels"] = ws2812fx.numPixels();
     root["brightness"] = ws2812fx.getBrightness();
@@ -131,7 +133,7 @@ void setup() {
       jsonColors.add(seg.colors[2]);
       jsonSegments.add(jsonSegment);
     }
-    // root.printTo(Serial);
+//root.printTo(Serial); // debug
 
     int bufferSize = root.measureLength() + 1;
     char *json = (char*)malloc(sizeof(char) * (bufferSize));
@@ -139,7 +141,120 @@ void setup() {
     server.send(200, "application/json", json);
     free(json);
   });
-  
+#endif
+#if ARDUINOJSON_VERSION_MAJOR == 6
+  server.on("/getsegments", [](){
+    int freeHeap = ESP.getFreeHeap();
+    DynamicJsonDocument doc(freeHeap - 3096); // allocate all of the available heap except 3kB
+
+    doc["pin"] = ws2812fx.getPin();
+    doc["numPixels"] = ws2812fx.numPixels();
+    doc["brightness"] = ws2812fx.getBrightness();
+    doc["numSegments"] = ws2812fx.getNumSegments();
+    JsonArray jsonSegments = doc.createNestedArray("segments");
+
+    WS2812FX::segment* segments = ws2812fx.getSegments();
+    for(int i=0; i<ws2812fx.getNumSegments(); i++) {
+      WS2812FX::segment seg = segments[i];
+      JsonObject jsonSegment = jsonSegments.createNestedObject();
+      jsonSegment["start"] = seg.start;
+      jsonSegment["stop"] = seg.stop;
+      jsonSegment["mode"] = seg.mode;
+      jsonSegment["speed"] = seg.speed;
+      jsonSegment["options"] = seg.options;
+      JsonArray jsonColors = jsonSegment.createNestedArray("colors");
+      jsonColors.add(seg.colors[0]); // the web interface expects three color values
+      jsonColors.add(seg.colors[1]);
+      jsonColors.add(seg.colors[2]);
+    }
+//serializeJson(doc, Serial); Serial.println(); // debug
+
+    int bufferSize = measureJson(doc) + 1;
+    char *json = (char*)malloc(sizeof(char) * (bufferSize));
+    serializeJson(doc, json, sizeof(char) * bufferSize);
+    server.send(200, "application/json", json);
+    free(json);
+  });
+#endif
+
+  // receive the segment info in JSON format and setup the WS2812 strip
+#if ARDUINOJSON_VERSION_MAJOR == 5
+  server.on("/setsegments", HTTP_POST, [](){
+    String data = server.arg("plain");
+    data = data.substring(1, data.length() - 1); // remove the surrounding quotes
+    data.replace("\\\"", "\""); // replace all the backslash quotes with just quotes
+//Serial.println(data); // debug
+
+    DynamicJsonBuffer jsonBuffer(1000);
+    JsonObject& root = jsonBuffer.parseObject(data);
+    if(root.success()) {
+      ws2812fx.stop();
+      ws2812fx.setLength(root["numPixels"]);
+      ws2812fx.stop(); // reset strip again in case length was increased
+      ws2812fx.setBrightness(root["brightness"]);
+      ws2812fx.setNumSegments(1); // reset number of segments
+      JsonArray segments = root["segments"];
+      for (int i=0; i<segments.size(); i++){
+        JsonObject seg = segments[i];
+        JsonArray colors = seg["colors"];
+        // the web interface sends three color values
+        uint32_t _colors[NUM_COLORS] = {colors[0], colors[1], colors[2]};
+        uint8_t _options = seg["options"];
+        ws2812fx.setSegment(i, seg["start"], seg["stop"], seg["mode"], _colors, seg["speed"], _options);
+      }
+      saveToEEPROM(); // save segment data to EEPROM
+      ws2812fx.start();
+    }
+    server.send(200, "text/plain", "OK");
+  });
+#endif
+#if ARDUINOJSON_VERSION_MAJOR == 6
+  server.on("/setsegments", HTTP_POST, [](){
+    String data = server.arg("plain");
+    data = data.substring(1, data.length() - 1); // remove the surrounding quotes
+    data.replace("\\\"", "\""); // replace all the backslash quotes with just quotes
+//Serial.println(data); // debug
+
+    int freeHeap = ESP.getFreeHeap();
+    DynamicJsonDocument doc(freeHeap - 3096); // allocate all of the available heap except 3kB
+    DeserializationError error = deserializeJson(doc, data);
+    if (!error) {
+      JsonObject root = doc.as<JsonObject>();
+      ws2812fx.stop();
+      ws2812fx.setLength(root["numPixels"]);
+      ws2812fx.stop(); // reset strip again in case length was increased
+      ws2812fx.setBrightness(root["brightness"]);
+      ws2812fx.setNumSegments(1); // reset number of segments
+      JsonArray segments = root["segments"];
+      for (int i=0; i<segments.size(); i++){
+        JsonObject seg = segments[i];
+        JsonArray colors = seg["colors"];
+        // the web interface sends three color values
+        uint32_t _colors[NUM_COLORS] = {colors[0], colors[1], colors[2]};
+        uint8_t _options = seg["options"];
+        ws2812fx.setSegment(i, seg["start"], seg["stop"], seg["mode"], _colors, seg["speed"], _options);
+      }
+      saveToEEPROM(); // save segment data to EEPROM
+      ws2812fx.start();
+    }
+    server.send(200, "text/plain", "OK");
+  });
+#endif
+
+  // send the WS2812FX mode info in JSON format
+  server.on("/getmodes", []() {
+    char modes[1000] = "[";
+    for (uint8_t i = 0; i < ws2812fx.getModeCount(); i++) {
+      strcat(modes, "\"");
+      strcat_P(modes, (PGM_P)ws2812fx.getModeName(i));
+      strcat(modes, "\",");
+    }
+    modes[strlen(modes) - 1] = ']';
+
+    server.sendHeader("Access-Control-Allow-Origin", "*");
+    server.send(200, "application/json", modes);
+  });
+
   // control Run / stop / pause / resume
   server.on("/runcontrol", HTTP_POST, [](){
     String data = server.arg("plain");
@@ -157,50 +272,6 @@ void setup() {
      ws2812fx.stop(); 
     }
     server.send(200, "text/plain", "OK");
-  });
-
-  // receive the segment info in JSON format and setup the WS2812 strip
-  server.on("/setsegments", HTTP_POST, [](){
-    String data = server.arg("plain");
-    data = data.substring(1, data.length() - 1); // remove the surrounding quotes
-    data.replace("\\\"", "\""); // replace all the backslash quotes with just quotes
-//Serial.println(data);
-    DynamicJsonBuffer jsonBuffer(1000);
-    JsonObject& root = jsonBuffer.parseObject(data);
-    if(root.success()) {
-      ws2812fx.stop();
-      ws2812fx.setLength(root["numPixels"]);
-      ws2812fx.stop(); // reset strip again in case length was increased
-      ws2812fx.setBrightness(root["brightness"]);
-      ws2812fx.setNumSegments(1); // reset number of segments
-      JsonArray& segments = root["segments"];
-      for (int i=0; i<segments.size(); i++){
-        JsonObject& seg = segments[i];
-        JsonArray& colors = seg["colors"];
-        // the web interface sends three color values
-        uint32_t _colors[NUM_COLORS] = {colors[0], colors[1], colors[2]};
-        uint8_t _options = seg["options"];
-        ws2812fx.setSegment(i, seg["start"], seg["stop"], seg["mode"], _colors, seg["speed"], _options);
-      }
-      saveToEEPROM(); // save segment data to EEPROM
-      ws2812fx.start();
-    }
-    server.send(200, "text/plain", "OK");
-  });
-
-  // send the WS2812 mode info
-  server.on("/getmodes", [](){
-    DynamicJsonBuffer jsonBuffer(1000);
-    JsonArray& root = jsonBuffer.createArray();
-    for(uint8_t i=0; i < ws2812fx.getModeCount(); i++) {
-      root.add(ws2812fx.getModeName(i));
-    }
-
-    int bufferSize = root.measureLength() + 1;
-    char *json = (char*)malloc(sizeof(char) * (bufferSize));
-    root.printTo(json, sizeof(char) * bufferSize);
-    server.send(200, "application/json", json);
-    free(json);
   });
 
   server.onNotFound([](){

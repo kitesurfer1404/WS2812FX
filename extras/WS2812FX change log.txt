@@ -1,13 +1,22 @@
 WS2182FX Change Log
 
 
+v1.2.2 changes 9/23/2019
+------------------------
+
+1) Refactored the ws2812fx_segments_web example sketch to allow the use
+	of ArduinoJson v6, and replaced the materialize front-end UI framework
+	with Material Components for the Web (https://material.io/develop/web/),
+	since support for Materialize seems to be fading.
+
+
 v1.2.1 changes 9/12/2019
 ------------------------
 
 1) Refactored the ws2812fx_dma example sketch to use the proper NeoPixelBus API.
 
 2) Incorporated chrissicool's suggestion to remove platform restriction for
-    PlatformIO users, as well as some other minor tweaks to library.json.
+	PlatformIO users, as well as some other minor tweaks to library.json.
 	See https://github.com/kitesurfer1404/WS2812FX/pull/186
 
 3) Updates to README.md and WS2812FX Users Guide.md
