@@ -40,7 +40,7 @@
 extern WS2812FX ws2812fx;
 
 uint16_t twinkleFox(void) {
-  uint16_t myRandom = 0; // reset the random number generator seed
+  uint16_t mySeed = 0; // reset the random number generator seed
   WS2812FX::Segment* seg = ws2812fx.getSegment(); // get the current segment
   WS2812FX::Segment_runtime* segrt = ws2812fx.getSegmentRuntime();
 
@@ -56,10 +56,10 @@ uint16_t twinkleFox(void) {
   for (uint16_t i = seg->start; i <= seg->stop; i+=size) {
     // Use Mark Kriegsman's clever idea of using pseudo-random numbers to determine
     // each LED's initial and increment blend values
-    myRandom = (myRandom * 2053) + 13849; // a random, but deterministic, number
-    uint16_t initValue = myRandom & 0xff; // the LED's initial blend index (0-255)
-    myRandom = (myRandom * 2053) + 13849; // another random, but deterministic, number
-    uint16_t incrValue = ((myRandom & 0x07) + 1) * 3; // blend index increment (3-24)
+    mySeed = (mySeed * 2053) + 13849; // a random, but deterministic, number
+    uint16_t initValue = (mySeed + (mySeed >> 8)) & 0xff; // the LED's initial blend index (0-255)
+    mySeed = (mySeed * 2053) + 13849; // another random, but deterministic, number
+    uint16_t incrValue = (((mySeed + (mySeed >> 8)) & 0x07) + 1) * 2; // blend index increment (2,4,6,8,10,12,14,16)
 
     // We're going to use a sine function to blend colors, instead of Mark's triangle
     // function, simply because a sine lookup table is already built into the
@@ -88,7 +88,7 @@ uint16_t twinkleFox(void) {
       }
     }
   }
-  return seg->speed / 16;
+  return seg->speed / 32;
 }
 
 #endif
