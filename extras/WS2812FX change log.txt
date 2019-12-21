@@ -1,13 +1,23 @@
 WS2182FX Change Log
 
 
-v1.2.2 changes 9/23/2019
+v1.2.2 changes 12/21/2019
 ------------------------
 
 1) Refactored the ws2812fx_segments_web example sketch to allow the use
 	of ArduinoJson v6, and replaced the materialize front-end UI framework
 	with Material Components for the Web (https://material.io/develop/web/),
 	since support for Materialize seems to be fading.
+
+2) Updated esp8266_webinterface example sketch to allow setting a specific
+	speed.
+
+3) Refactored the RainbowLarson and Trifade custom effects so they work
+	properly when used in more than one segment (removed static variables).
+
+4) Added the TwinkleFox custom effect
+
+5) Updated the Flash Sparkle effect to implement SIZE option.
 
 
 v1.2.1 changes 9/12/2019

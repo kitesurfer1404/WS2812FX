@@ -1034,23 +1034,23 @@ uint16_t WS2812FX::mode_sparkle(void) {
 
 
 /*
- * Lights all LEDs in the color. Flashes single white pixels randomly.
+ * Lights all LEDs in the color. Flashes white pixels randomly.
  * Inspired by www.tweaking4all.com/hardware/arduino/arduino-led-strip-effects/
  */
 uint16_t WS2812FX::mode_flash_sparkle(void) {
-  if(SEGMENT_RUNTIME.counter_mode_call == 0) {
-    for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
-      setPixelColor(i, SEGMENT.colors[0]);
-    }
+  for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
+    setPixelColor(i, SEGMENT.colors[0]);
   }
 
-  setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.aux_param3, SEGMENT.colors[0]);
-
   if(random8(5) == 0) {
-    SEGMENT_RUNTIME.aux_param3 = random16(SEGMENT_LENGTH); // aux_param3 stores the random led index
-    setPixelColor(SEGMENT.start + SEGMENT_RUNTIME.aux_param3, WHITE);
+    uint8_t size = 1 << SIZE_OPTION;
+    uint16_t index = SEGMENT.start + random16(SEGMENT_LENGTH - size);
+    for(uint8_t j=0; j<size; j++) {
+      setPixelColor(index + j, WHITE);
+    }
     return 20;
-  } 
+  }
+
   return SEGMENT.speed;
 }
 

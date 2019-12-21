@@ -46,20 +46,25 @@ extern WS2812FX ws2812fx;
 
 uint16_t rainbowLarson(void) {
   WS2812FX::Segment* seg = ws2812fx.getSegment(); // get the current segment
+  WS2812FX::Segment_runtime* segrt = ws2812fx.getSegmentRuntime();
   int seglen = seg->stop - seg->start + 1;
 
-  static int16_t index = 0, dir = 1, cnt = 0;
-  index += dir;
+  int8_t dir = segrt->aux_param2 ? -1 : 1;
+  segrt->aux_param3 += dir;
+  int16_t index = segrt->aux_param3 % seglen;
 
   ws2812fx.fade_out();
 
   if(seg->options == NO_OPTIONS) {
-    ws2812fx.setPixelColor(seg->start + index, ws2812fx.color_wheel((cnt++ % 8) * 32));
+    int8_t cnt = segrt->aux_param++;
+    ws2812fx.setPixelColor(seg->start + index, ws2812fx.color_wheel((cnt % 8) * 32));
   } else {
     ws2812fx.setPixelColor(seg->start + index, ws2812fx.color_wheel((index * 256) / seglen));
   }
 
-  if(index >= (seg->stop - seg->start) || index <= 0) dir = -dir; 
+  if(segrt->aux_param3 >= (seg->stop - seg->start) || segrt->aux_param3 <= 0) {
+    segrt->aux_param2 = !segrt->aux_param2;
+  }
 
   return (seg->speed / (seglen * 2));
 }
