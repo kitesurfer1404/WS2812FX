@@ -1,6 +1,19 @@
 WS2182FX Change Log
 
 
+v1.2.3 changes 2/1/2020
+------------------------
+
+1) Fixed minor type casting problem that was generating "comparison between
+	signed and unsigned integer expressions" warnings when compiling for
+	Teensy.
+
+2) Added "depends=Adafruit NeoPixel" parameter to library.properties.
+	see https://github.com/kitesurfer1404/WS2812FX/pull/205
+
+3) Added the Heartbeat custom effect. Just in time for Valentine's Day. :)
+
+
 v1.2.2 changes 12/21/2019
 ------------------------
 
