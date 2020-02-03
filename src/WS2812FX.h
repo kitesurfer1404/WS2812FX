@@ -65,7 +65,7 @@
 #define MAX_CUSTOM_MODES  4
 #define SEGMENT          _segments[_segment_index]
 #define SEGMENT_RUNTIME  _segment_runtimes[_segment_index]
-#define SEGMENT_LENGTH   (SEGMENT.stop - SEGMENT.start + 1)
+#define SEGMENT_LENGTH   (uint16_t)(SEGMENT.stop - SEGMENT.start + 1)
 
 // some common colors
 #define RED        (uint32_t)0xFF0000

@@ -777,7 +777,7 @@ uint16_t WS2812FX::scan(uint32_t color1, uint32_t color2, bool dual) {
 
   SEGMENT_RUNTIME.counter_mode_step += dir;
   if(SEGMENT_RUNTIME.counter_mode_step == 0) SEGMENT_RUNTIME.aux_param = 0;
-  if(SEGMENT_RUNTIME.counter_mode_step >= (SEGMENT_LENGTH - size)) SEGMENT_RUNTIME.aux_param = 1;
+  if(SEGMENT_RUNTIME.counter_mode_step >= (uint16_t)(SEGMENT_LENGTH - size)) SEGMENT_RUNTIME.aux_param = 1;
 
   return (SEGMENT.speed / (SEGMENT_LENGTH * 2));
 }
@@ -1384,7 +1384,7 @@ uint16_t WS2812FX::mode_larson_scanner(void) {
   else CLR_CYCLE;
 
   SEGMENT_RUNTIME.counter_mode_step++;
-  if(SEGMENT_RUNTIME.counter_mode_step >= ((SEGMENT_LENGTH * 2) - 2)) {
+  if(SEGMENT_RUNTIME.counter_mode_step >= (uint16_t)((SEGMENT_LENGTH * 2) - 2)) {
     SEGMENT_RUNTIME.counter_mode_step = 0;
   }
 
@@ -1609,7 +1609,7 @@ uint8_t WS2812FX::setCustomMode(const __FlashStringHelper* name, uint16_t (*p)()
 }
 
 uint8_t WS2812FX::setCustomMode(uint8_t index, const __FlashStringHelper* name, uint16_t (*p)()) {
-  if((FX_MODE_CUSTOM_0 + index) < MODE_COUNT) {
+  if((uint8_t)(FX_MODE_CUSTOM_0 + index) < MODE_COUNT) {
     _names[FX_MODE_CUSTOM_0 + index] = name; // store the custom mode name
     customModes[index] = p; // store the custom mode
 
