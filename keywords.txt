@@ -44,6 +44,7 @@ gamma	KEYWORD2
 trigger	KEYWORD2
 setMode	KEYWORD2
 strip_off	KEYWORD2
+fade_out	KEYWORD2
 setCustomMode	KEYWORD2
 setCustomShow	KEYWORD2
 setSpeed	KEYWORD2
