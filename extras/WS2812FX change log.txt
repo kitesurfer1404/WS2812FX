@@ -1,6 +1,24 @@
 WS2182FX Change Log
 
 
+v1.2.4 changes 5/8/2020
+------------------------
+
+1) Fixed the Static effect, so that it uses the segment's speed parameter
+    instead of hardcoding the speed to 500. Makes the Static effect more
+    responsive to mode changes.
+    See https://github.com/kitesurfer1404/WS2812FX/issues/220.
+
+2) Fixed Random Chase custom effect to work when brigtness < 255.
+    See https://github.com/kitesurfer1404/WS2812FX/issues/217.
+
+3) Updated the Running Lights effect to use two colors instead of just one.
+    See https://github.com/kitesurfer1404/WS2812FX/issues/221.
+
+4) Added the Matrix custom effect to demonstrate animating a 2D LED matrix.
+    See https://github.com/kitesurfer1404/WS2812FX/issues/216.
+
+
 v1.2.3 changes 2/1/2020
 ------------------------
 

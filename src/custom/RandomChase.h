@@ -40,9 +40,8 @@ extern WS2812FX ws2812fx;
 
 uint16_t randomChase(void) {
   WS2812FX::Segment* seg = ws2812fx.getSegment();
-  for(uint16_t i=seg->stop; i>seg->start; i--) {
-    ws2812fx.setPixelColor(i, ws2812fx.getPixelColor(i-1));
-  }
+  int seglen = seg->stop - seg->start + 1;
+  ws2812fx.copyPixels(seg->start + 1, seg->start, seglen - 1);
   uint32_t color = ws2812fx.getPixelColor(seg->start + 1);
   int r = random(6) != 0 ? (color >> 16 & 0xFF) : random(256);
   int g = random(6) != 0 ? (color >> 8  & 0xFF) : random(256);
