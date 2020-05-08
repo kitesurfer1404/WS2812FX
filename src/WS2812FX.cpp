@@ -531,7 +531,7 @@ uint16_t WS2812FX::mode_static(void) {
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
     setPixelColor(i, SEGMENT.colors[0]);
   }
-  return 500;
+  return SEGMENT.speed;
 }
 
 
@@ -672,7 +672,7 @@ uint16_t WS2812FX::mode_random_color(void) {
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
     setPixelColor(i, color);
   }
-  return (SEGMENT.speed);
+  return SEGMENT.speed;
 }
 
 
@@ -688,7 +688,7 @@ uint16_t WS2812FX::mode_single_dynamic(void) {
   }
 
   setPixelColor(SEGMENT.start + random16(SEGMENT_LENGTH), color_wheel(random8()));
-  return (SEGMENT.speed);
+  return SEGMENT.speed;
 }
 
 
@@ -700,7 +700,7 @@ uint16_t WS2812FX::mode_multi_dynamic(void) {
   for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
     setPixelColor(i, color_wheel(random8()));
   }
-  return (SEGMENT.speed);
+  return SEGMENT.speed;
 }
 
 
@@ -851,19 +851,15 @@ uint16_t WS2812FX::mode_theater_chase_rainbow(void) {
  * Running lights effect with smooth sine transition.
  */
 uint16_t WS2812FX::mode_running_lights(void) {
-  uint8_t w = ((SEGMENT.colors[0] >> 24) & 0xFF);
-  uint8_t r = ((SEGMENT.colors[0] >> 16) & 0xFF);
-  uint8_t g = ((SEGMENT.colors[0] >>  8) & 0xFF);
-  uint8_t b =  (SEGMENT.colors[0]        & 0xFF);
-
   uint8_t size = 1 << SIZE_OPTION;
   uint8_t sineIncr = max(1, (256 / SEGMENT_LENGTH) * size);
   for(uint16_t i=0; i < SEGMENT_LENGTH; i++) {
     int lum = (int)sine8(((i + SEGMENT_RUNTIME.counter_mode_step) * sineIncr));
+    uint32_t color = color_blend(SEGMENT.colors[0], SEGMENT.colors[1], lum);
     if(IS_REVERSE) {
-      setPixelColor(SEGMENT.start + i, (r * lum) / 256, (g * lum) / 256, (b * lum) / 256, (w * lum) / 256);
+      setPixelColor(SEGMENT.start + i, color);
     } else {
-      setPixelColor(SEGMENT.stop - i,  (r * lum) / 256, (g * lum) / 256, (b * lum) / 256, (w * lum) / 256);
+      setPixelColor(SEGMENT.stop - i,  color);
     }
   }
   SEGMENT_RUNTIME.counter_mode_step = (SEGMENT_RUNTIME.counter_mode_step + 1) % 256;
