@@ -45,6 +45,8 @@
 #define DEFAULT_MODE       (uint8_t)0
 #define DEFAULT_SPEED      (uint16_t)1000
 #define DEFAULT_COLOR      (uint32_t)0xFF0000
+#define DEFAULT_COLORS     { RED, GREEN, BLUE }
+#define RGB_COLORS(r,g,b)  (const uint32_t[]){r,g,b}
 
 #if defined(ESP8266) || defined(ESP32)
   //#pragma message("Compiling for ESP")
@@ -108,12 +110,13 @@
 #define SIZE_OPTION  ((SEGMENT.options >> 1) & 3)
 
 // segment runtime options (aux_param2)
-#define FRAME     (uint8_t)B10000000
-#define SET_FRAME (SEGMENT_RUNTIME.aux_param2 |=  FRAME)
-#define CLR_FRAME (SEGMENT_RUNTIME.aux_param2 &= ~FRAME)
-#define CYCLE     (uint8_t)B01000000
-#define SET_CYCLE (SEGMENT_RUNTIME.aux_param2 |=  CYCLE)
-#define CLR_CYCLE (SEGMENT_RUNTIME.aux_param2 &= ~CYCLE)
+#define FRAME           (uint8_t)B10000000
+#define SET_FRAME       (SEGMENT_RUNTIME.aux_param2 |=  FRAME)
+#define CLR_FRAME       (SEGMENT_RUNTIME.aux_param2 &= ~FRAME)
+#define CYCLE           (uint8_t)B01000000
+#define SET_CYCLE       (SEGMENT_RUNTIME.aux_param2 |=  CYCLE)
+#define CLR_CYCLE       (SEGMENT_RUNTIME.aux_param2 &= ~CYCLE)
+#define CLR_FRAME_CYCLE (SEGMENT_RUNTIME.aux_param2 &= ~(FRAME | CYCLE))
 
 #define MODE_COUNT (sizeof(_names)/sizeof(_names[0]))
 
@@ -443,6 +446,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       increaseLength(uint16_t s),
       decreaseLength(uint16_t s),
       trigger(void),
+      setCycle(void),
       setNumSegments(uint8_t n),
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color,          uint16_t speed, bool reverse),
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color,          uint16_t speed, uint8_t options),
@@ -515,12 +519,15 @@ class WS2812FX : public Adafruit_NeoPixel {
       color_wipe(uint32_t, uint32_t, bool),
       twinkle(uint32_t, uint32_t),
       twinkle_fade(uint32_t),
+      sparkle(uint32_t, uint32_t),
       chase(uint32_t, uint32_t, uint32_t),
+      chase_flash(uint32_t, uint32_t),
       running(uint32_t, uint32_t),
       fireworks(uint32_t),
       fire_flicker(int),
       tricolor_chase(uint32_t, uint32_t, uint32_t),
       scan(uint32_t, uint32_t, bool);
+
     uint32_t
       color_blend(uint32_t, uint32_t, uint8_t);
 

@@ -1,6 +1,19 @@
 WS2182FX Change Log
 
 
+v1.x.x changes 5/11/2020
+------------------------
+
+1) This library now makes use of the new Adafruit fill() function,
+	so requires Adafruit_NeoPixel library v1.1.7 or newer.
+
+2) Added the cycle flag to the effects that did not have it implemented.
+
+3) Refactored many effects, because the flash memory footprint was
+	getting too big to fit in my Arduino Leonardo. Some of the effects
+	don't look exactly the same, but they're pretty close.
+
+
 v1.2.4 changes 5/8/2020
 ------------------------
 

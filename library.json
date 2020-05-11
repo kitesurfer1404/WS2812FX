@@ -20,7 +20,7 @@
   "dependencies": [
     {
       "name": "Adafruit NeoPixel",
-      "version": ">=1.1.4"
+      "version": ">=1.1.7"
     }
   ],
   "examples": [
