@@ -59,7 +59,7 @@ uint16_t dualLarson(void) {
   if(segrt->aux_param3 >= (seg->stop - seg->start) || segrt->aux_param3 <= 0) {
     segrt->aux_param = !segrt->aux_param;
     if(seg->options & REVERSE) offset = (offset + 1) % seglen;
-    ws2812fx.setCycle();
+    if(!segrt->aux_param) ws2812fx.setCycle();
   }
 
   return (seg->speed / (seglen * 2));

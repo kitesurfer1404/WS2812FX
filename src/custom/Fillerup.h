@@ -84,6 +84,7 @@ uint16_t fillerup(void) {
   if(segrt->aux_param3 >= seglen) {
     segrt->aux_param = !segrt->aux_param;
     segrt->aux_param3 = 0;
+    ws2812fx.setCycle();
   }
 
   return (seg->speed / seglen);

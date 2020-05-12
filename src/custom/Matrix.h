@@ -76,7 +76,7 @@ uint16_t matrix(void) {
 
   // increment to the next page
   segrt->aux_param < (numPages - 1) ? segrt->aux_param++ : segrt->aux_param = 0;
-
+  if(segrt->aux_param == 0) ws2812fx.setCycle();
   return seg->speed;
 }
 

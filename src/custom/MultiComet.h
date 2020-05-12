@@ -60,6 +60,7 @@ uint16_t multiComet(void) {
     } else {
       if(!random(seglen)) {
         comets[i] = 0;
+        ws2812fx.setCycle();
       }
     }
   }

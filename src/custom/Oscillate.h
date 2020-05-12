@@ -61,11 +61,13 @@ uint16_t oscillate(void) {
       oscillators[i].pos = 0;
       oscillators[i].dir = 1;
       oscillators[i].speed = random(1, 3);
+      ws2812fx.setCycle();
     }
     if((oscillators[i].dir == 1) && (oscillators[i].pos >= (seglen - 1))) {
       oscillators[i].pos = seglen - 1;
       oscillators[i].dir = -1;
       oscillators[i].speed = random(1, 3);
+      ws2812fx.setCycle();
     }
   }
 

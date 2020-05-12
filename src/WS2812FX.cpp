@@ -91,23 +91,15 @@ void WS2812FX::service() {
 // overload setPixelColor() functions so we can use gamma correction
 // (see https://learn.adafruit.com/led-tricks-gamma-correction/the-issue)
 void WS2812FX::setPixelColor(uint16_t n, uint32_t c) {
-  if(IS_GAMMA) {
-    uint8_t w = (c >> 24) & 0xFF;
-    uint8_t r = (c >> 16) & 0xFF;
-    uint8_t g = (c >>  8) & 0xFF;
-    uint8_t b =  c        & 0xFF;
-    Adafruit_NeoPixel::setPixelColor(n, gamma8(r), gamma8(g), gamma8(b), gamma8(w));
-  } else {
-    Adafruit_NeoPixel::setPixelColor(n, c);
-  }
+  uint8_t w = (c >> 24) & 0xFF;
+  uint8_t r = (c >> 16) & 0xFF;
+  uint8_t g = (c >>  8) & 0xFF;
+  uint8_t b =  c        & 0xFF;
+  setPixelColor(n, r, g, b, w);
 }
 
 void WS2812FX::setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b) {
-  if(IS_GAMMA) {
-    Adafruit_NeoPixel::setPixelColor(n, gamma8(r), gamma8(g), gamma8(b));
-  } else {
-    Adafruit_NeoPixel::setPixelColor(n, r, g, b);
-  }
+  setPixelColor(n, r, g, b, 0);
 }
 
 void WS2812FX::setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w) {
@@ -127,11 +119,7 @@ void WS2812FX::copyPixels(uint16_t dest, uint16_t src, uint16_t count) {
 
 // overload show() functions so we can use custom show()
 void WS2812FX::show(void) {
-  if(customShow == NULL) {
-    Adafruit_NeoPixel::show();
-  } else {
-    customShow();
-  }
+  customShow == NULL ? Adafruit_NeoPixel::show() : customShow();
 }
 
 void WS2812FX::start() {
@@ -240,20 +228,16 @@ void WS2812FX::setLength(uint16_t b) {
 }
 
 void WS2812FX::increaseLength(uint16_t s) {
-  s = _segments[0].stop - _segments[0].start + 1 + s;
-  setLength(s);
+  uint16_t seglen = _segments[0].stop - _segments[0].start + 1;
+  setLength(seglen + s);
 }
 
 void WS2812FX::decreaseLength(uint16_t s) {
-  if (s > _segments[0].stop - _segments[0].start + 1) s = 1;
-  s = _segments[0].stop - _segments[0].start + 1 - s;
-
-  for(uint16_t i=_segments[0].start + s; i <= (_segments[0].stop - _segments[0].start + 1); i++) {
-    setPixelColor(i, 0);
-  }
+  uint16_t seglen = _segments[0].stop - _segments[0].start + 1;
+  fill(BLACK, _segments[0].start, seglen);
   show();
 
-  setLength(s);
+  if (s < seglen) setLength(seglen - s);
 }
 
 boolean WS2812FX::isRunning() {
@@ -374,7 +358,11 @@ const __FlashStringHelper* WS2812FX::getModeName(uint8_t m) {
 
 void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed, bool reverse) {
   uint32_t colors[] = {color, 0, 0};
-  setSegment(n, start, stop, mode, colors, speed, reverse);
+  setSegment(n, start, stop, mode, colors, speed, (uint8_t)(reverse ? REVERSE : NO_OPTIONS));
+}
+
+void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse) {
+  setSegment(n, start, stop, mode, colors, speed, (uint8_t)(reverse ? REVERSE : NO_OPTIONS));
 }
 
 void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed, uint8_t options) {
@@ -382,12 +370,8 @@ void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode
   setSegment(n, start, stop, mode, colors, speed, options);
 }
 
-void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse) {
-  setSegment(n, start, stop, mode, colors, speed, (uint8_t)(reverse ? REVERSE : NO_OPTIONS));
-}
-
 void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options) {
-  if(n < (sizeof(_segments) / sizeof(_segments[0]))) {
+  if(n < MAX_NUM_SEGMENTS) {
     if(n + 1 > _num_segments) _num_segments = n + 1;
     _segments[n].start = start;
     _segments[n].stop = stop;
@@ -406,7 +390,7 @@ void WS2812FX::resetSegments() {
   memset(_segments, 0, sizeof(_segments));
   _segment_index = 0;
   _num_segments = 1;
-  setSegment(0, 0, 7, FX_MODE_STATIC, (const uint32_t[]){DEFAULT_COLOR, 0, 0}, DEFAULT_SPEED, NO_OPTIONS);
+  setSegment(0, 0, 7, FX_MODE_STATIC, DEFAULT_COLOR, DEFAULT_SPEED, NO_OPTIONS);
 }
 
 void WS2812FX::resetSegmentRuntimes() {
@@ -471,7 +455,7 @@ uint8_t WS2812FX::random8() {
 // note random8(lim) generates numbers in the range 0 to (lim -1)
 uint8_t WS2812FX::random8(uint8_t lim) {
     uint8_t r = random8();
-    r = (r * lim) >> 8;
+    r = ((uint16_t)r * lim) >> 8;
     return r;
 }
 
@@ -527,9 +511,7 @@ uint32_t* WS2812FX::intensitySums() {
  * No blinking. Just plain old static light.
  */
 uint16_t WS2812FX::mode_static(void) {
-  for(uint16_t i=SEGMENT.start; i <= SEGMENT.stop; i++) {
-    setPixelColor(i, SEGMENT.colors[0]);
-  }
+  fill(SEGMENT.colors[0], SEGMENT.start, SEGMENT_LENGTH);
   SET_CYCLE;
   return SEGMENT.speed;
 }

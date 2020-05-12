@@ -73,6 +73,7 @@ uint16_t vuMeter(void) {
       }
     }
   }
+  ws2812fx.setCycle();
 
   return seg->speed;
 }

@@ -40,13 +40,17 @@ extern WS2812FX ws2812fx;
 
 uint16_t randomChase(void) {
   WS2812FX::Segment* seg = ws2812fx.getSegment();
+  WS2812FX::Segment_runtime* segrt = ws2812fx.getSegmentRuntime();
   int seglen = seg->stop - seg->start + 1;
+
   ws2812fx.copyPixels(seg->start + 1, seg->start, seglen - 1);
   uint32_t color = ws2812fx.getPixelColor(seg->start + 1);
   int r = random(6) != 0 ? (color >> 16 & 0xFF) : random(256);
   int g = random(6) != 0 ? (color >> 8  & 0xFF) : random(256);
   int b = random(6) != 0 ? (color       & 0xFF) : random(256);
   ws2812fx.setPixelColor(seg->start, r, g, b);
+
+  if((segrt->counter_mode_call % seglen) == 0) ws2812fx.setCycle();
   return seg->speed;
 }
 

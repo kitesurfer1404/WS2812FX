@@ -69,7 +69,7 @@ uint16_t twinkleFox(void) {
     // Index into the built-in Adafruit_NeoPixel sine table to lookup the blend amount
     uint8_t blendAmt = Adafruit_NeoPixel::sine8(blendIndex); // 0-255
 
-    // If colors[0] is BLACK, bland random colors
+    // If colors[0] is BLACK, blend random colors
     if(color0 == BLACK) {
       blendedColor = ws2812fx.color_blend(ws2812fx.color_wheel(initValue), color1, blendAmt);
     // If colors[2] isn't BLACK, choose to blend colors[0]/colors[1] or colors[1]/colors[2]
@@ -88,6 +88,7 @@ uint16_t twinkleFox(void) {
       }
     }
   }
+  ws2812fx.setCycle();
   return seg->speed / 32;
 }
 

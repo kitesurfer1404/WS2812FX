@@ -84,6 +84,7 @@ uint16_t popcorn(void) {
         popcorn[i].color = popcornColor;
         ledIndex = isReverse ? seg->stop : seg->start;
         ws2812fx.setPixelColor(ledIndex, popcorn[i].color);
+        ws2812fx.setCycle();
       }
     }
   }

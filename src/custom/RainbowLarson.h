@@ -42,6 +42,8 @@
 
 #include <WS2812FX.h>
 
+#define DIR_BIT (uint8_t)B00000001 // segrt->aux_param2 direction bit
+
 extern WS2812FX ws2812fx;
 
 uint16_t rainbowLarson(void) {
@@ -49,7 +51,7 @@ uint16_t rainbowLarson(void) {
   WS2812FX::Segment_runtime* segrt = ws2812fx.getSegmentRuntime();
   int seglen = seg->stop - seg->start + 1;
 
-  int8_t dir = segrt->aux_param2 ? -1 : 1;
+  int8_t dir = (segrt->aux_param2 & DIR_BIT == DIR_BIT) ? -1 : 1; // forward?
   segrt->aux_param3 += dir;
   int16_t index = segrt->aux_param3 % seglen;
 
@@ -63,7 +65,8 @@ uint16_t rainbowLarson(void) {
   }
 
   if(segrt->aux_param3 >= (seg->stop - seg->start) || segrt->aux_param3 <= 0) {
-    segrt->aux_param2 = !segrt->aux_param2;
+    segrt->aux_param2 ^= DIR_BIT; // change direction
+    ws2812fx.setCycle();
   }
 
   return (seg->speed / (seglen * 2));
