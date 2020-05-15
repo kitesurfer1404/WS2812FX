@@ -69,15 +69,17 @@ void WS2812FX::service() {
   if(_running || _triggered) {
     unsigned long now = millis(); // Be aware, millis() rolls over every 49 days
     bool doShow = false;
-    for(uint8_t i=0; i < _num_segments; i++) {
-      _segment_index = i;
-      CLR_FRAME_CYCLE;
-      if(now > SEGMENT_RUNTIME.next_time || _triggered) {
-        SET_FRAME;
-        doShow = true;
-        uint16_t delay = (this->*_mode[SEGMENT.mode])();
-        SEGMENT_RUNTIME.next_time = now + max(delay, SPEED_MIN);
-        SEGMENT_RUNTIME.counter_mode_call++;
+    for(uint8_t i=0; i < _active_segments_len; i++) {
+      if(_active_segments[i] != INACTIVE_SEGMENT) {
+        _segment_index = _active_segments[i];
+        CLR_FRAME_CYCLE;
+        if(now > SEGMENT_RUNTIME.next_time || _triggered) {
+          SET_FRAME;
+          doShow = true;
+          uint16_t delay = (this->*_mode[SEGMENT.mode])();
+          SEGMENT_RUNTIME.next_time = now + max(delay, SPEED_MIN);
+          SEGMENT_RUNTIME.counter_mode_call++;
+        }
       }
     }
     if(doShow) {
@@ -192,7 +194,7 @@ void WS2812FX::setColor(uint8_t seg, uint32_t c) {
 }
 
 void WS2812FX::setColors(uint8_t seg, uint32_t* c) {
-  for(uint8_t i=0; i<NUM_COLORS; i++) {
+  for(uint8_t i=0; i<MAX_NUM_COLORS; i++) {
     _segments[seg].colors[i] = c[i];
   }
 }
@@ -356,6 +358,16 @@ const __FlashStringHelper* WS2812FX::getModeName(uint8_t m) {
   }
 }
 
+void WS2812FX::setIdleSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed, uint8_t options) {
+  uint32_t colors[] = {color, 0, 0};
+  setIdleSegment(n, start, stop, mode, colors, speed, options);
+}
+
+void WS2812FX::setIdleSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options) {
+  setSegment(n, start, stop, mode, colors, speed, options);
+  if(n < _active_segments_len) _active_segments[n] = INACTIVE_SEGMENT;
+}
+
 void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed, bool reverse) {
   uint32_t colors[] = {color, 0, 0};
   setSegment(n, start, stop, mode, colors, speed, (uint8_t)(reverse ? REVERSE : NO_OPTIONS));
@@ -371,7 +383,7 @@ void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode
 }
 
 void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options) {
-  if(n < MAX_NUM_SEGMENTS) {
+  if(n < _segments_len) {
     if(n + 1 > _num_segments) _num_segments = n + 1;
     _segments[n].start = start;
     _segments[n].stop = stop;
@@ -379,26 +391,26 @@ void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode
     _segments[n].speed = speed;
     _segments[n].options = options;
 
-    for(uint8_t i=0; i<NUM_COLORS; i++) {
-      _segments[n].colors[i] = colors[i];
-    }
+    setColors(n, (uint32_t*)colors);
+
+    if(n < _active_segments_len) _active_segments[n] = n;
   }
 }
 
 void WS2812FX::resetSegments() {
   resetSegmentRuntimes();
-  memset(_segments, 0, sizeof(_segments));
+  memset(_segments, 0, _segments_len * sizeof(Segment));
+  memset(_active_segments, INACTIVE_SEGMENT, _active_segments_len);
   _segment_index = 0;
-  _num_segments = 1;
-  setSegment(0, 0, 7, FX_MODE_STATIC, DEFAULT_COLOR, DEFAULT_SPEED, NO_OPTIONS);
+  _num_segments = 0;
 }
 
 void WS2812FX::resetSegmentRuntimes() {
-  memset(_segment_runtimes, 0, sizeof(_segment_runtimes));
+  memset(_segment_runtimes, 0, _active_segments_len * sizeof(Segment_runtime));
 }
 
 void WS2812FX::resetSegmentRuntime(uint8_t seg) {
-  memset(&_segment_runtimes[seg], 0, sizeof(_segment_runtimes[0]));
+  memset(&_segment_runtimes[seg], 0, sizeof(Segment_runtime));
 }
 
 /*
@@ -1434,7 +1446,7 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
 uint16_t WS2812FX::mode_fireworks(void) {
   uint32_t color = BLACK;
   do { // randomly choose a non-BLACK color from the colors array
-    color = SEGMENT.colors[random8(NUM_COLORS)];
+    color = SEGMENT.colors[random8(MAX_NUM_COLORS)];
   } while (color == BLACK);
   return fireworks(color);
 }

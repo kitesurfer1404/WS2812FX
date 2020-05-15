@@ -49,7 +49,7 @@ uint16_t oscillate(void) {
   WS2812FX::Segment* seg = ws2812fx.getSegment(); // get the current segment
   int seglen = seg->stop - seg->start + 1;
 
-  static oscillator oscillators[NUM_COLORS] = {
+  static oscillator oscillators[] = {
     {seglen/4,   seglen/8,  1, 1},
     {seglen/4*2, seglen/8, -1, 1},
     {seglen/4*3, seglen/8,  1, 2}

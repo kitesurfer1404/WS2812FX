@@ -60,11 +60,13 @@
 #define BRIGHTNESS_MIN (uint8_t)0
 #define BRIGHTNESS_MAX (uint8_t)255
 
-/* each segment uses 36 bytes of SRAM memory, so if you're application fails because of
-  insufficient memory, decreasing MAX_NUM_SEGMENTS may help */
-#define MAX_NUM_SEGMENTS 10
-#define NUM_COLORS        3 /* number of colors per segment */
-#define MAX_CUSTOM_MODES  4
+/* each segment uses 36 bytes of SRAM memory, so if you're compile fails
+  because of insufficient flash memory, decreasing MAX_NUM_SEGMENTS may help */
+#define MAX_NUM_SEGMENTS         10
+#define MAX_NUM_ACTIVE_SEGMENTS  10
+#define INACTIVE_SEGMENT        255 /* max uint_8 */
+#define MAX_NUM_COLORS            3 /* number of colors per segment */
+#define MAX_CUSTOM_MODES          4
 #define SEGMENT          _segments[_segment_index]
 #define SEGMENT_RUNTIME  _segment_runtimes[_segment_index]
 #define SEGMENT_LENGTH   (uint16_t)(SEGMENT.stop - SEGMENT.start + 1)
@@ -182,8 +184,9 @@
 #define FX_MODE_CUSTOM_2                58
 #define FX_MODE_CUSTOM_3                59
 
-// create GLOBAL names to allow WS2812FX to compile with sketches and other libs that store strings
-// in PROGMEM (get rid of the "section type conflict with __c" errors once and for all. Amen.)
+// create GLOBAL names to allow WS2812FX to compile with sketches and other libs
+// that store strings in PROGMEM (get rid of the "section type conflict with __c"
+// errors once and for all. Amen.)
 const char name_0[] PROGMEM = "Static";
 const char name_1[] PROGMEM = "Blink";
 const char name_2[] PROGMEM = "Breath";
@@ -310,8 +313,8 @@ static const __FlashStringHelper* _names[] = {
 
 class WS2812FX : public Adafruit_NeoPixel {
 
-  typedef uint16_t (WS2812FX::*mode_ptr)(void);
-  
+typedef uint16_t (WS2812FX::*mode_ptr)(void);
+
   // segment parameters
   public:
     typedef struct Segment { // 20 bytes
@@ -320,7 +323,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       uint16_t speed;
       uint8_t  mode;
       uint8_t  options;
-      uint32_t colors[NUM_COLORS];
+      uint32_t colors[MAX_NUM_COLORS];
     } segment;
 
   // segment runtime parameters
@@ -333,7 +336,10 @@ class WS2812FX : public Adafruit_NeoPixel {
       uint16_t aux_param3; // auxilary param (usually stores a segment index)
     } segment_runtime;
 
-    WS2812FX(uint16_t n, uint8_t p, neoPixelType t) : Adafruit_NeoPixel(n, p, t) {
+    WS2812FX(uint16_t num_leds, uint8_t pin, neoPixelType type,
+      uint8_t max_num_segments=MAX_NUM_SEGMENTS,
+      uint8_t max_num_active_segments=MAX_NUM_ACTIVE_SEGMENTS)
+      : Adafruit_NeoPixel(num_leds, pin, type) {
       _mode[FX_MODE_STATIC]                  = &WS2812FX::mode_static;
       _mode[FX_MODE_BLINK]                   = &WS2812FX::mode_blink;
       _mode[FX_MODE_COLOR_WIPE]              = &WS2812FX::mode_color_wipe;
@@ -405,13 +411,17 @@ class WS2812FX : public Adafruit_NeoPixel {
 
       brightness = DEFAULT_BRIGHTNESS + 1; // Adafruit_NeoPixel internally offsets brightness by 1
       _running = false;
-      _num_segments = 1;
-      _segments[0].mode = DEFAULT_MODE;
-      _segments[0].colors[0] = DEFAULT_COLOR;
-      _segments[0].start = 0;
-      _segments[0].stop = n - 1;
-      _segments[0].speed = DEFAULT_SPEED;
-      resetSegmentRuntimes();
+
+      _segments_len = max_num_segments;
+      _active_segments_len = max_num_active_segments;
+
+      // create all the segment arrays and init to zeros
+      _segments = new segment[_segments_len]();
+      _active_segments = new uint8_t[_active_segments_len]();
+      _segment_runtimes = new segment_runtime[_active_segments_len]();
+
+      resetSegments();
+      setSegment(0, 0, num_leds - 1, DEFAULT_MODE, DEFAULT_COLOR, DEFAULT_SPEED, NO_OPTIONS);
     }
 
     void
@@ -452,6 +462,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color,          uint16_t speed, uint8_t options),
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse),
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options),
+      setIdleSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color,          uint16_t speed, uint8_t options),
+      setIdleSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options),
       resetSegments(),
       resetSegmentRuntimes(),
       resetSegmentRuntime(uint8_t),
@@ -610,13 +622,13 @@ class WS2812FX : public Adafruit_NeoPixel {
 
     mode_ptr _mode[MODE_COUNT]; // SRAM footprint: 4 bytes per element
 
-    uint8_t _segment_index = 0;
-    uint8_t _num_segments = 1;
-    segment _segments[MAX_NUM_SEGMENTS] = { // SRAM footprint: 20 bytes per element
-      // start, stop, speed, mode, options, color[]
-      { 0, 7, DEFAULT_SPEED, FX_MODE_STATIC, NO_OPTIONS, {DEFAULT_COLOR}}
-    };
-    segment_runtime _segment_runtimes[MAX_NUM_SEGMENTS]; // SRAM footprint: 16 bytes per element
+    uint8_t _segment_index = 0;         // runtime index into the _segments array
+    uint8_t _num_segments = 0;          // number of segments stored in the _segments array
+    uint8_t _segments_len = 0;          // size of _segments array
+    uint8_t _active_segments_len = 0;   // size of _segments_runtime and _active_segments arrays
+    segment* _segments;                 // SRAM footprint: 20 bytes per element
+    uint8_t* _active_segments;          // SRAM footprint: 1 bytes per element
+    segment_runtime* _segment_runtimes; // SRAM footprint: 16 bytes per element
 };
 
 #endif

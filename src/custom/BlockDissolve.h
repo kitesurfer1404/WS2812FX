@@ -61,7 +61,7 @@ uint16_t blockDissolve(void) {
     ws2812fx.setPixelColor(i, color);
   }
 
-  segrt->aux_param = (segrt->aux_param + 1) % NUM_COLORS;
+  segrt->aux_param = (segrt->aux_param + 1) % MAX_NUM_COLORS;
   if(segrt->aux_param == 0) ws2812fx.setCycle();
   return seg->speed;
 }

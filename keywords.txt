@@ -55,6 +55,7 @@ setColors	KEYWORD2
 setBrightness	KEYWORD2
 setLength	KEYWORD2
 setSegment	KEYWORD2
+setIdleSegment	KEYWORD2
 resetSegments	KEYWORD2
 resetSegmentRuntimes	KEYWORD2
 resetSegmentRuntime	KEYWORD2
