@@ -397,6 +397,43 @@ void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode
   }
 }
 
+void WS2812FX::addActiveSegment(uint8_t seg) {
+  // uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
+  // if(ptr != NULL) return; // segment already active
+  // ptr = (uint8_t*)memchr(_active_segments, INACTIVE_SEGMENT, _active_segments_len);
+  // if(ptr == NULL) return; // no active segment slots available
+  // *ptr = seg;
+  for(uint8_t i=0; i<_active_segments_len; i++) {
+    if(_active_segments[i] == INACTIVE_SEGMENT) {
+      _active_segments[i] = seg;
+      resetSegmentRuntime(i);
+      break;
+    }
+  }
+}
+
+void WS2812FX::removeActiveSegment(uint8_t seg) {
+  // uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
+  // if(ptr != NULL) *ptr = INACTIVE_SEGMENT;
+  for(uint8_t i=0; i<_active_segments_len; i++) {
+    if(_active_segments[i] == seg) {
+      _active_segments[i] = INACTIVE_SEGMENT;
+    }
+  }
+}
+
+void WS2812FX::swapActiveSegment(uint8_t oldSeg, uint8_t newSeg) {
+  uint8_t* ptr = (uint8_t*)memchr(_active_segments, newSeg, _active_segments_len);
+  if(ptr != NULL) return; // if newSeg is already active, don't swap
+  for(uint8_t i=0; i<_active_segments_len; i++) {
+    if(_active_segments[i] == oldSeg) {
+      _active_segments[i] = newSeg;
+      resetSegmentRuntime(i);
+      break;
+    }
+  }
+}
+
 void WS2812FX::resetSegments() {
   resetSegmentRuntimes();
   memset(_segments, 0, _segments_len * sizeof(Segment));

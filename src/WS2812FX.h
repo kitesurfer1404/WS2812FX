@@ -46,7 +46,7 @@
 #define DEFAULT_SPEED      (uint16_t)1000
 #define DEFAULT_COLOR      (uint32_t)0xFF0000
 #define DEFAULT_COLORS     { RED, GREEN, BLUE }
-#define RGB_COLORS(r,g,b)  (const uint32_t[]){r,g,b}
+#define COLORS(...)        (const uint32_t[]){__VA_ARGS__}
 
 #if defined(ESP8266) || defined(ESP32)
   //#pragma message("Compiling for ESP")
@@ -83,8 +83,11 @@
 #define PURPLE     (uint32_t)0x400080
 #define ORANGE     (uint32_t)0xFF3000
 #define PINK       (uint32_t)0xFF1493
+#define GRAY       (uint32_t)0x101010
 #define ULTRAWHITE (uint32_t)0xFFFFFFFF
-#define DARK(c)    (uint32_t)((c >> 4) & 0x0f0f0f0f)
+#define DIM(c)     (uint32_t)((c >> 2) & 0x3f3f3f3f) // color at 25% intensity
+#define DARK(c)    (uint32_t)((c >> 4) & 0x0f0f0f0f) // color at  6% intensity
+
 
 // segment options
 // bit    7: reverse animation
@@ -464,6 +467,9 @@ typedef uint16_t (WS2812FX::*mode_ptr)(void);
       setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options),
       setIdleSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color,          uint16_t speed, uint8_t options),
       setIdleSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options),
+      addActiveSegment(uint8_t seg),
+      removeActiveSegment(uint8_t seg),
+      swapActiveSegment(uint8_t oldSeg, uint8_t newSeg),
       resetSegments(),
       resetSegmentRuntimes(),
       resetSegmentRuntime(uint8_t),

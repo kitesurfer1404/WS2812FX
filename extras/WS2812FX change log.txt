@@ -13,6 +13,9 @@ v1.x.x changes 5/11/2020
 	getting too big to fit in my Arduino Leonardo. Some of the effects
 	don't look exactly the same, but they're pretty close.
 
+4) Refactored the Matrix custom effect so it can be configured from 
+	outside of the Matrix.h file.
+
 
 v1.2.4 changes 5/8/2020
 ------------------------
