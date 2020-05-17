@@ -67,9 +67,6 @@
 #define INACTIVE_SEGMENT        255 /* max uint_8 */
 #define MAX_NUM_COLORS            3 /* number of colors per segment */
 #define MAX_CUSTOM_MODES          4
-#define SEGMENT          _segments[_segment_index]
-#define SEGMENT_RUNTIME  _segment_runtimes[_segment_index]
-#define SEGMENT_LENGTH   (uint16_t)(SEGMENT.stop - SEGMENT.start + 1)
 
 // some common colors
 #define RED        (uint32_t)0xFF0000
@@ -97,7 +94,7 @@
 // bits   0: TBD
 #define NO_OPTIONS   (uint8_t)B00000000
 #define REVERSE      (uint8_t)B10000000
-#define IS_REVERSE   ((SEGMENT.options & REVERSE) == REVERSE)
+#define IS_REVERSE   ((_seg->options & REVERSE) == REVERSE)
 #define FADE_XFAST   (uint8_t)B00010000
 #define FADE_FAST    (uint8_t)B00100000
 #define FADE_MEDIUM  (uint8_t)B00110000
@@ -105,23 +102,23 @@
 #define FADE_XSLOW   (uint8_t)B01010000
 #define FADE_XXSLOW  (uint8_t)B01100000
 #define FADE_GLACIAL (uint8_t)B01110000
-#define FADE_RATE    ((SEGMENT.options >> 4) & 7)
+#define FADE_RATE    ((_seg->options >> 4) & 7)
 #define GAMMA        (uint8_t)B00001000
-#define IS_GAMMA     ((SEGMENT.options & GAMMA) == GAMMA)
+#define IS_GAMMA     ((_seg->options & GAMMA) == GAMMA)
 #define SIZE_SMALL   (uint8_t)B00000000
 #define SIZE_MEDIUM  (uint8_t)B00000010
 #define SIZE_LARGE   (uint8_t)B00000100
 #define SIZE_XLARGE  (uint8_t)B00000110
-#define SIZE_OPTION  ((SEGMENT.options >> 1) & 3)
+#define SIZE_OPTION  ((_seg->options >> 1) & 3)
 
 // segment runtime options (aux_param2)
 #define FRAME           (uint8_t)B10000000
-#define SET_FRAME       (SEGMENT_RUNTIME.aux_param2 |=  FRAME)
-#define CLR_FRAME       (SEGMENT_RUNTIME.aux_param2 &= ~FRAME)
+#define SET_FRAME       (_seg_rt->aux_param2 |=  FRAME)
+#define CLR_FRAME       (_seg_rt->aux_param2 &= ~FRAME)
 #define CYCLE           (uint8_t)B01000000
-#define SET_CYCLE       (SEGMENT_RUNTIME.aux_param2 |=  CYCLE)
-#define CLR_CYCLE       (SEGMENT_RUNTIME.aux_param2 &= ~CYCLE)
-#define CLR_FRAME_CYCLE (SEGMENT_RUNTIME.aux_param2 &= ~(FRAME | CYCLE))
+#define SET_CYCLE       (_seg_rt->aux_param2 |=  CYCLE)
+#define CLR_CYCLE       (_seg_rt->aux_param2 &= ~CYCLE)
+#define CLR_FRAME_CYCLE (_seg_rt->aux_param2 &= ~(FRAME | CYCLE))
 
 #define MODE_COUNT (sizeof(_names)/sizeof(_names[0]))
 
@@ -485,7 +482,8 @@ typedef uint16_t (WS2812FX::*mode_ptr)(void);
       isFrame(void),
       isFrame(uint8_t),
       isCycle(void),
-      isCycle(uint8_t);
+      isCycle(uint8_t),
+      isActiveSegment(uint8_t seg);
 
     uint8_t
       random8(void),
@@ -516,6 +514,7 @@ typedef uint16_t (WS2812FX::*mode_ptr)(void);
 
     uint32_t* getColors(uint8_t);
     uint32_t* intensitySums(void);
+    uint8_t*  getActiveSegments(void);
 
     const __FlashStringHelper* getModeName(uint8_t m);
 
@@ -626,15 +625,20 @@ typedef uint16_t (WS2812FX::*mode_ptr)(void);
       _running,
       _triggered;
 
-    mode_ptr _mode[MODE_COUNT]; // SRAM footprint: 4 bytes per element
+    mode_ptr _mode[MODE_COUNT]; // array of mode function pointers (4 bytes per element)
 
-    uint8_t _segment_index = 0;         // runtime index into the _segments array
-    uint8_t _num_segments = 0;          // number of segments stored in the _segments array
+    segment* _segments;                 // array of segments (20 bytes per element)
+    segment_runtime* _segment_runtimes; // array of segment runtimes (16 bytes per element)
+    uint8_t* _active_segments;          // array of active segments (1 bytes per element)
+
     uint8_t _segments_len = 0;          // size of _segments array
     uint8_t _active_segments_len = 0;   // size of _segments_runtime and _active_segments arrays
-    segment* _segments;                 // SRAM footprint: 20 bytes per element
-    uint8_t* _active_segments;          // SRAM footprint: 1 bytes per element
-    segment_runtime* _segment_runtimes; // SRAM footprint: 16 bytes per element
+    uint8_t _num_segments = 0;          // number of configured segments in the _segments array
+
+    segment* _seg;                      // currently active segment (20 bytes)
+    segment_runtime* _seg_rt;           // currently active segment runtime (16 bytes)
+
+    uint16_t _seg_len;                  // num LEDs in the currently active segment
 };
 
 #endif

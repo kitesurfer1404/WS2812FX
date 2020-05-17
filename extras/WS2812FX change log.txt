@@ -134,7 +134,7 @@ v1.1.7 changes 1/18/2019
 	setSegment(uint8_t, uint16_t, uint16_t, uint8_t, uint32_t, uint16_t, uint8_t)
 
 4) Fixed a bug in the Larson Scanner effect that caused it to
-	crash if SEGMENT_LENGTH==1. Fixes issue #145:
+	crash if the length of the segment is 1. Fixes issue #145:
 	https://github.com/kitesurfer1404/WS2812FX/issues/145
 
 5) Updated the Rain custom effect to make use of all three colors.
