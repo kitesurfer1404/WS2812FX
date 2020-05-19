@@ -256,16 +256,20 @@ boolean WS2812FX::isFrame() {
   return isFrame(0);
 }
 
-boolean WS2812FX::isFrame(uint8_t segIndex) {
-  return (_segment_runtimes[segIndex].aux_param2 & FRAME);
+boolean WS2812FX::isFrame(uint8_t seg) {
+  uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
+  if(ptr == NULL) return false; // segment not active
+  return (_segment_runtimes[ptr - _active_segments].aux_param2 & FRAME);
 }
 
 boolean WS2812FX::isCycle() {
   return isCycle(0);
 }
 
-boolean WS2812FX::isCycle(uint8_t segIndex) {
-  return (_segment_runtimes[segIndex].aux_param2 & CYCLE);
+boolean WS2812FX::isCycle(uint8_t seg) {
+  uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
+  if(ptr == NULL) return false; // segment not active
+  return (_segment_runtimes[ptr - _active_segments].aux_param2 & CYCLE);
 }
 
 void WS2812FX::setCycle() {
@@ -344,10 +348,10 @@ WS2812FX::Segment_runtime* WS2812FX::getSegmentRuntime(void) {
   return _seg_rt;
 }
 
-WS2812FX::Segment_runtime* WS2812FX::getSegmentRuntime(uint8_t seg) { // KAL
+WS2812FX::Segment_runtime* WS2812FX::getSegmentRuntime(uint8_t seg) {
   uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
   if(ptr == NULL) return NULL; // segment not active
-  return &_segment_runtimes[*ptr];
+  return &_segment_runtimes[ptr - _active_segments];
 }
 
 WS2812FX::Segment_runtime* WS2812FX::getSegmentRuntimes(void) {
@@ -408,21 +412,16 @@ void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode
 void WS2812FX::addActiveSegment(uint8_t seg) {
   uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
   if(ptr != NULL) return; // segment already active
-  // ptr = (uint8_t*)memchr(_active_segments, INACTIVE_SEGMENT, _active_segments_len);
-  // if(ptr == NULL) return; // no active segment slots available
-  // *ptr = seg;
   for(uint8_t i=0; i<_active_segments_len; i++) {
     if(_active_segments[i] == INACTIVE_SEGMENT) {
       _active_segments[i] = seg;
-      resetSegmentRuntime(i);
+      resetSegmentRuntime(seg);
       break;
     }
   }
 }
 
 void WS2812FX::removeActiveSegment(uint8_t seg) {
-  // uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
-  // if(ptr != NULL) *ptr = INACTIVE_SEGMENT;
   for(uint8_t i=0; i<_active_segments_len; i++) {
     if(_active_segments[i] == seg) {
       _active_segments[i] = INACTIVE_SEGMENT;
@@ -436,7 +435,7 @@ void WS2812FX::swapActiveSegment(uint8_t oldSeg, uint8_t newSeg) {
   for(uint8_t i=0; i<_active_segments_len; i++) {
     if(_active_segments[i] == oldSeg) {
       _active_segments[i] = newSeg;
-      resetSegmentRuntime(i);
+      resetSegmentRuntime(newSeg);
       break;
     }
   }
@@ -460,7 +459,9 @@ void WS2812FX::resetSegmentRuntimes() {
 }
 
 void WS2812FX::resetSegmentRuntime(uint8_t seg) {
-  memset(&_segment_runtimes[seg], 0, sizeof(Segment_runtime));
+  uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
+  if(ptr == NULL) return; // segment not active
+  memset(&_segment_runtimes[ptr - _active_segments], 0, sizeof(Segment_runtime));
 }
 
 /*
