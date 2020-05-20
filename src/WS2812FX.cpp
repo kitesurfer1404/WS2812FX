@@ -435,7 +435,15 @@ void WS2812FX::swapActiveSegment(uint8_t oldSeg, uint8_t newSeg) {
   for(uint8_t i=0; i<_active_segments_len; i++) {
     if(_active_segments[i] == oldSeg) {
       _active_segments[i] = newSeg;
-      resetSegmentRuntime(newSeg);
+
+      // reset all runtime parameters EXCEPT next_time,
+      // allowing the current animation frame to complete
+      segment_runtime seg_rt = _segment_runtimes[i];
+      seg_rt.counter_mode_step = 0;
+      seg_rt.counter_mode_call = 0;
+      seg_rt.aux_param = 0;
+      seg_rt.aux_param2 = 0;
+      seg_rt.aux_param3 = 0;
       break;
     }
   }

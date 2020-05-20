@@ -315,8 +315,8 @@ class WS2812FX : public Adafruit_NeoPixel {
 
 typedef uint16_t (WS2812FX::*mode_ptr)(void);
 
-  // segment parameters
   public:
+    // segment parameters
     typedef struct Segment { // 20 bytes
       uint16_t start;
       uint16_t stop;
@@ -326,7 +326,7 @@ typedef uint16_t (WS2812FX::*mode_ptr)(void);
       uint32_t colors[MAX_NUM_COLORS];
     } segment;
 
-  // segment runtime parameters
+    // segment runtime parameters
     typedef struct Segment_runtime { // 16 bytes
       unsigned long next_time;
       uint32_t counter_mode_step;
