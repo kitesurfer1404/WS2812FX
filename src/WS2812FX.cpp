@@ -1610,6 +1610,18 @@ uint16_t WS2812FX::mode_custom_2() {
 uint16_t WS2812FX::mode_custom_3() {
   return customModes[3]();
 }
+uint16_t WS2812FX::mode_custom_4() {
+  return customModes[4]();
+}
+uint16_t WS2812FX::mode_custom_5() {
+  return customModes[5]();
+}
+uint16_t WS2812FX::mode_custom_6() {
+  return customModes[6]();
+}
+uint16_t WS2812FX::mode_custom_7() {
+  return customModes[7]();
+}
 
 /*
  * Custom mode helpers

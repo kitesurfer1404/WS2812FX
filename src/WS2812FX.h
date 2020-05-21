@@ -66,7 +66,7 @@
 #define MAX_NUM_ACTIVE_SEGMENTS  10
 #define INACTIVE_SEGMENT        255 /* max uint_8 */
 #define MAX_NUM_COLORS            3 /* number of colors per segment */
-#define MAX_CUSTOM_MODES          4
+#define MAX_CUSTOM_MODES          8
 
 // some common colors
 #define RED        (uint32_t)0xFF0000
@@ -183,6 +183,10 @@
 #define FX_MODE_CUSTOM_1                57
 #define FX_MODE_CUSTOM_2                58
 #define FX_MODE_CUSTOM_3                59
+#define FX_MODE_CUSTOM_4                60
+#define FX_MODE_CUSTOM_5                61
+#define FX_MODE_CUSTOM_6                62
+#define FX_MODE_CUSTOM_7                63
 
 // create GLOBAL names to allow WS2812FX to compile with sketches and other libs
 // that store strings in PROGMEM (get rid of the "section type conflict with __c"
@@ -247,6 +251,10 @@ const char name_56[] PROGMEM = "Custom 0"; // custom modes need to go at the end
 const char name_57[] PROGMEM = "Custom 1";
 const char name_58[] PROGMEM = "Custom 2";
 const char name_59[] PROGMEM = "Custom 3";
+const char name_60[] PROGMEM = "Custom 4";
+const char name_61[] PROGMEM = "Custom 5";
+const char name_62[] PROGMEM = "Custom 6";
+const char name_63[] PROGMEM = "Custom 7";
 
 static const __FlashStringHelper* _names[] = {
   FSH(name_0),
@@ -308,7 +316,11 @@ static const __FlashStringHelper* _names[] = {
   FSH(name_56),
   FSH(name_57),
   FSH(name_58),
-  FSH(name_59)
+  FSH(name_59),
+  FSH(name_60),
+  FSH(name_61),
+  FSH(name_62),
+  FSH(name_63)
 };
 
 class WS2812FX : public Adafruit_NeoPixel {
@@ -408,6 +420,10 @@ typedef uint16_t (WS2812FX::*mode_ptr)(void);
       _mode[FX_MODE_CUSTOM_1]                = &WS2812FX::mode_custom_1;
       _mode[FX_MODE_CUSTOM_2]                = &WS2812FX::mode_custom_2;
       _mode[FX_MODE_CUSTOM_3]                = &WS2812FX::mode_custom_3;
+      _mode[FX_MODE_CUSTOM_4]                = &WS2812FX::mode_custom_4;
+      _mode[FX_MODE_CUSTOM_5]                = &WS2812FX::mode_custom_5;
+      _mode[FX_MODE_CUSTOM_6]                = &WS2812FX::mode_custom_6;
+      _mode[FX_MODE_CUSTOM_7]                = &WS2812FX::mode_custom_7;
 
       brightness = DEFAULT_BRIGHTNESS + 1; // Adafruit_NeoPixel internally offsets brightness by 1
       _running = false;
@@ -609,11 +625,19 @@ typedef uint16_t (WS2812FX::*mode_ptr)(void);
       mode_custom_0(void),
       mode_custom_1(void),
       mode_custom_2(void),
-      mode_custom_3(void);
+      mode_custom_3(void),
+      mode_custom_4(void),
+      mode_custom_5(void),
+      mode_custom_6(void),
+      mode_custom_7(void);
 
   private:
     uint16_t _rand16seed;
     uint16_t (*customModes[MAX_CUSTOM_MODES])(void) {
+      []{ return (uint16_t)1000; },
+      []{ return (uint16_t)1000; },
+      []{ return (uint16_t)1000; },
+      []{ return (uint16_t)1000; },
       []{ return (uint16_t)1000; },
       []{ return (uint16_t)1000; },
       []{ return (uint16_t)1000; },
