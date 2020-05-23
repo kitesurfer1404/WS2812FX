@@ -121,7 +121,7 @@
 #define FX_MODE_BLINK                    1
 #define FX_MODE_BREATH                   2
 #define FX_MODE_COLOR_WIPE               3
-#define FX_MODE_COLOR_WIPE_INV           4 
+#define FX_MODE_COLOR_WIPE_INV           4
 #define FX_MODE_COLOR_WIPE_REV           5
 #define FX_MODE_COLOR_WIPE_REV_INV       6
 #define FX_MODE_COLOR_WIPE_RANDOM        7
@@ -308,7 +308,7 @@ static const __FlashStringHelper* _names[] = {
 class WS2812FX : public Adafruit_NeoPixel {
 
   typedef uint16_t (WS2812FX::*mode_ptr)(void);
-  
+
   // segment parameters
   public:
     typedef struct Segment { // 20 bytes

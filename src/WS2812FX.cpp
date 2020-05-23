@@ -1545,7 +1545,7 @@ uint16_t WS2812FX::mode_circus_combustus(void) {
  */
 uint16_t WS2812FX::mode_icu(void) {
   uint16_t dest = SEGMENT_RUNTIME.counter_mode_step & 0xFFFF;
- 
+
   setPixelColor(SEGMENT.start + dest, SEGMENT.colors[0]);
   setPixelColor(SEGMENT.start + dest + SEGMENT_LENGTH/2, SEGMENT.colors[0]);
 
