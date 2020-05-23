@@ -186,15 +186,15 @@ void myCustomShow(void) {
       uint32_t estimatedCurrent = ((intensitySum * INCREMENTAL_CURRENT) / 1000) + QUIESCENT_CURRENT;
       Serial.print("estimatedCurrent="); Serial.print(estimatedCurrent); Serial.println("mA");
 
-      uint8_t oldBrightness = ws2812fx.Adafruit_NeoPixel::getBrightness();
+      uint8_t oldBrightness = ws2812fx.getBrightness();
       Serial.print("old brightness="); Serial.println(oldBrightness);
 
       uint8_t scaleFactor = (MAX_INTENSITY_SUM * 256) / intensitySum; // brightness scaling factor
       uint8_t newBrightness = constrain(((oldBrightness * scaleFactor) / 256), BRIGHTNESS_MIN, BRIGHTNESS_MAX);
       Serial.print("new brightness="); Serial.println(newBrightness);
 
-      // call the Adafruit_Neopixel::setBrightness() function, because the WS2812FX::setBrightness() function calls show(), which we don't want.
-      ws2812fx.Adafruit_NeoPixel::setBrightness(newBrightness);
+      // call the setBrightnessDirect() function, because the WS2812FX::setBrightness() function calls show(), which we don't want.
+      ws2812fx.setBrightnessDirect(newBrightness);
 
       // optionally, for verification, recalculate the intensity sum and current estimate
       intensitySum = ws2812fx.intensitySum();
@@ -204,5 +204,5 @@ void myCustomShow(void) {
     }
     lastSum = intensitySum;
   }
-  ws2812fx.Adafruit_NeoPixel::show();
+  ws2812fx.showDirect();
 }

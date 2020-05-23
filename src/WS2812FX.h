@@ -305,7 +305,7 @@ static const __FlashStringHelper* _names[] = {
   FSH(name_59)
 };
 
-class WS2812FX : public Adafruit_NeoPixel {
+class WS2812FX {
 
   typedef uint16_t (WS2812FX::*mode_ptr)(void);
 
@@ -330,7 +330,9 @@ class WS2812FX : public Adafruit_NeoPixel {
       uint16_t aux_param3; // auxilary param (usually stores a segment index)
     } segment_runtime;
 
-    WS2812FX(uint16_t n, uint8_t p, neoPixelType t) : Adafruit_NeoPixel(n, p, t) {
+    WS2812FX(uint16_t n, uint8_t p, neoPixelType t) {
+      Adafruit_NeoPixel strand(n, p, t);
+      _strand = &strand;
       _mode[FX_MODE_STATIC]                  = &WS2812FX::mode_static;
       _mode[FX_MODE_BLINK]                   = &WS2812FX::mode_blink;
       _mode[FX_MODE_COLOR_WIPE]              = &WS2812FX::mode_color_wipe;
@@ -400,7 +402,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _mode[FX_MODE_CUSTOM_2]                = &WS2812FX::mode_custom_2;
       _mode[FX_MODE_CUSTOM_3]                = &WS2812FX::mode_custom_3;
 
-      brightness = DEFAULT_BRIGHTNESS + 1; // Adafruit_NeoPixel internally offsets brightness by 1
+      _strand->setBrightness(DEFAULT_BRIGHTNESS + 1); // Adafruit_NeoPixel internally offsets brightness by 1
       _running = false;
       _num_segments = 1;
       _segments[0].mode = DEFAULT_MODE;
@@ -408,6 +410,10 @@ class WS2812FX : public Adafruit_NeoPixel {
       _segments[0].start = 0;
       _segments[0].stop = n - 1;
       _segments[0].speed = DEFAULT_SPEED;
+      _strand_offset = {
+        (uint8_t)((t >> 6) & 0b11),  // Taken from Adafruit calculation
+        (uint8_t)((t >> 4) & 0b11) // Taken from Adafruit calculation
+      };
       resetSegmentRuntimes();
     }
 
@@ -437,6 +443,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       setColor(uint8_t seg, uint32_t c),
       setColors(uint8_t seg, uint32_t* c),
       setBrightness(uint8_t b),
+      setBrightnessDirect(uint8_t b),
       increaseBrightness(uint8_t s),
       decreaseBrightness(uint8_t s),
       setLength(uint16_t b),
@@ -455,6 +462,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b),
       setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w),
       copyPixels(uint16_t d, uint16_t s, uint16_t c),
+      showDirect(void),
       show(void);
 
     boolean
@@ -468,6 +476,7 @@ class WS2812FX : public Adafruit_NeoPixel {
     uint8_t
       random8(void),
       random8(uint8_t),
+      getBrightness(void),
       getMode(void),
       getMode(uint8_t),
       getModeCount(void),
@@ -490,6 +499,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       color_wheel(uint8_t),
       getColor(void),
       getColor(uint8_t),
+      getPixelColor(uint16_t),
       intensitySum(void);
 
     uint32_t* getColors(uint8_t);
@@ -588,6 +598,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_custom_3(void);
 
   private:
+    Adafruit_NeoPixel* _strand;
+
     uint16_t _rand16seed;
     uint16_t (*customModes[MAX_CUSTOM_MODES])(void) {
       []{ return (uint16_t)1000; },
@@ -610,6 +622,11 @@ class WS2812FX : public Adafruit_NeoPixel {
       { 0, 7, DEFAULT_SPEED, FX_MODE_STATIC, NO_OPTIONS, {DEFAULT_COLOR}}
     };
     segment_runtime _segment_runtimes[MAX_NUM_SEGMENTS]; // SRAM footprint: 16 bytes per element
+
+    struct Strand_offsets { // Adafruit offset values
+      uint8_t           rOffset;    ///< Red index within each 3- or 4-byte pixel
+      uint8_t           wOffset;    ///< Index of white (==rOffset if no white)
+    } _strand_offset;
 };
 
 #endif
