@@ -54,9 +54,101 @@
 
 #include "WS2812FX.h"
 
+void WS2812FX::initSegments(neoPixelType t) {
+  _running = false;
+  _num_segments = 1;
+  _strand_offset = {
+    (uint8_t)((t >> 6) & 0b11),  // Taken from Adafruit calculation
+    (uint8_t)((t >> 4) & 0b11) // Taken from Adafruit calculation
+  };
+  _segments[0].mode = DEFAULT_MODE;
+  _segments[0].colors[0] = DEFAULT_COLOR;
+  _segments[0].start = 0;
+  _segments[0].stop = getLength() - 1;
+  _segments[0].speed = DEFAULT_SPEED;
+}
+
+void WS2812FX::initMode() {
+  _mode[FX_MODE_STATIC]                  = &WS2812FX::mode_static;
+  _mode[FX_MODE_BLINK]                   = &WS2812FX::mode_blink;
+  _mode[FX_MODE_COLOR_WIPE]              = &WS2812FX::mode_color_wipe;
+  _mode[FX_MODE_COLOR_WIPE_INV]          = &WS2812FX::mode_color_wipe_inv;
+  _mode[FX_MODE_COLOR_WIPE_REV]          = &WS2812FX::mode_color_wipe_rev;
+  _mode[FX_MODE_COLOR_WIPE_REV_INV]      = &WS2812FX::mode_color_wipe_rev_inv;
+  _mode[FX_MODE_COLOR_WIPE_RANDOM]       = &WS2812FX::mode_color_wipe_random;
+  _mode[FX_MODE_RANDOM_COLOR]            = &WS2812FX::mode_random_color;
+  _mode[FX_MODE_SINGLE_DYNAMIC]          = &WS2812FX::mode_single_dynamic;
+  _mode[FX_MODE_MULTI_DYNAMIC]           = &WS2812FX::mode_multi_dynamic;
+  _mode[FX_MODE_RAINBOW]                 = &WS2812FX::mode_rainbow;
+  _mode[FX_MODE_RAINBOW_CYCLE]           = &WS2812FX::mode_rainbow_cycle;
+  _mode[FX_MODE_SCAN]                    = &WS2812FX::mode_scan;
+  _mode[FX_MODE_DUAL_SCAN]               = &WS2812FX::mode_dual_scan;
+  _mode[FX_MODE_FADE]                    = &WS2812FX::mode_fade;
+  _mode[FX_MODE_THEATER_CHASE]           = &WS2812FX::mode_theater_chase;
+  _mode[FX_MODE_THEATER_CHASE_RAINBOW]   = &WS2812FX::mode_theater_chase_rainbow;
+  _mode[FX_MODE_TWINKLE]                 = &WS2812FX::mode_twinkle;
+  _mode[FX_MODE_TWINKLE_RANDOM]          = &WS2812FX::mode_twinkle_random;
+  _mode[FX_MODE_TWINKLE_FADE]            = &WS2812FX::mode_twinkle_fade;
+  _mode[FX_MODE_TWINKLE_FADE_RANDOM]     = &WS2812FX::mode_twinkle_fade_random;
+  _mode[FX_MODE_SPARKLE]                 = &WS2812FX::mode_sparkle;
+  _mode[FX_MODE_FLASH_SPARKLE]           = &WS2812FX::mode_flash_sparkle;
+  _mode[FX_MODE_HYPER_SPARKLE]           = &WS2812FX::mode_hyper_sparkle;
+  _mode[FX_MODE_STROBE]                  = &WS2812FX::mode_strobe;
+  _mode[FX_MODE_STROBE_RAINBOW]          = &WS2812FX::mode_strobe_rainbow;
+  _mode[FX_MODE_MULTI_STROBE]            = &WS2812FX::mode_multi_strobe;
+  _mode[FX_MODE_BLINK_RAINBOW]           = &WS2812FX::mode_blink_rainbow;
+  _mode[FX_MODE_CHASE_WHITE]             = &WS2812FX::mode_chase_white;
+  _mode[FX_MODE_CHASE_COLOR]             = &WS2812FX::mode_chase_color;
+  _mode[FX_MODE_CHASE_RANDOM]            = &WS2812FX::mode_chase_random;
+  _mode[FX_MODE_CHASE_RAINBOW]           = &WS2812FX::mode_chase_rainbow;
+  _mode[FX_MODE_CHASE_FLASH]             = &WS2812FX::mode_chase_flash;
+  _mode[FX_MODE_CHASE_FLASH_RANDOM]      = &WS2812FX::mode_chase_flash_random;
+  _mode[FX_MODE_CHASE_RAINBOW_WHITE]     = &WS2812FX::mode_chase_rainbow_white;
+  _mode[FX_MODE_CHASE_BLACKOUT]          = &WS2812FX::mode_chase_blackout;
+  _mode[FX_MODE_CHASE_BLACKOUT_RAINBOW]  = &WS2812FX::mode_chase_blackout_rainbow;
+  _mode[FX_MODE_COLOR_SWEEP_RANDOM]      = &WS2812FX::mode_color_sweep_random;
+  _mode[FX_MODE_RUNNING_COLOR]           = &WS2812FX::mode_running_color;
+  _mode[FX_MODE_RUNNING_RED_BLUE]        = &WS2812FX::mode_running_red_blue;
+  _mode[FX_MODE_RUNNING_RANDOM]          = &WS2812FX::mode_running_random;
+  _mode[FX_MODE_LARSON_SCANNER]          = &WS2812FX::mode_larson_scanner;
+  _mode[FX_MODE_COMET]                   = &WS2812FX::mode_comet;
+  _mode[FX_MODE_FIREWORKS]               = &WS2812FX::mode_fireworks;
+  _mode[FX_MODE_FIREWORKS_RANDOM]        = &WS2812FX::mode_fireworks_random;
+  _mode[FX_MODE_MERRY_CHRISTMAS]         = &WS2812FX::mode_merry_christmas;
+  _mode[FX_MODE_FIRE_FLICKER]            = &WS2812FX::mode_fire_flicker;
+  _mode[FX_MODE_FIRE_FLICKER_SOFT]       = &WS2812FX::mode_fire_flicker_soft;
+  _mode[FX_MODE_FIRE_FLICKER_INTENSE]    = &WS2812FX::mode_fire_flicker_intense;
+  _mode[FX_MODE_CIRCUS_COMBUSTUS]        = &WS2812FX::mode_circus_combustus;
+  _mode[FX_MODE_HALLOWEEN]               = &WS2812FX::mode_halloween;
+  _mode[FX_MODE_BICOLOR_CHASE]           = &WS2812FX::mode_bicolor_chase;
+  _mode[FX_MODE_TRICOLOR_CHASE]          = &WS2812FX::mode_tricolor_chase;
+// if flash memory is constrained (I'm looking at you Arduino Nano), replace modes
+// that use a lot of flash with mode_static (reduces flash footprint by about 2100 bytes)
+#ifdef REDUCED_MODES
+  _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_static;
+  _mode[FX_MODE_RUNNING_LIGHTS]          = &WS2812FX::mode_static;
+  _mode[FX_MODE_ICU]                     = &WS2812FX::mode_static;
+#else
+  _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_breath;
+  _mode[FX_MODE_RUNNING_LIGHTS]          = &WS2812FX::mode_running_lights;
+  _mode[FX_MODE_ICU]                     = &WS2812FX::mode_icu;
+#endif
+  _mode[FX_MODE_CUSTOM_0]                = &WS2812FX::mode_custom_0;
+  _mode[FX_MODE_CUSTOM_1]                = &WS2812FX::mode_custom_1;
+  _mode[FX_MODE_CUSTOM_2]                = &WS2812FX::mode_custom_2;
+  _mode[FX_MODE_CUSTOM_3]                = &WS2812FX::mode_custom_3;
+}
+
+void WS2812FX::initFinish() {
+  setBrightness(DEFAULT_BRIGHTNESS + 1); // Adafruit_NeoPixel internally offsets brightness by 1
+  resetSegmentRuntimes();
+}
+
 void WS2812FX::init() {
   resetSegmentRuntimes();
-  _strand->begin();
+  for(int i = 0; i < _strandsSize; ++i) {
+    _strands[i]->begin();
+  }
 }
 
 // void WS2812FX::timer() {
@@ -91,39 +183,52 @@ void WS2812FX::service() {
 // overload setPixelColor() functions so we can use gamma correction
 // (see https://learn.adafruit.com/led-tricks-gamma-correction/the-issue)
 void WS2812FX::setPixelColor(uint16_t n, uint32_t c) {
+  StrandAndPixel strandAndPixel = getStrandAndPixel(n);
+  auto strand = strandAndPixel.strand;
+
   if(IS_GAMMA) {
     uint8_t w = (c >> 24) & 0xFF;
     uint8_t r = (c >> 16) & 0xFF;
     uint8_t g = (c >>  8) & 0xFF;
     uint8_t b =  c        & 0xFF;
-    _strand->setPixelColor(n, _strand->gamma8(r), _strand->gamma8(g), _strand->gamma8(b), _strand->gamma8(w));
+    strand->setPixelColor(strandAndPixel.pixel, strand->gamma8(r), strand->gamma8(g), strand->gamma8(b), strand->gamma8(w));
   } else {
-    _strand->setPixelColor(n, c);
+    strand->setPixelColor(strandAndPixel.pixel, c);
   }
 }
 
 void WS2812FX::setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b) {
+  StrandAndPixel strandAndPixel = getStrandAndPixel(n);
+  auto strand = strandAndPixel.strand;
+
   if(IS_GAMMA) {
-    _strand->setPixelColor(n, _strand->gamma8(r), _strand->gamma8(g), _strand->gamma8(b));
+    strand->setPixelColor(strandAndPixel.pixel, strand->gamma8(r), strand->gamma8(g), strand->gamma8(b));
   } else {
-    _strand->setPixelColor(n, r, g, b);
+    strand->setPixelColor(strandAndPixel.pixel, r, g, b);
   }
 }
 
 void WS2812FX::setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w) {
+  StrandAndPixel strandAndPixel = getStrandAndPixel(n);
+  auto strand = strandAndPixel.strand;
+
   if(IS_GAMMA) {
-    _strand->setPixelColor(n, _strand->gamma8(r), _strand->gamma8(g), _strand->gamma8(b), _strand->gamma8(w));
+    strand->setPixelColor(strandAndPixel.pixel, strand->gamma8(r), strand->gamma8(g), strand->gamma8(b), strand->gamma8(w));
   } else {
-    _strand->setPixelColor(n, r, g, b, w);
+    strand->setPixelColor(strandAndPixel.pixel, r, g, b, w);
   }
 }
 
-void WS2812FX::copyPixels(uint16_t dest, uint16_t src, uint16_t count) {
-  uint8_t *pixels = _strand->getPixels();
-  uint8_t bytesPerPixel = getNumBytesPerPixel(); // 3=RGB, 4=RGBW
 
-  memmove(pixels + (dest * bytesPerPixel), pixels + (src * bytesPerPixel), count * bytesPerPixel);
+void WS2812FX::copyPixels(uint16_t dest, uint16_t src, uint16_t count) {
+  for(int i = 0; i < _strandsSize; ++i) {
+    uint8_t *pixels = _strands[i]->getPixels();
+    uint8_t bytesPerPixel = getNumBytesPerPixel(); // 3=RGB, 4=RGBW
+
+    memmove(pixels + (dest * bytesPerPixel), pixels + (src * bytesPerPixel), count * bytesPerPixel);
+  }
 }
+
 
 // overload show() functions so we can use custom show()
 void WS2812FX::show(void) {
@@ -135,7 +240,9 @@ void WS2812FX::show(void) {
 }
 
 void WS2812FX::showDirect(void) {
-    _strand->show();
+    for(int i = 0; i < _strandsSize; ++i) {
+      _strands[i]->show();
+    }
 }
 
 void WS2812FX::start() {
@@ -217,12 +324,14 @@ void WS2812FX::setColors(uint8_t seg, uint32_t* c) {
 }
 
 uint8_t WS2812FX::getBrightness(void) {
-  return _strand->getBrightness();
+  return _strands[0]->getBrightness();
 }
 
 void WS2812FX::setBrightnessDirect(uint8_t b) {
   b = constrain(b, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
-  _strand->setBrightness(b);
+  for(int i = 0; i < _strandsSize; ++i) {
+    _strands[i]->setBrightness(b);
+  }
 }
 
 void WS2812FX::setBrightness(uint8_t b) {
@@ -246,7 +355,7 @@ void WS2812FX::setLength(uint16_t b) {
 
   // Decrease numLEDs to maximum available memory
   do {
-      _strand->updateLength(b);
+      _strands[0]->updateLength(b);
       b--;
   } while(!getLength() && b > 1);
 
@@ -311,17 +420,24 @@ uint16_t WS2812FX::getSpeed(uint8_t seg) {
   return _segments[seg].speed;
 }
 
-
 uint8_t WS2812FX::getOptions(uint8_t seg) {
   return _segments[seg].options;
 }
 
 uint16_t WS2812FX::getLength(void) {
-  return _strand->numPixels();
+  uint16_t length = 0;
+  for(int i = 0; i < _strandsSize; ++i) {
+    length += _strands[i]->numPixels();
+  }
+  return length;
 }
 
 uint16_t WS2812FX::getNumBytes(void) {
   return getLength() * getNumBytesPerPixel();
+}
+
+uint16_t WS2812FX::getNumBytesPerStrand(int strandIndex) {
+  return _strands[strandIndex]->numPixels() * getNumBytesPerPixel();
 }
 
 uint8_t WS2812FX::getNumBytesPerPixel(void) {
@@ -353,7 +469,9 @@ uint32_t* WS2812FX::getColors(uint8_t seg) {
 }
 
 uint32_t WS2812FX::getPixelColor(uint16_t pixel) {
-  return _strand->getPixelColor(pixel);
+  StrandAndPixel strandAndPixel = getStrandAndPixel(pixel);
+  auto strand = strandAndPixel.strand;
+  return strand->getPixelColor(strandAndPixel.pixel);
 }
 
 WS2812FX::Segment* WS2812FX::getSegment(void) {
@@ -433,6 +551,21 @@ void WS2812FX::resetSegmentRuntime(uint8_t seg) {
   memset(&_segment_runtimes[seg], 0, sizeof(_segment_runtimes[0]));
 }
 
+StrandAndPixel WS2812FX::getStrandAndPixel(uint16_t n) {
+  int index = 0;
+  auto strand = _strands[index];
+  auto pixel = n;
+
+  if (pixel >= strand->numPixels()) {
+    pixel -= strand->numPixels();
+    strand = _strands[++index];
+  }
+  StrandAndPixel response;
+  response.strand = strand;
+  response.pixel = pixel;
+  return response;
+}
+
 /* #####################################################
 #
 #  Color and Blinken Functions
@@ -443,7 +576,9 @@ void WS2812FX::resetSegmentRuntime(uint8_t seg) {
  * Turns everything off. Doh.
  */
 void WS2812FX::strip_off() {
-  _strand->clear();
+  for(int i = 0; i < _strandsSize; ++i) {
+    _strands[i]->clear();
+  }
   show();
 }
 
@@ -513,11 +648,14 @@ uint16_t WS2812FX::random16(uint16_t lim) {
 // Return the sum of all LED intensities (can be used for
 // rudimentary power calculations)
 uint32_t WS2812FX::intensitySum() {
-  uint8_t *pixels = _strand->getPixels();
   uint32_t sum = 0;
-  for(uint16_t i=0; i <getNumBytes(); i++) {
-    sum+= pixels[i];
+  for(int i = 0; i < _strandsSize; ++i) {
+    uint8_t *pixels = _strands[i]->getPixels();
+    for(uint16_t i=0; i < getNumBytesPerStrand(i); i++) {
+      sum+= pixels[i];
+    }
   }
+
   return sum;
 }
 
@@ -529,13 +667,15 @@ uint32_t* WS2812FX::intensitySums() {
   static uint32_t intensities[] = { 0, 0, 0, 0 };
   memset(intensities, 0, sizeof(intensities));
 
-  uint8_t *pixels = _strand->getPixels();
   uint8_t bytesPerPixel = getNumBytesPerPixel(); // 3=RGB, 4=RGBW
-  for(uint16_t i=0; i <getNumBytes(); i += bytesPerPixel) {
-    intensities[0] += pixels[i];
-    intensities[1] += pixels[i + 1];
-    intensities[2] += pixels[i + 2];
-    if(bytesPerPixel == 4) intensities[3] += pixels[i + 3]; // for RGBW LEDs
+  for(int strandIndex = 0; strandIndex < _strandsSize; ++strandIndex) {
+    uint8_t *pixels = _strands[strandIndex]->getPixels();
+    for(uint16_t i=0; i < getNumBytesPerStrand(strandIndex); i += bytesPerPixel) {
+      intensities[0] += pixels[i];
+      intensities[1] += pixels[i + 1];
+      intensities[2] += pixels[i + 2];
+      if(bytesPerPixel == 4) intensities[3] += pixels[i + 3]; // for RGBW LEDs
+    }
   }
   return intensities;
 }
@@ -870,7 +1010,7 @@ uint16_t WS2812FX::mode_running_lights(void) {
   uint8_t size = 1 << SIZE_OPTION;
   uint8_t sineIncr = max(1, (256 / SEGMENT_LENGTH) * size);
   for(uint16_t i=0; i < SEGMENT_LENGTH; i++) {
-    int lum = (int)_strand->sine8(((i + SEGMENT_RUNTIME.counter_mode_step) * sineIncr));
+    int lum = (int)_strands[0]->sine8(((i + SEGMENT_RUNTIME.counter_mode_step) * sineIncr));
     uint32_t color = color_blend(SEGMENT.colors[0], SEGMENT.colors[1], lum);
     if(IS_REVERSE) {
       setPixelColor(SEGMENT.start + i, color);
@@ -1427,16 +1567,21 @@ uint16_t WS2812FX::mode_comet(void) {
 uint16_t WS2812FX::fireworks(uint32_t color) {
   fade_out();
 
-// for better performance, manipulate the Adafruit_NeoPixels pixels[] array directly
-  uint8_t *pixels = _strand->getPixels();
+  // for better performance, manipulate the Adafruit_NeoPixels pixels[] array directly
   uint8_t bytesPerPixel = getNumBytesPerPixel(); // 3=RGB, 4=RGBW
   uint16_t startPixel = SEGMENT.start * bytesPerPixel + bytesPerPixel;
   uint16_t stopPixel = SEGMENT.stop * bytesPerPixel ;
+
+
   for(uint16_t i=startPixel; i <stopPixel; i++) {
-    uint16_t tmpPixel = (pixels[i - bytesPerPixel] >> 2) +
-      pixels[i] +
-      (pixels[i + bytesPerPixel] >> 2);
-    pixels[i] =  tmpPixel > 255 ? 255 : tmpPixel;
+    StrandAndPixel strandAndPixel = getStrandAndPixel(i);
+    auto strand = strandAndPixel.strand;
+
+    uint8_t *pixels = strand->getPixels();
+    uint16_t tmpPixel = (pixels[strandAndPixel.pixel - bytesPerPixel] >> 2) +
+      pixels[strandAndPixel.pixel] +
+      (pixels[strandAndPixel.pixel + bytesPerPixel] >> 2);
+    pixels[strandAndPixel.pixel] =  tmpPixel > 255 ? 255 : tmpPixel;
   }
 
   uint8_t size = 2 << SIZE_OPTION;

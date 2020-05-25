@@ -305,6 +305,11 @@ static const __FlashStringHelper* _names[] = {
   FSH(name_59)
 };
 
+struct StrandAndPixel {
+  Adafruit_NeoPixel* strand;
+  uint16_t pixel;
+};
+
 class WS2812FX {
 
   typedef uint16_t (WS2812FX::*mode_ptr)(void);
@@ -330,91 +335,31 @@ class WS2812FX {
       uint16_t aux_param3; // auxilary param (usually stores a segment index)
     } segment_runtime;
 
-    WS2812FX(uint16_t n, uint8_t p, neoPixelType t) {
-      Adafruit_NeoPixel strand(n, p, t);
-      _strand = &strand;
-      _mode[FX_MODE_STATIC]                  = &WS2812FX::mode_static;
-      _mode[FX_MODE_BLINK]                   = &WS2812FX::mode_blink;
-      _mode[FX_MODE_COLOR_WIPE]              = &WS2812FX::mode_color_wipe;
-      _mode[FX_MODE_COLOR_WIPE_INV]          = &WS2812FX::mode_color_wipe_inv;
-      _mode[FX_MODE_COLOR_WIPE_REV]          = &WS2812FX::mode_color_wipe_rev;
-      _mode[FX_MODE_COLOR_WIPE_REV_INV]      = &WS2812FX::mode_color_wipe_rev_inv;
-      _mode[FX_MODE_COLOR_WIPE_RANDOM]       = &WS2812FX::mode_color_wipe_random;
-      _mode[FX_MODE_RANDOM_COLOR]            = &WS2812FX::mode_random_color;
-      _mode[FX_MODE_SINGLE_DYNAMIC]          = &WS2812FX::mode_single_dynamic;
-      _mode[FX_MODE_MULTI_DYNAMIC]           = &WS2812FX::mode_multi_dynamic;
-      _mode[FX_MODE_RAINBOW]                 = &WS2812FX::mode_rainbow;
-      _mode[FX_MODE_RAINBOW_CYCLE]           = &WS2812FX::mode_rainbow_cycle;
-      _mode[FX_MODE_SCAN]                    = &WS2812FX::mode_scan;
-      _mode[FX_MODE_DUAL_SCAN]               = &WS2812FX::mode_dual_scan;
-      _mode[FX_MODE_FADE]                    = &WS2812FX::mode_fade;
-      _mode[FX_MODE_THEATER_CHASE]           = &WS2812FX::mode_theater_chase;
-      _mode[FX_MODE_THEATER_CHASE_RAINBOW]   = &WS2812FX::mode_theater_chase_rainbow;
-      _mode[FX_MODE_TWINKLE]                 = &WS2812FX::mode_twinkle;
-      _mode[FX_MODE_TWINKLE_RANDOM]          = &WS2812FX::mode_twinkle_random;
-      _mode[FX_MODE_TWINKLE_FADE]            = &WS2812FX::mode_twinkle_fade;
-      _mode[FX_MODE_TWINKLE_FADE_RANDOM]     = &WS2812FX::mode_twinkle_fade_random;
-      _mode[FX_MODE_SPARKLE]                 = &WS2812FX::mode_sparkle;
-      _mode[FX_MODE_FLASH_SPARKLE]           = &WS2812FX::mode_flash_sparkle;
-      _mode[FX_MODE_HYPER_SPARKLE]           = &WS2812FX::mode_hyper_sparkle;
-      _mode[FX_MODE_STROBE]                  = &WS2812FX::mode_strobe;
-      _mode[FX_MODE_STROBE_RAINBOW]          = &WS2812FX::mode_strobe_rainbow;
-      _mode[FX_MODE_MULTI_STROBE]            = &WS2812FX::mode_multi_strobe;
-      _mode[FX_MODE_BLINK_RAINBOW]           = &WS2812FX::mode_blink_rainbow;
-      _mode[FX_MODE_CHASE_WHITE]             = &WS2812FX::mode_chase_white;
-      _mode[FX_MODE_CHASE_COLOR]             = &WS2812FX::mode_chase_color;
-      _mode[FX_MODE_CHASE_RANDOM]            = &WS2812FX::mode_chase_random;
-      _mode[FX_MODE_CHASE_RAINBOW]           = &WS2812FX::mode_chase_rainbow;
-      _mode[FX_MODE_CHASE_FLASH]             = &WS2812FX::mode_chase_flash;
-      _mode[FX_MODE_CHASE_FLASH_RANDOM]      = &WS2812FX::mode_chase_flash_random;
-      _mode[FX_MODE_CHASE_RAINBOW_WHITE]     = &WS2812FX::mode_chase_rainbow_white;
-      _mode[FX_MODE_CHASE_BLACKOUT]          = &WS2812FX::mode_chase_blackout;
-      _mode[FX_MODE_CHASE_BLACKOUT_RAINBOW]  = &WS2812FX::mode_chase_blackout_rainbow;
-      _mode[FX_MODE_COLOR_SWEEP_RANDOM]      = &WS2812FX::mode_color_sweep_random;
-      _mode[FX_MODE_RUNNING_COLOR]           = &WS2812FX::mode_running_color;
-      _mode[FX_MODE_RUNNING_RED_BLUE]        = &WS2812FX::mode_running_red_blue;
-      _mode[FX_MODE_RUNNING_RANDOM]          = &WS2812FX::mode_running_random;
-      _mode[FX_MODE_LARSON_SCANNER]          = &WS2812FX::mode_larson_scanner;
-      _mode[FX_MODE_COMET]                   = &WS2812FX::mode_comet;
-      _mode[FX_MODE_FIREWORKS]               = &WS2812FX::mode_fireworks;
-      _mode[FX_MODE_FIREWORKS_RANDOM]        = &WS2812FX::mode_fireworks_random;
-      _mode[FX_MODE_MERRY_CHRISTMAS]         = &WS2812FX::mode_merry_christmas;
-      _mode[FX_MODE_FIRE_FLICKER]            = &WS2812FX::mode_fire_flicker;
-      _mode[FX_MODE_FIRE_FLICKER_SOFT]       = &WS2812FX::mode_fire_flicker_soft;
-      _mode[FX_MODE_FIRE_FLICKER_INTENSE]    = &WS2812FX::mode_fire_flicker_intense;
-      _mode[FX_MODE_CIRCUS_COMBUSTUS]        = &WS2812FX::mode_circus_combustus;
-      _mode[FX_MODE_HALLOWEEN]               = &WS2812FX::mode_halloween;
-      _mode[FX_MODE_BICOLOR_CHASE]           = &WS2812FX::mode_bicolor_chase;
-      _mode[FX_MODE_TRICOLOR_CHASE]          = &WS2812FX::mode_tricolor_chase;
-// if flash memory is constrained (I'm looking at you Arduino Nano), replace modes
-// that use a lot of flash with mode_static (reduces flash footprint by about 2100 bytes)
-#ifdef REDUCED_MODES
-      _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_static;
-      _mode[FX_MODE_RUNNING_LIGHTS]          = &WS2812FX::mode_static;
-      _mode[FX_MODE_ICU]                     = &WS2812FX::mode_static;
-#else
-      _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_breath;
-      _mode[FX_MODE_RUNNING_LIGHTS]          = &WS2812FX::mode_running_lights;
-      _mode[FX_MODE_ICU]                     = &WS2812FX::mode_icu;
-#endif
-      _mode[FX_MODE_CUSTOM_0]                = &WS2812FX::mode_custom_0;
-      _mode[FX_MODE_CUSTOM_1]                = &WS2812FX::mode_custom_1;
-      _mode[FX_MODE_CUSTOM_2]                = &WS2812FX::mode_custom_2;
-      _mode[FX_MODE_CUSTOM_3]                = &WS2812FX::mode_custom_3;
+    WS2812FX(Adafruit_NeoPixel** strands, int strandsSize, neoPixelType t) {
+      _strands = strands;
+      _strandsSize = strandsSize;
+      initMode();
+      initSegments(t);
+      initFinish();
+    }
 
-      _strand->setBrightness(DEFAULT_BRIGHTNESS + 1); // Adafruit_NeoPixel internally offsets brightness by 1
-      _running = false;
-      _num_segments = 1;
-      _segments[0].mode = DEFAULT_MODE;
-      _segments[0].colors[0] = DEFAULT_COLOR;
-      _segments[0].start = 0;
-      _segments[0].stop = n - 1;
-      _segments[0].speed = DEFAULT_SPEED;
-      _strand_offset = {
-        (uint8_t)((t >> 6) & 0b11),  // Taken from Adafruit calculation
-        (uint8_t)((t >> 4) & 0b11) // Taken from Adafruit calculation
-      };
-      resetSegmentRuntimes();
+    WS2812FX(Adafruit_NeoPixel* strand, neoPixelType t) {
+      Adafruit_NeoPixel* strands[] = {strand};
+      _strands = strands;
+      _strandsSize = 1;
+      initMode();
+      initSegments(t);
+      initFinish();
+    }
+
+    WS2812FX(uint16_t n, uint8_t p, neoPixelType t) {
+      Adafruit_NeoPixel _createdStrand(n, p, t);
+      Adafruit_NeoPixel* strands[] = {&_createdStrand};
+      _strands = strands;
+      _strandsSize = 1;
+      initMode();
+      initSegments(t);
+      initFinish();
     }
 
     void
@@ -493,6 +438,7 @@ class WS2812FX {
       getSpeed(void),
       getSpeed(uint8_t),
       getLength(void),
+      getNumBytesPerStrand(int),
       getNumBytes(void);
 
     uint32_t
@@ -598,7 +544,9 @@ class WS2812FX {
       mode_custom_3(void);
 
   private:
-    Adafruit_NeoPixel* _strand;
+    Adafruit_NeoPixel _createdStrand;
+    Adafruit_NeoPixel** _strands;
+    int _strandsSize;
 
     uint16_t _rand16seed;
     uint16_t (*customModes[MAX_CUSTOM_MODES])(void) {
@@ -623,10 +571,18 @@ class WS2812FX {
     };
     segment_runtime _segment_runtimes[MAX_NUM_SEGMENTS]; // SRAM footprint: 16 bytes per element
 
+    StrandAndPixel getStrandAndPixel(uint16_t n);
+
     struct Strand_offsets { // Adafruit offset values
       uint8_t           rOffset;    ///< Red index within each 3- or 4-byte pixel
       uint8_t           wOffset;    ///< Index of white (==rOffset if no white)
     } _strand_offset;
+
+    // initializer functions
+    void
+      initSegments(neoPixelType t),
+      initMode(),
+      initFinish();
 };
 
 #endif
