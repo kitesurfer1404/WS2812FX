@@ -1,21 +1,105 @@
 #include <pgmspace.h>
-char main_js[] PROGMEM = R"=====(
-window.addEventListener('load', setup);
-window.addEventListener('resize', drawColorbar);
 
-function handle_M_B_S(e) {
-  e.preventDefault();
-  var name = e.target.className;
-  var val = e.target.id;
-  if(e.target.className.indexOf('m') > -1) {
-    elems = document.querySelectorAll('#mode li a');
-    [].forEach.call(elems, function(el) {
-      el.classList.remove('active');
-      name = e.target.className;
-    });
-    e.target.classList.add('active');
+/*
+The tiny Javascript/canvas based color picker is based on the clever work of the folks
+at Sparkbox. https://seesparkbox.com/foundry/how_i_built_a_canvas_color_picker
+*/
+
+char main_js[] PROGMEM = R"=====(
+
+var activeButton = null;
+var colorCanvas = null;
+
+window.addEventListener('DOMContentLoaded', (event) => {
+  // init the canvas color picker
+  colorCanvas = document.getElementById('color-canvas');
+  var colorctx = colorCanvas.getContext('2d');
+
+  // Create color gradient
+  var gradient = colorctx.createLinearGradient(0, 0, colorCanvas.width - 1, 0);
+  gradient.addColorStop(0,    "rgb(255,   0,   0)");
+  gradient.addColorStop(0.16, "rgb(255,   0, 255)");
+  gradient.addColorStop(0.33, "rgb(0,     0, 255)");
+  gradient.addColorStop(0.49, "rgb(0,   255, 255)");
+  gradient.addColorStop(0.66, "rgb(0,   255,   0)");
+  gradient.addColorStop(0.82, "rgb(255, 255,   0)");
+  gradient.addColorStop(1,    "rgb(255,   0,   0)");
+
+  // Apply gradient to canvas
+  colorctx.fillStyle = gradient;
+  colorctx.fillRect(0, 0, colorCanvas.width - 1, colorCanvas.height - 1);
+
+  // Create semi transparent gradient (white -> transparent -> black)
+  gradient = colorctx.createLinearGradient(0, 0, 0, colorCanvas.height - 1);
+  gradient.addColorStop(0,    "rgba(255, 255, 255, 1)");
+  gradient.addColorStop(0.48, "rgba(255, 255, 255, 0)");
+  gradient.addColorStop(0.52, "rgba(0,     0,   0, 0)");
+  gradient.addColorStop(1,    "rgba(0,     0,   0, 1)");
+
+  // Apply gradient to canvas
+  colorctx.fillStyle = gradient;
+  colorctx.fillRect(0, 0, colorCanvas.width - 1, colorCanvas.height - 1);
+
+  // setup the canvas click listener
+  colorCanvas.addEventListener('click', (event) => {
+    var imageData = colorCanvas.getContext('2d').getImageData(event.offsetX, event.offsetY, 1, 1);
+
+    var selectedColor = 'rgb(' + imageData.data[0] + ',' + imageData.data[1] + ',' + imageData.data[2] + ')'; 
+    //console.log('click: ' + event.offsetX + ', ' + event.offsetY + ', ' + selectedColor);
+    document.getElementById('color-value').value = selectedColor;
+
+    selectedColor = imageData.data[0] * 65536 + imageData.data[1] * 256 + imageData.data[2];
+    submitVal('c', selectedColor);
+  });
+
+  // get list of modes from ESP
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+   if (xhttp.readyState == 4 && xhttp.status == 200) {
+     document.getElementById('modes').innerHTML = xhttp.responseText;
+     modes = document.querySelectorAll('ul#modes li a');
+     modes.forEach(initMode);
+   }
+  };
+  xhttp.open('GET', 'modes', true);
+  xhttp.send();
+});
+
+function initMode(mode, index) {
+  mode.addEventListener('click', (event) => onMode(event, index));
+}
+
+function onColor(event, color) {
+  event.preventDefault();
+  var match = color.match(/rgb\(([0-9]*),([0-9]*),([0-9]*)\)/);
+  if(match) {
+    var colorValue = Number(match[1]) * 65536 + Number(match[2]) * 256 + Number(match[3]);
+    //console.log('onColor:' + match[1] + "," + match[2] + "," + match[3] + "," + colorValue);
+    submitVal('c', colorValue);
   }
-  submitVal(name, val);
+}
+
+function onMode(event, mode) {
+  event.preventDefault();
+  if(activeButton) activeButton.classList.remove('active')
+  activeButton = event.target;
+  activeButton.classList.add('active');
+  submitVal('m', mode);
+}
+
+function onBrightness(event, dir) {
+  event.preventDefault();
+  submitVal('b', dir);
+}
+
+function onSpeed(event, dir) {
+  event.preventDefault();
+  submitVal('s', dir);
+}
+
+function onAuto(event, dir) {
+  event.preventDefault();
+  submitVal('a', dir);
 }
 
 function submitVal(name, val) {
@@ -23,99 +107,4 @@ function submitVal(name, val) {
   xhttp.open('GET', 'set?' + name + '=' + val, true);
   xhttp.send();
 }
-
-function compToHex(c) {
-  hex = c.toString(16);
-  return hex.length == 1 ? '0' + hex : hex;
-}
-
-function getMousePos(can, evt) {
-  r = can.getBoundingClientRect();
-  return {
-    x: evt.clientX - r.left,
-    y: evt.clientY - r.top
-  };
-}
-
-function Touch(e) {
-  e.preventDefault();
-  pos = {
-    x: Math.round(e.targetTouches[0].pageX),
-    y: Math.round(e.targetTouches[0].pageY)
-  };
-  rgb = ctx.getImageData(pos.x, pos.y, 1, 1).data;
-  drawColorbar(rgb);
-  submitVal('c', compToHex(rgb[0]) + compToHex(rgb[1]) + compToHex(rgb[2]));
-}
-
-function Click(e) {
-  pos = getMousePos(can, e);
-  rgb = ctx.getImageData(pos.x, pos.y, 1, 1).data;
-  drawColorbar(rgb);
-  submitVal('c', compToHex(rgb[0]) + compToHex(rgb[1]) + compToHex(rgb[2]));
-}
-
-// Thanks to the backup at http://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
-function rgbToHsl(r, g, b){
-  r = r / 255;
-  g = g / 255;
-  b = b / 255;
-  var max = Math.max(r, g, b);
-  var min = Math.min(r, g, b);
-  var h, s, l = (max + min) / 2;
-  if(max == min) {
-    h = s = 0;
-  } else {
-    var d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch(max) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
-    }
-    h = h / 6;
-  }
-  return [h, s, l];
-}
-
-function drawColorbar(rgb = [0, 0, 0]) {
-  can = document.getElementById('colorbar');
-  ctx = can.getContext('2d');
-  can.width = document.body.clientWidth * 0.25;
-  var h = can.height / 360;
-  
-  var hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]);
-  
-  for(var i=0; i<=360; i++) {
-    ctx.fillStyle = 'hsl('+i+', 100%, 50%)';
-    ctx.fillRect(0, i * h, can.width/2, h);
-    ctx.fillStyle = 'hsl(' + hsl[0] * 360 + ', 100%, ' + i * (100/360) + '%)';
-    ctx.fillRect(can.width/2, i * h, can.width/2, h);
-  }
-}
-
-function setup(){
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (xhttp.readyState == 4 && xhttp.status == 200) {
-      document.getElementById('mode').innerHTML = xhttp.responseText;
-      elems = document.querySelectorAll('ul li a'); // adds listener also to existing s and b buttons
-      [].forEach.call(elems, function(el) {
-        el.addEventListener('touchstart', handle_M_B_S, false);
-        el.addEventListener('click', handle_M_B_S, false);
-      });
-    }
-  };
-  xhttp.open('GET', 'modes', true);
-  xhttp.send();
- 
-  var can = document.getElementById('colorbar');
-  var ctx = can.getContext('2d');
-
-  drawColorbar();
-  
-  can.addEventListener('touchstart', Touch, false);
-  can.addEventListener('click', Click, false);
-}
 )=====";
-

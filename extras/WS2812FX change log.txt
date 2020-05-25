@@ -1,7 +1,7 @@
 WS2182FX Change Log
 
 
-v1.x.x changes 5/11/2020
+v1.3.0 changes 5/11/2020
 ------------------------
 
 1) This library now makes use of the new Adafruit fill() function,
@@ -13,8 +13,33 @@ v1.x.x changes 5/11/2020
 	getting too big to fit in my Arduino Leonardo. Some of the effects
 	don't look exactly the same, but they're pretty close.
 
-4) Refactored the Matrix custom effect so it can be configured from 
+4) Changed the ICU effect from a built-in effect to a custom effect,
+	since it was quite large and removing it from the built-in effects
+	made more room for custom effects. It always seemed like a specialty
+	effect to me anyway.
+
+5) Refactored the Matrix custom effect so it can be configured from 
 	outside of the Matrix.h file.
+
+6) Refactored the ws2812fx_webinterface example sketch to take advantage
+	of flex box layout and a more modern color picker.
+
+7) Added API for managing idle/active segments.
+	a) segment arrays are now configured at runtime instead of compile
+		time, allowing more flexibility in allocating SRAM for
+		that data (see the new WS2812FX constructor).
+
+	b) The number of segments and the number of segment_runtimes
+		are independent now, allowing for more fine grained SRAM
+		allocation and the creation of "idle" segments that are
+		activated at a later time. See the new
+		ws2812fx_segment_sequence example sketch.
+
+8) Increased the maximum number of custom effects from 4 to 8.
+
+9) Substantial refactoring of the segment code to use global variables
+	instead of macros, which makes sketches significantly smaller.
+
 
 
 v1.2.4 changes 5/8/2020

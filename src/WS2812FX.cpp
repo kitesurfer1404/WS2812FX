@@ -1561,39 +1561,39 @@ uint16_t WS2812FX::mode_fire_flicker_intense(void) {
 /*
  * ICU mode
  */
-uint16_t WS2812FX::mode_icu(void) {
-  uint16_t dest = _seg_rt->counter_mode_step & 0xFFFF;
+// uint16_t WS2812FX::mode_icu(void) {
+//   uint16_t dest = _seg_rt->counter_mode_step & 0xFFFF;
  
-  setPixelColor(_seg->start + dest, _seg->colors[0]);
-  setPixelColor(_seg->start + dest + _seg_len/2, _seg->colors[0]);
+//   setPixelColor(_seg->start + dest, _seg->colors[0]);
+//   setPixelColor(_seg->start + dest + _seg_len/2, _seg->colors[0]);
 
-  if(_seg_rt->aux_param3 == dest) { // pause between eye movements
-    if(random8(6) == 0) { // blink once in a while
-      setPixelColor(_seg->start + dest, BLACK);
-      setPixelColor(_seg->start + dest + _seg_len/2, BLACK);
-      return 200;
-    }
-    _seg_rt->aux_param3 = random16(_seg_len/2);
-    SET_CYCLE;
-    return 1000 + random16(2000);
-  }
+//   if(_seg_rt->aux_param3 == dest) { // pause between eye movements
+//     if(random8(6) == 0) { // blink once in a while
+//       setPixelColor(_seg->start + dest, BLACK);
+//       setPixelColor(_seg->start + dest + _seg_len/2, BLACK);
+//       return 200;
+//     }
+//     _seg_rt->aux_param3 = random16(_seg_len/2);
+//     SET_CYCLE;
+//     return 1000 + random16(2000);
+//   }
 
-  setPixelColor(_seg->start + dest, BLACK);
-  setPixelColor(_seg->start + dest + _seg_len/2, BLACK);
+//   setPixelColor(_seg->start + dest, BLACK);
+//   setPixelColor(_seg->start + dest + _seg_len/2, BLACK);
 
-  if(_seg_rt->aux_param3 > _seg_rt->counter_mode_step) {
-    _seg_rt->counter_mode_step++;
-    dest++;
-  } else if (_seg_rt->aux_param3 < _seg_rt->counter_mode_step) {
-    _seg_rt->counter_mode_step--;
-    dest--;
-  }
+//   if(_seg_rt->aux_param3 > _seg_rt->counter_mode_step) {
+//     _seg_rt->counter_mode_step++;
+//     dest++;
+//   } else if (_seg_rt->aux_param3 < _seg_rt->counter_mode_step) {
+//     _seg_rt->counter_mode_step--;
+//     dest--;
+//   }
 
-  setPixelColor(_seg->start + dest, _seg->colors[0]);
-  setPixelColor(_seg->start + dest + _seg_len/2, _seg->colors[0]);
+//   setPixelColor(_seg->start + dest, _seg->colors[0]);
+//   setPixelColor(_seg->start + dest + _seg_len/2, _seg->colors[0]);
 
-  return (_seg->speed / _seg_len);
-}
+//   return (_seg->speed / _seg_len);
+// }
 
 /*
  * Custom modes

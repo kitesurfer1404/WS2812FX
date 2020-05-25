@@ -1,11 +1,5 @@
 /*
-  Custom effect that creates a Larson Scanner with rainbow colors
-  It has two modes:
-  1) if the segment options parameter is set to NO_OPTIONS, then
-    the rainbow of colors span the 'comet'.
-  2) if the segment options parameter is set to a FADE option
-    (e.g. FADE_MEDIUM), then the rainbow of colors span the segment
-    and the 'comet' merely shows the colors at that point in the segment.
+  Custom effect that mimics two eyes looking about
   
   Keith Lord - 2018
 
@@ -34,42 +28,52 @@
   THE SOFTWARE.
   
   CHANGELOG
-  2018-08-26 initial version
+  2018-07-26 initial version
 */
 
-#ifndef RainbowLarson_h
-#define RainbowLarson_h
+#ifndef ICU_h
+#define ICU_h
 
 #include <WS2812FX.h>
 
-#define DIR_BIT (uint8_t)B00000001 // segrt->aux_param2 direction bit
-
 extern WS2812FX ws2812fx;
 
-uint16_t rainbowLarson(void) {
+uint16_t icu(void) {
   WS2812FX::Segment* seg = ws2812fx.getSegment(); // get the current segment
   WS2812FX::Segment_runtime* segrt = ws2812fx.getSegmentRuntime();
   int seglen = seg->stop - seg->start + 1;
 
-  int8_t dir = ((segrt->aux_param2 & DIR_BIT) == DIR_BIT) ? -1 : 1; // forward?
-  segrt->aux_param3 += dir;
-  int16_t index = segrt->aux_param3 % seglen;
+  uint16_t dest = segrt->counter_mode_step & 0xFFFF;
+ 
+  ws2812fx.setPixelColor(seg->start + dest, seg->colors[0]);
+  ws2812fx.setPixelColor(seg->start + dest + seglen/2, seg->colors[0]);
 
-  ws2812fx.fade_out();
-
-  if(seg->options == NO_OPTIONS) {
-    int8_t cnt = segrt->aux_param++;
-    ws2812fx.setPixelColor(seg->start + index, ws2812fx.color_wheel((cnt % 8) * 32));
-  } else {
-    ws2812fx.setPixelColor(seg->start + index, ws2812fx.color_wheel((index * 256) / seglen));
-  }
-
-  if(segrt->aux_param3 >= (seg->stop - seg->start) || segrt->aux_param3 <= 0) {
-    segrt->aux_param2 ^= DIR_BIT; // change direction
+  if(segrt->aux_param3 == dest) { // pause between eye movements
+    if(ws2812fx.random8(6) == 0) { // blink once in a while
+      ws2812fx.setPixelColor(seg->start + dest, BLACK);
+      ws2812fx.setPixelColor(seg->start + dest + seglen/2, BLACK);
+      return 200;
+    }
+    segrt->aux_param3 = ws2812fx.random16(seglen/2);
     ws2812fx.setCycle();
+    return 1000 + ws2812fx.random16(2000);
   }
 
-  return (seg->speed / (seglen * 2));
+  ws2812fx.setPixelColor(seg->start + dest, BLACK);
+  ws2812fx.setPixelColor(seg->start + dest + seglen/2, BLACK);
+
+  if(segrt->aux_param3 > segrt->counter_mode_step) {
+    segrt->counter_mode_step++;
+    dest++;
+  } else if (segrt->aux_param3 < segrt->counter_mode_step) {
+    segrt->counter_mode_step--;
+    dest--;
+  }
+
+  ws2812fx.setPixelColor(seg->start + dest, seg->colors[0]);
+  ws2812fx.setPixelColor(seg->start + dest + seglen/2, seg->colors[0]);
+
+  return (seg->speed / seglen);
 }
 
 #endif

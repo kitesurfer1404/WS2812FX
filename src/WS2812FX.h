@@ -177,16 +177,15 @@
 #define FX_MODE_HALLOWEEN               52
 #define FX_MODE_BICOLOR_CHASE           53
 #define FX_MODE_TRICOLOR_CHASE          54
-#define FX_MODE_ICU                     55
-#define FX_MODE_CUSTOM                  56  // keep this for backward compatiblity
-#define FX_MODE_CUSTOM_0                56  // custom modes need to go at the end
-#define FX_MODE_CUSTOM_1                57
-#define FX_MODE_CUSTOM_2                58
-#define FX_MODE_CUSTOM_3                59
-#define FX_MODE_CUSTOM_4                60
-#define FX_MODE_CUSTOM_5                61
-#define FX_MODE_CUSTOM_6                62
-#define FX_MODE_CUSTOM_7                63
+#define FX_MODE_CUSTOM                  55  // keep this for backward compatiblity
+#define FX_MODE_CUSTOM_0                55  // custom modes need to go at the end
+#define FX_MODE_CUSTOM_1                56
+#define FX_MODE_CUSTOM_2                57
+#define FX_MODE_CUSTOM_3                58
+#define FX_MODE_CUSTOM_4                59
+#define FX_MODE_CUSTOM_5                60
+#define FX_MODE_CUSTOM_6                61
+#define FX_MODE_CUSTOM_7                62
 
 // create GLOBAL names to allow WS2812FX to compile with sketches and other libs
 // that store strings in PROGMEM (get rid of the "section type conflict with __c"
@@ -246,15 +245,14 @@ const char name_51[] PROGMEM = "Circus Combustus";
 const char name_52[] PROGMEM = "Halloween";
 const char name_53[] PROGMEM = "Bicolor Chase";
 const char name_54[] PROGMEM = "Tricolor Chase";
-const char name_55[] PROGMEM = "ICU";
-const char name_56[] PROGMEM = "Custom 0"; // custom modes need to go at the end
-const char name_57[] PROGMEM = "Custom 1";
-const char name_58[] PROGMEM = "Custom 2";
-const char name_59[] PROGMEM = "Custom 3";
-const char name_60[] PROGMEM = "Custom 4";
-const char name_61[] PROGMEM = "Custom 5";
-const char name_62[] PROGMEM = "Custom 6";
-const char name_63[] PROGMEM = "Custom 7";
+const char name_55[] PROGMEM = "Custom 0"; // custom modes need to go at the end
+const char name_56[] PROGMEM = "Custom 1";
+const char name_57[] PROGMEM = "Custom 2";
+const char name_58[] PROGMEM = "Custom 3";
+const char name_59[] PROGMEM = "Custom 4";
+const char name_60[] PROGMEM = "Custom 5";
+const char name_61[] PROGMEM = "Custom 6";
+const char name_62[] PROGMEM = "Custom 7";
 
 static const __FlashStringHelper* _names[] = {
   FSH(name_0),
@@ -319,8 +317,7 @@ static const __FlashStringHelper* _names[] = {
   FSH(name_59),
   FSH(name_60),
   FSH(name_61),
-  FSH(name_62),
-  FSH(name_63)
+  FSH(name_62)
 };
 
 class WS2812FX : public Adafruit_NeoPixel {
@@ -405,17 +402,8 @@ typedef uint16_t (WS2812FX::*mode_ptr)(void);
       _mode[FX_MODE_HALLOWEEN]               = &WS2812FX::mode_halloween;
       _mode[FX_MODE_BICOLOR_CHASE]           = &WS2812FX::mode_bicolor_chase;
       _mode[FX_MODE_TRICOLOR_CHASE]          = &WS2812FX::mode_tricolor_chase;
-// if flash memory is constrained (I'm looking at you Arduino Nano), replace modes
-// that use a lot of flash with mode_static (reduces flash footprint by about 2100 bytes)
-#ifdef REDUCED_MODES
-      _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_static;
-      _mode[FX_MODE_RUNNING_LIGHTS]          = &WS2812FX::mode_static;
-      _mode[FX_MODE_ICU]                     = &WS2812FX::mode_static;
-#else
       _mode[FX_MODE_BREATH]                  = &WS2812FX::mode_breath;
       _mode[FX_MODE_RUNNING_LIGHTS]          = &WS2812FX::mode_running_lights;
-      _mode[FX_MODE_ICU]                     = &WS2812FX::mode_icu;
-#endif
       _mode[FX_MODE_CUSTOM_0]                = &WS2812FX::mode_custom_0;
       _mode[FX_MODE_CUSTOM_1]                = &WS2812FX::mode_custom_1;
       _mode[FX_MODE_CUSTOM_2]                = &WS2812FX::mode_custom_2;
@@ -621,7 +609,6 @@ typedef uint16_t (WS2812FX::*mode_ptr)(void);
       mode_circus_combustus(void),
       mode_bicolor_chase(void),
       mode_tricolor_chase(void),
-      mode_icu(void),
       mode_custom_0(void),
       mode_custom_1(void),
       mode_custom_2(void),
