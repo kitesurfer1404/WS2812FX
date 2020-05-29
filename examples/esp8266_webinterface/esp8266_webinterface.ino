@@ -67,7 +67,7 @@ extern const char main_js[];
 #define HTTP_PORT 80
 
 #define DEFAULT_COLOR 0xFF5900
-#define DEFAULT_BRIGHTNESS 255
+#define DEFAULT_BRIGHTNESS 128
 #define DEFAULT_SPEED 1000
 #define DEFAULT_MODE FX_MODE_STATIC
 
@@ -82,9 +82,8 @@ ESP8266WebServer server(HTTP_PORT);
 
 void setup(){
   Serial.begin(115200);
-  Serial.println();
-  Serial.println();
-  Serial.println("Starting...");
+  delay(500);
+  Serial.println("\n\nStarting...");
 
   modes.reserve(5000);
   modes_setup();
@@ -192,9 +191,7 @@ void modes_setup() {
   uint8_t num_modes = sizeof(myModes) > 0 ? sizeof(myModes) : ws2812fx.getModeCount();
   for(uint8_t i=0; i < num_modes; i++) {
     uint8_t m = sizeof(myModes) > 0 ? myModes[i] : i;
-    modes += "<li><a href='#' class='m' id='";
-    modes += m;
-    modes += "'>";
+    modes += "<li><a href='#'>";
     modes += ws2812fx.getModeName(m);
     modes += "</a></li>";
   }
@@ -223,7 +220,7 @@ void srv_handle_modes() {
 void srv_handle_set() {
   for (uint8_t i=0; i < server.args(); i++){
     if(server.argName(i) == "c") {
-      uint32_t tmp = (uint32_t) strtol(server.arg(i).c_str(), NULL, 16);
+      uint32_t tmp = (uint32_t) strtol(server.arg(i).c_str(), NULL, 10);
       if(tmp >= 0x000000 && tmp <= 0xFFFFFF) {
         ws2812fx.setColor(tmp);
       }

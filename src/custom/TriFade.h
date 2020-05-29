@@ -82,7 +82,10 @@ uint16_t triFade(void) {
   }
 
   segrt->aux_param3 += 4;
-  if(segrt->aux_param3 >= 1536) segrt->aux_param3 = 0;
+  if(segrt->aux_param3 >= 1536) {
+    segrt->aux_param3 = 0;
+    ws2812fx.setCycle();
+  }
 
   return (seg->speed / 128);
 }

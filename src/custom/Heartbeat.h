@@ -72,6 +72,7 @@ uint16_t heartbeat(void) {
     beatIt(seg, size); // create the first beat
     secondBeatActive = false;
     lastBeat = millis();
+    ws2812fx.setCycle();
   }
 
   return(seg->speed / 32);

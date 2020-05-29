@@ -80,6 +80,7 @@ uint16_t rainbowFireworks(void) {
     if(ws2812fx.random8(10) == 0) {
       uint16_t index = seg->start + 6 + ws2812fx.random16(seglen - 12);
       ws2812fx.setPixelColor(index, RED);
+      ws2812fx.setCycle();
     }
   }
 

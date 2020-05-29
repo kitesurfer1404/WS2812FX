@@ -1,8 +1,5 @@
 /*
-  Custom effect that creates two Larson scanners moving in opposite directions.
-  If you set the REVERSE option, an offset will be added to the comet after each
-  cycle (so if the LEDs are arranged in a circle, the animation will appear to
-  "walk" around the circle.)
+  Custom effect that mimics two eyes looking about
   
   Keith Lord - 2018
 
@@ -31,38 +28,52 @@
   THE SOFTWARE.
   
   CHANGELOG
-  2018-02-26 initial version
+  2018-07-26 initial version
 */
 
-#ifndef DualLarson_h
-#define DualLarson_h
+#ifndef ICU_h
+#define ICU_h
 
 #include <WS2812FX.h>
 
 extern WS2812FX ws2812fx;
 
-uint16_t dualLarson(void) {
+uint16_t icu(void) {
   WS2812FX::Segment* seg = ws2812fx.getSegment(); // get the current segment
   WS2812FX::Segment_runtime* segrt = ws2812fx.getSegmentRuntime();
   int seglen = seg->stop - seg->start + 1;
 
-  static int16_t offset = 0;
-  int8_t dir = segrt->aux_param ? -1 : 1;
-  segrt->aux_param3 += dir;
+  uint16_t dest = segrt->counter_mode_step & 0xFFFF;
+ 
+  ws2812fx.setPixelColor(seg->start + dest, seg->colors[0]);
+  ws2812fx.setPixelColor(seg->start + dest + seglen/2, seg->colors[0]);
 
-  ws2812fx.fade_out();
-
-  int16_t segIndex = (segrt->aux_param3 + offset) % seglen;
-  ws2812fx.setPixelColor(seg->start + segIndex, seg->colors[0]);
-  ws2812fx.setPixelColor(seg->stop  - segIndex, seg->colors[2]);
-
-  if(segrt->aux_param3 >= (seg->stop - seg->start) || segrt->aux_param3 <= 0) {
-    segrt->aux_param = !segrt->aux_param;
-    if(seg->options & REVERSE) offset = (offset + 1) % seglen;
-    if(!segrt->aux_param) ws2812fx.setCycle();
+  if(segrt->aux_param3 == dest) { // pause between eye movements
+    if(ws2812fx.random8(6) == 0) { // blink once in a while
+      ws2812fx.setPixelColor(seg->start + dest, BLACK);
+      ws2812fx.setPixelColor(seg->start + dest + seglen/2, BLACK);
+      return 200;
+    }
+    segrt->aux_param3 = ws2812fx.random16(seglen/2);
+    ws2812fx.setCycle();
+    return 1000 + ws2812fx.random16(2000);
   }
 
-  return (seg->speed / (seglen * 2));
+  ws2812fx.setPixelColor(seg->start + dest, BLACK);
+  ws2812fx.setPixelColor(seg->start + dest + seglen/2, BLACK);
+
+  if(segrt->aux_param3 > segrt->counter_mode_step) {
+    segrt->counter_mode_step++;
+    dest++;
+  } else if (segrt->aux_param3 < segrt->counter_mode_step) {
+    segrt->counter_mode_step--;
+    dest--;
+  }
+
+  ws2812fx.setPixelColor(seg->start + dest, seg->colors[0]);
+  ws2812fx.setPixelColor(seg->start + dest + seglen/2, seg->colors[0]);
+
+  return (seg->speed / seglen);
 }
 
 #endif

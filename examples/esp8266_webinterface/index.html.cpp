@@ -1,97 +1,114 @@
 #include <pgmspace.h>
 char index_html[] PROGMEM = R"=====(
-<!DOCTYPE html>
-<html lang='en'>
+<!doctype html>
+<html lang='en' dir='ltr'>
 <head>
   <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-  <meta name='viewport' content='width=device-width' />
-
-  <title>WS2812FX Ctrl</title>
-
+  <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+  <title>WS2812FX Control</title>
   <script type='text/javascript' src='main.js'></script>
 
   <style>
-  * {
-    font-family:sans-serif;
-    margin:0;
-    padding:0;
-  }
+    body {
+      font-family:Arial,sans-serif;
+      margin:10px;
+      padding:0;
+      background-color:#202020;
+      color:#909090;
+      text-align:center;
+    }
 
-  body {
-    width:100%;
-    max-width:675px;
-    background-color:#202020;
-  }
-  
-  h1 {
-    width:65%;
-    margin:25px 0 25px 25%;
-    color:#454545;
-    text-align:center;
-  }
-  
-  #colorbar {
-    float:left;
-  }
-  
-  #controls {
-    width:65%;
-    display:inline-block;
-    padding-left:5px;
-  }
+    .flex-row {
+      display:flex;
+      flex-direction:row;
+    }
 
-  ul {
-    text-align:center;
-  }
+    .flex-row-wrap {
+      display:flex;
+      flex-direction:row;
+      flex-wrap:wrap;
+    }
 
-  ul#mode li {
-    display:block;
-  }
+    .flex-col {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
 
-  ul#brightness li, ul#speed li, ul#auto li {
-    display:inline-block;
-    width:30%;
-  }
+    input[type='text'] {
+      background-color: #d0d0d0;
+      color:#404040;
+    }
 
-  ul li a {
-    display:block;
-    margin:3px;
-    padding:10px 5px;
-    border:2px solid #454545;
-    border-radius:5px;
-    color:#454545;
-    font-weight:bold;
-    text-decoration:none;
-  }
+    ul {
+      list-style-type: none;
+    }
 
-  ul li a.active {
-    border:2px solid #909090;
-    color:#909090;
-  }
+    ul li a {
+      display:block;
+      margin:3px;
+      padding:10px;
+      border:2px solid #404040;
+      border-radius:5px;
+      color:#909090;
+      text-decoration:none;
+    }
+
+    ul#modes li a {
+      min-width:220px;
+    }
+
+    ul.control li a {
+      min-width:60px;
+      min-height:24px;
+    }
+
+    ul.control {
+      display:flex;
+      flex-direction:row;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0px;
+    }
+
+    ul li a.active {
+      border:2px solid #909090;
+    }
   </style>
 </head>
 <body>
   <h1>WS2812FX Control</h1>
-  <canvas id='colorbar' width='75' height='1080'></canvas>
-  <div id='controls'>
-    <ul id='mode'></ul>
+  <div class='flex-row'>
 
-    <ul id='brightness'>
-      <li><a href='#' class='b' id='-'>&#9788;</a></li>
-      <li><a href='#' class='b' id='+'>&#9728;</a></li>
-    </ul>
+    <div class='flex-col'>
+      <div><canvas id='color-canvas' width='360' height='360'></canvas><br/></div>
+      <div><input type='text' id='color-value' oninput='onColor(event, this.value)'/></div>
 
-    <ul id='speed'>
-      <li><a href='#' class='s' id='-'>&#8722;</a></li>
-      <li><a href='#' class='s' id='+'>&#43;</a></li>
-    </ul>
+      <div>
+        <ul class='control'>
+          <li>Brightness:</li>
+          <li><a href='#' onclick="onBrightness(event, '-')">&#9788;</a></li>
+          <li><a href='#' onclick="onBrightness(event, '+')">&#9728;</a></li>
+        </ul>
 
-    <ul id='auto'>
-      <li><a href='#' class='a' id='-'>&#9632;</a></li>
-      <li><a href='#' class='a' id='+'>&#9658;</a></li>
-    </ul>
+        <ul class='control'>
+          <li>Speed:</li>
+          <li><a href='#' onclick="onSpeed(event, '-')">&#8722;</a></li>
+          <li><a href='#' onclick="onSpeed(event, '+')">&#43;</a></li>
+        </ul>
+
+        <ul class='control'>
+          <li>Auto cycle:</li>
+          <li><a href='#' onclick="onAuto(event, '-')">&#9632;</a></li>
+          <li><a href='#' onclick="onAuto(event, '+')">&#9658;</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <ul id='modes' class='flex-row-wrap'>
+    </div>
   </div>
 </body>
 </html>
 )=====";
-

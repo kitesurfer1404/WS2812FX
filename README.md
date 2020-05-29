@@ -23,7 +23,7 @@ Download, Install and Example
 You can **search for WS2812FX in the Arduino IDE Library Manager** or install the latest (or development) version manually:
 
 
-* Install the famous [Adafruit NeoPixel library](https://github.com/adafruit/Adafruit_NeoPixel) (v1.1.4 or newer)
+* Install the famous [Adafruit NeoPixel library](https://github.com/adafruit/Adafruit_NeoPixel) (v1.1.7 or newer)
 * Download this repository.
 * Extract to your Arduino libraries directory.
 * Open Arduino IDE.

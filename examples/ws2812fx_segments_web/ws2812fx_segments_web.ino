@@ -198,7 +198,7 @@ void setup() {
         JsonObject seg = segments[i];
         JsonArray colors = seg["colors"];
         // the web interface sends three color values
-        uint32_t _colors[NUM_COLORS] = {colors[0], colors[1], colors[2]};
+        uint32_t _colors[] = {colors[0], colors[1], colors[2]};
         uint8_t _options = seg["options"];
         ws2812fx.setSegment(i, seg["start"], seg["stop"], seg["mode"], _colors, seg["speed"], _options);
       }
@@ -230,7 +230,7 @@ void setup() {
         JsonObject seg = segments[i];
         JsonArray colors = seg["colors"];
         // the web interface sends three color values
-        uint32_t _colors[NUM_COLORS] = {colors[0], colors[1], colors[2]};
+        uint32_t _colors[] = {colors[0], colors[1], colors[2]};
         uint8_t _options = seg["options"];
         ws2812fx.setSegment(i, seg["start"], seg["stop"], seg["mode"], _colors, seg["speed"], _options);
       }
