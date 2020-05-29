@@ -471,13 +471,14 @@ typedef uint16_t (WS2812FX::*mode_ptr)(void);
       addActiveSegment(uint8_t seg),
       removeActiveSegment(uint8_t seg),
       swapActiveSegment(uint8_t oldSeg, uint8_t newSeg),
-      resetSegments(),
-      resetSegmentRuntimes(),
+      resetSegments(void),
+      resetSegmentRuntimes(void),
       resetSegmentRuntime(uint8_t),
       setPixelColor(uint16_t n, uint32_t c),
       setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b),
       setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w),
       copyPixels(uint16_t d, uint16_t s, uint16_t c),
+      setPixels(uint16_t, uint8_t*),
       show(void);
 
     boolean

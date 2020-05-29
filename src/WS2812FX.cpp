@@ -121,6 +121,14 @@ void WS2812FX::copyPixels(uint16_t dest, uint16_t src, uint16_t count) {
   memmove(pixels + (dest * bytesPerPixel), pixels + (src * bytesPerPixel), count * bytesPerPixel);
 }
 
+// change the underlying Adafruit_NeoPixel pixels pointer (use with care)
+void WS2812FX::setPixels(uint16_t num_leds, uint8_t* ptr) {
+  free(Adafruit_NeoPixel::pixels); // free existing data (if any)
+  Adafruit_NeoPixel::pixels = ptr;
+  Adafruit_NeoPixel::numLEDs = num_leds;
+  Adafruit_NeoPixel::numBytes = num_leds * ((wOffset == rOffset) ? 3 : 4);
+}
+
 // overload show() functions so we can use custom show()
 void WS2812FX::show(void) {
   customShow == NULL ? Adafruit_NeoPixel::show() : customShow();
