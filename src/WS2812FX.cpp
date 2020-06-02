@@ -61,7 +61,7 @@ void WS2812FX::init() {
 
 // void WS2812FX::timer() {
 //     for (int j=0; j < 1000; j++) {
-//       uint16_t delay = (this->*_mode[_seg->mode])();
+//       uint16_t delay = (this->*_modes[_seg->mode])();
 //     }
 // }
 
@@ -78,7 +78,7 @@ void WS2812FX::service() {
         if(now > _seg_rt->next_time || _triggered) {
           SET_FRAME;
           doShow = true;
-          uint16_t delay = (this->*_mode[_seg->mode])();
+          uint16_t delay = (this->*_modes[_seg->mode])();
           _seg_rt->next_time = now + max(delay, SPEED_MIN);
           _seg_rt->counter_mode_call++;
         }
