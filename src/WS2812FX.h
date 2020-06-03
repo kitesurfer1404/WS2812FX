@@ -589,7 +589,7 @@ class WS2812FX : public Adafruit_NeoPixel {
 };
 
 // define static array of member function pointers.
-// function pointers MUST be in the same ourder as the corresponding name in the _name array.
+// function pointers MUST be in the same order as the corresponding name in the _name array.
 static WS2812FX::mode_ptr _modes[MODE_COUNT] = {
   &WS2812FX::mode_static,
   &WS2812FX::mode_blink,
