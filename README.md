@@ -64,7 +64,7 @@ Note, some effects make use of more then one color (up to three) and are program
 // divide the string of LEDs into two independent segments
 uint32_t colors[] = {RED, GREEN};
 ws2812fx.setSegment(0, 0,           (LED_COUNT/2)-1, FX_MODE_BLINK, colors, 1000, false);
-ws2812fx.setSegment(1, LED_COUNT/2, LED_COUNT-1,     FX_MODE_BLINK, (const uint32_t[]) {ORANGE, PURPLE}, 1000, false);
+ws2812fx.setSegment(1, LED_COUNT/2, LED_COUNT-1,     FX_MODE_BLINK, COLORS(ORANGE, PURPLE), 1000, false);
 ```
 
 
@@ -124,13 +124,10 @@ Effects
 50. **Fire Flicker (intense)** - Fire flickering effect. More range of color.
 51. **Circus Combustus** - Alternating white/red/black pixels running.
 52. **Halloween** - Alternating orange/purple pixels running.
-53. **Bicolor Chase** - Two LEDs running on a background color (set three colors).
-54. **Tricolor Chase** - Alternating three color pixels running (set three colors).
-55. **ICU** - Two eyes looking around.
-56. **Custom** - Up to four user created custom effects.
-57. **Custom**
-58. **Custom**
-59. **Custom**
+53. **Bicolor Chase** - Two LEDs running on a background color.
+54. **Tricolor Chase** - Alternating three color pixels running.
+55. thru 62. **Custom** - Up to eight user created custom effects.
+
 
 Projects using WS2812FX
 -----------------------
