@@ -1377,7 +1377,7 @@ uint16_t WS2812FX::running(uint32_t color1, uint32_t color2) {
  * Alternating color/white pixels running.
  */
 uint16_t WS2812FX::mode_running_color(void) {
-  return running(_seg->colors[0], WHITE);
+  return running(_seg->colors[0], _seg->colors[1]);
 }
 
 
