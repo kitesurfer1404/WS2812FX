@@ -522,6 +522,20 @@ show() function.
 ```c++
 ws2812fx.setCustomShow(myCustomShow);
 ```
+
+***
+
+## Segment management
+
+As of v1.3.0 WS2812FX provides more fine grained management of segments by
+introducing the idea of idle segments. Segments can be created
+in an "idle" state using the setIdleSegment() function. These segments are
+initially inactive and can be activated at a later time by using the
+addActiveSegment() or swapActiveSegment() functions. Active segments can be
+returned to the idle state by using the removeActiveSegment() function. In this
+way you can create a bunch of segments, and then pick and choose which segments
+are active at runtime. See the **ws2812fx_segment_sequence** example sketch.
+
 ***
 
 ## One More Thing

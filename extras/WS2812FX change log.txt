@@ -1,6 +1,23 @@
 WS2182FX Change Log
 
 
+v1.3.1 changes 6/2/2020
+------------------------
+
+1) Changed _modes[] to a static array. Saves a bunch of flash
+	and SRAM memory when instantiating more than one WS2812FX object.
+
+2) Added ws2812fx_virtual_strip example sketch to demonstrate how to
+	use setPixels() to manage the Adafruit_NeoPixel pixel data.
+
+3) Changed RUNNING_COLOR effect so that the background color is
+	set to colors[1] instead of hardcoded to WHITE. The default
+	background color will be BLACK now. Set color[1]=WHITE if
+	you want the old behavior.
+
+4) Updated the README.md file.
+
+
 v1.3.0 changes 5/11/2020
 ------------------------
 
@@ -40,6 +57,8 @@ v1.3.0 changes 5/11/2020
 9) Substantial refactoring of the segment code to use global variables
 	instead of macros, which makes sketches significantly smaller.
 
+10) added setPixels() function to allow users to manually manage the
+	underlying Adafruit_NeoPixel pixel data.
 
 
 v1.2.4 changes 5/8/2020
@@ -230,7 +249,7 @@ v1.1.4 changes 12/1/2018
 
 1) Refactored the custom effect code to make it more flexible. You
 	can now dynamically assign custom effects to any one of the
-	four _mode 'slots' by using the setCustomMode(index, name, *p)
+	four _modes[] 'slots' by using the setCustomMode(index, name, *p)
 	function.
 
 2) Fixed a bug in the DualLarson custom effect that caused it to
