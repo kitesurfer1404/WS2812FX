@@ -10,7 +10,12 @@ v1.3.1 changes 6/2/2020
 2) Added ws2812fx_virtual_strip example sketch to demonstrate how to
 	use setPixels() to manage the Adafruit_NeoPixel pixel data.
 
-3) Updated the README.md file.
+3) Changed RUNNING_COLOR effect so that the background color is
+	set to colors[1] instead of hardcoded to WHITE. The default
+	background color will be BLACK now. Set color[1]=WHITE if
+	you want the old behavior.
+
+4) Updated the README.md file.
 
 
 v1.3.0 changes 5/11/2020
