@@ -1,7 +1,9 @@
 /*
   Demo sketch which shows how to configure WS2812FX such that two physical
-  stips of LEDs, driven by two separate GPIO pins, get their pixel data
-  from one virtual strip. One effect can be spread across two strips.
+  strips of LEDs, driven by two separate GPIO pins, get their pixel data
+  from one virtual strip. One effect can be spread across two strips. It's
+  sort of a counterpart to the ws2812fx_overlay sketch, which overlays two
+  virtual strips onto one physical strip.
 
 
   LICENSE

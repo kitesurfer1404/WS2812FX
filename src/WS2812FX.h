@@ -361,6 +361,10 @@ class WS2812FX : public Adafruit_NeoPixel {
       _active_segments = new uint8_t[_active_segments_len]();
       _segment_runtimes = new segment_runtime[_active_segments_len]();
 
+      // init segment pointers
+      _seg     = _segments;
+      _seg_rt  = _segment_runtimes;
+
       resetSegments();
       setSegment(0, 0, num_leds - 1, DEFAULT_MODE, DEFAULT_COLOR, DEFAULT_SPEED, NO_OPTIONS);
     }
