@@ -232,7 +232,7 @@ page shows hex numbers as “\#aabbcc”, but in the Arduino IDE they are writte
 “0xaabbcc”.
 
 The best part of WS2812FX is the many different animation effects that it can
-create. More the 50! The only way to get a feel for each one is to try them. In
+create. More than 50! The only way to get a feel for each one is to try them. In
 the sketch, change the ws2812fx.setMode() parameter to invoke a different
 effect. The library’s WS2812FX.h file contains the complete list of effect
 keywords to choose from:
@@ -318,7 +318,7 @@ ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_BLINK, colors, 2000, false);
 ```
 or more succinctly:
 ```c++
-ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_BLINK, (const uint32_t[]) {RED, GREEN, BLUE}, 2000, false);
+ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_BLINK, COLORS(RED, GREEN, BLUE), 2000, false);
 ```
 Not all modes support multiple colors. FX_MODE_COLOR_WIPE, for instance, will
 alternate between the first and second color. FX_MODE_TRICOLOR_CHASE creates a
@@ -479,7 +479,7 @@ all in an Arduino's limited flash memory would be a problem. So they're
 broken out into separate files so users can pick and choose which custom
 effects to include in their project.
 
-Note, there are four custom effect 'slots' available. A custom effect is
+Note, there are eight custom effect 'slots' available. A custom effect is
 assigned to a slot by calling the setCustomMode(name, *p) or
 setCustomMode(index, name, *p) functions. For guidance, see
 the **ws2812fx_custom_effect2** example sketch.
@@ -512,7 +512,8 @@ is an advanced feature, not for the faint of heart. It requires a healthy
 knowledge of the WS2812 Din timing requirements and probably a deeper
 understanding of WS2812FX's inner workings. But if you have a project that needs
 to handle driving the LEDs in a unique way, then a custom show() function may
-be the solution.
+be the solution. See the **ws2812fx_spi** example sketch, which uses a custom
+show() function to drive DotStar/APA102 LEDs, to get you started.
 
 The basic idea follows the custom effect implementation.
 1.  Create a function that transforms the LED data into a form that can create

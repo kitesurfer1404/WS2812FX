@@ -1,6 +1,20 @@
 WS2182FX Change Log
 
 
+v1.3.2 changes 9/19/2020
+------------------------
+
+1) Fixed a bug in esp8266_webinterface example sketch, which was
+	causing issues with auto cycle mode if you used the myModes[]
+	array to create a custom list of effects.
+
+2) Added code to properly initialize the segment pointers. Fixes
+	a bug that caused a crash if you tried to manipulate an LED's
+	color without first calling the strip's service() function.
+
+3) Added the ws2812fx_overlay and ws2812fx_spi example sketches.
+
+
 v1.3.1 changes 6/2/2020
 ------------------------
 
