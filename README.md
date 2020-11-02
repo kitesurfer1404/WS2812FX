@@ -57,7 +57,7 @@ void loop() {
 More complex effects can be created by dividing your string of LEDs into segments (up to ten) and programming each segment independently. Use the **setSegment()** function to program each segment's mode, color, speed and direction (normal or reverse):
   * setSegment(segment index, start LED, stop LED, mode, color, speed, reverse);
 
-Note, some effects make use of more then one color (up to three) and are programmed by specifying an array of colors:
+Note, some effects make use of more than one color (up to three) and are programmed by specifying an array of colors:
   * setSegment(segment index, start LED, stop LED, mode, colors[], speed, reverse);
 
 ```cpp
