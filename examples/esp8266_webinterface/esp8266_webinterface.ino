@@ -39,8 +39,15 @@
   2018-01-06 added custom effects list option and auto-cycle feature
   
 */
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
+
+#if defined(ESP8266)
+  #include <ESP8266WiFi.h>
+  #include <ESP8266WebServer.h>
+#else
+  #include <WiFi.h>
+  #include <WebServer.h>
+#endif
+
 #include <WS2812FX.h>
 
 extern const char index_html[];
