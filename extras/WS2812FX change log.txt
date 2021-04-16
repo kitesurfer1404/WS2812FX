@@ -18,7 +18,7 @@ v1.3.3 changes 4/15/2021
 	of retrieving them from the Internet), and I've added some
 	new features.
 
-4) Some minor code cleanup (changed data type boolean to bool).
+5) Some minor code cleanup (changed data type boolean to bool).
 
 
 v1.3.2 changes 9/19/2020
