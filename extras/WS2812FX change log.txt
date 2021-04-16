@@ -1,14 +1,12 @@
 WS2182FX Change Log
 
 
-
-
 v1.3.3 changes 4/15/2021
 ------------------------
 
 1) Added bits.h custom effect.
 
-2) Added ws2812fx_matrix example sketch.
+2) Added ws2812fx_matrix and ws2812fx_audio_reactive example sketches.
 
 3) Made twinkleFOX one of the built-in effects, so it doesn't
 	need to be included as a custom effect anymore. It's such a
