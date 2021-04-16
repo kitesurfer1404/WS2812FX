@@ -49,8 +49,8 @@
 //   NEO_RGBW    Pixels are wired for RGBW bitstream (NeoPixel RGBW products)
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
-char cmd[MAX_NUM_CHARS];       // char[] to store incoming serial commands
-boolean cmd_complete = false;  // whether the command string is complete
+char cmd[MAX_NUM_CHARS];    // char[] to store incoming serial commands
+bool cmd_complete = false;  // whether the command string is complete
 
 void setup() {
   Serial.begin(115200);

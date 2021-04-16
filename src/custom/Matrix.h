@@ -62,7 +62,7 @@ struct Matrix {
   int8_t   numPages;
   int8_t   numRows;
   int8_t   numCols;
-  int32_t* colors;
+  uint32_t* colors;
 };
 struct Matrix _matrix; // global variable, so this custom effect shouldn't be used in more then one segment
 
