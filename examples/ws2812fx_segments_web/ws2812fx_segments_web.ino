@@ -1,17 +1,17 @@
 /*
   WS2812FX segmented led strip web demo.
-  
+
   Keith Lord - 2017
-  
+
   FEATURES
-    * example of a web application to control segments of a strip of WS2812 LEDs
+      example of a web application to control segments of a strip of WS2812 LEDs
 
 
   LICENSE
 
   The MIT License (MIT)
 
-  Copyright (c) 2017  Keith Lord 
+  Copyright (c) 2017  Keith Lord
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -31,47 +31,284 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 
-  
+
   CHANGELOG
   2017-10-02 initial version
   2017-10-08 added web interface
-  
+  2021-04-02 major rewrite to make the app self-contained (does not pull resources off the Internet).
+
 */
+#define DYNAMIC_JSON_DOCUMENT_SIZE  2048 /* used by AsyncJson. Default is 1024, which is a little too small */
 
 #include <WS2812FX.h>
-#include <ESP8266WebServer.h>
+#include <ESPAsyncWebServer.h> /* https://github.com/me-no-dev/ESPAsyncWebServer */
+#include <AsyncJson.h>
 #include <ArduinoJson.h>
 #include <ArduinoOTA.h>
 #include <EEPROM.h>
 
-extern const char index_html[];
+#include "bundle.css.h"
+#include "bundle.js.h"
+#include "app.css.h"
+#include "app.js.h"
+#include "material_icons_subset.woff2.h"
+#include "index.html.h"
 
-#define LED_PIN   D1 // digital pin used to drive the LED strip (esp8266)
-#define LED_COUNT 30 // number of LEDs on the strip
+#define LED_PIN     4 // digital pin used to drive the LED strip
+#define LED_COUNT 144 // number of LEDs on the strip
 
 #define WIFI_SSID "xxxxxxxx"     // WiFi network
 #define WIFI_PASSWORD "xxxxxxxx" // WiFi network password
 
+#define EEPROM_SIZE 4096
+#define PRESETS_MAX_SIZE (EEPROM_SIZE - sizeof(int) - sizeof(preset) - 1) // maximum size of the presets string
+#define DEFAULT_PRESETS   "[{" \
+  "\"name\":\"Default\",\"pin\":%d,\"numPixels\":%d,\"brightness\":64," \
+  "\"segments\":[{\"start\":0,\"stop\":%d,\"mode\":0,\"speed\":1000,\"options\":0," \
+    "\"colors\":[\"#ff0000\",\"#00ff00\",\"#0000ff\"]" \
+  "}]" \
+"}]"
+
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
-ESP8266WebServer server(80);
+AsyncWebServer server(80);
+
+typedef struct Preset {
+  int  pin = LED_PIN;
+  int  numPixels = LED_COUNT;
+  int  brightness = 64;
+  int  numSegments = 1;
+  WS2812FX::Segment segments[MAX_NUM_SEGMENTS] = {
+    {0, LED_COUNT - 1, 1000, 0, 0, {RED, GREEN, BLUE}}
+  };
+};
+Preset preset; // note: "preset" is a Preset data struct
+
+char presets[PRESETS_MAX_SIZE] = "[]"; // note: "presets" is a JSON string
 
 void setup() {
   Serial.begin(115200);
-  EEPROM.begin(256); // for ESP8266 (comment out if using an Arduino)
+  EEPROM.begin(EEPROM_SIZE); // for ESP8266 (comment out if using an Arduino)
+
+  // build the default presets string using the default LED_PIN and LED_COUNT values
+  sprintf_P(presets, PSTR(DEFAULT_PRESETS), LED_PIN, LED_COUNT, LED_COUNT - 1);
+  Serial.println(presets); // debug
 
   // init WiFi
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   WiFi.mode(WIFI_STA);
 
   Serial.print("Connecting to " WIFI_SSID);
-  while(WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
   Serial.print("\r\nPoint your browser to ");
   Serial.println(WiFi.localIP());
 
-  /* init OTA */
+  initWebServer();
+  initWebAPI();
+
+  // start the web server
+  server.begin();
+
+  // init LED strip with a default segment
+  ws2812fx.init();
+  updateWs2812fx();
+
+  // if segment data had been previously saved to eeprom, load that data
+  restoreFromEEPROM();
+
+  ws2812fx.start();
+}
+
+void loop() {
+  ws2812fx.service();
+  ArduinoOTA.handle();
+}
+
+// config web server to serve "files"
+void initWebServer() {
+  server.onNotFound([](AsyncWebServerRequest * request) {
+    request->send(404, "text/plain", "Page not found");
+  });
+
+  // return the index.html file
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send_P(200, "text/html", index_html);
+  });
+
+  server.on("/bundle.css", HTTP_GET, [] (AsyncWebServerRequest * request) {
+    Serial.print("Sending bundle.css: "); Serial.println(bundle_css_len); // debug
+    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/css", bundle_css, bundle_css_len);
+    response->addHeader("Expires", "Fri, 1 Jan 2100 9:00:00 GMT");
+    response->addHeader("Content-Encoding", "gzip");
+    request->send(response);
+  });
+
+  server.on("/app.css", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send_P(200, "text/css", app_css);
+  });
+
+  server.on("/bundle.js", HTTP_GET, [] (AsyncWebServerRequest * request) {
+    Serial.print("Sending bundle.js: "); Serial.println(bundle_js_len); // debug
+    AsyncWebServerResponse *response = request->beginResponse_P(200, "application/javascript", bundle_js, bundle_js_len);
+    response->addHeader("Expires", "Fri, 1 Jan 2100 9:00:00 GMT");
+    response->addHeader("Content-Encoding", "gzip");
+    request->send(response);
+  });
+
+  server.on("/app.js", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send_P(200, "application/javascript", app_js);
+  });
+
+  server.on("/Material-Icons-subset.woff2", HTTP_GET, [] (AsyncWebServerRequest * request) {
+    Serial.print("Sending Material-Icons-subset.woff2: "); Serial.println(material_icons_subset_len); // debug
+    AsyncWebServerResponse *response = request->beginResponse_P(200, "font/woff2", material_icons_subset, material_icons_subset_len);
+    response->addHeader("Expires", "Fri, 1 Jan 2100 9:00:00 GMT");
+    request->send(response);
+  });
+}
+
+// config web server to process API calls
+void initWebAPI() {
+  // send the presets info
+  server.on("/loadpresets", HTTP_GET, [] (AsyncWebServerRequest * request) {
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/json", presets);
+    request->send(response);
+  });
+
+  // receive the presets info as a String and save to EEPROM
+  server.on("/savepresets", HTTP_POST, [](AsyncWebServerRequest * request) {
+    if (request->hasParam("presets", true)) {
+      String data = request->getParam("presets", true)->value();
+      Serial.println(data); // debug
+      if(data.length() < PRESETS_MAX_SIZE) {
+        strcpy(presets, data.c_str());
+        saveToEEPROM(); // save presets to EEPROM
+      } else {
+        request->send(413, "text/plain", "Error: Preset string is too big.");
+        return;
+      }
+    }
+    request->send(200, "text/plain", "OK");
+  });
+
+  // receive the preset info in JSON format and setup the WS2812 strip
+  AsyncCallbackJsonWebHandler* handler = new AsyncCallbackJsonWebHandler("/savePreset", [](AsyncWebServerRequest * request, JsonVariant & json) {
+    JsonObject jsonObj = json.as<JsonObject>();
+    serializeJson(jsonObj, Serial); Serial.println(); // debug
+    preset.pin = jsonObj["pin"];
+    preset.numPixels = jsonObj["numPixels"];
+    preset.brightness = jsonObj["brightness"];
+
+    JsonArray segments = jsonObj["segments"];
+    preset.numSegments = segments.size();
+    for (int i = 0; i < segments.size(); i++) {
+      JsonObject seg = segments[i];
+
+      preset.segments[i].start = seg["start"];
+      preset.segments[i].stop = seg["stop"];
+      preset.segments[i].mode = seg["mode"];
+      preset.segments[i].speed = seg["speed"];
+      preset.segments[i].options = seg["options"];
+
+      JsonArray colors = seg["colors"];
+      preset.segments[i].colors[0] = colors[0];
+      preset.segments[i].colors[1] = colors[1];
+      preset.segments[i].colors[2] = colors[2];
+    }
+
+    updateWs2812fx(); // update the ws2812fx object using preset info
+    request->send(200, "text/plain", "OK");
+  });
+  server.addHandler(handler);
+
+  // control run / stop / pause / resume
+  server.on("/runcontrol", HTTP_POST, [](AsyncWebServerRequest * request) {
+    showReqParams(request); // debug
+    if (request->hasParam("action", true)) {
+      String action = request->getParam("action", true)->value();
+      if (action == "pause") {
+        ws2812fx.pause();
+      } else if (action == "resume") {
+        ws2812fx.resume();
+      } else if (action == "run") {
+        ws2812fx.start();
+      }  else if (action == "stop") {
+        ws2812fx.stop();
+      }
+    }
+    request->send(200, "text/plain", "OK");
+  });
+
+  // send the WS2812FX mode info in JSON format
+  server.on("/getmodes", HTTP_GET, [] (AsyncWebServerRequest * request) {
+    char modes[1000] = "[";
+    for (uint8_t i = 0; i < ws2812fx.getModeCount(); i++) {
+      strcat(modes, "\"");
+      strcat_P(modes, (PGM_P)ws2812fx.getModeName(i));
+      strcat(modes, "\",");
+    }
+    modes[strlen(modes) - 1] = ']';
+
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/json", modes);
+    response->addHeader("Access-Control-Allow-Origin", "*");
+    request->send(response);
+  });
+}
+
+// debug function to print HTTP request parameters
+void showReqParams(AsyncWebServerRequest * request) {
+  Serial.println("HTTP request parameters:");
+  int params = request->params();
+  for (int i = 0; i < params; i++) {
+    AsyncWebParameter* p = request->getParam(i);
+    if (p->isFile()) { //p->isPost() is also true
+      Serial.printf("FILE[%s]: %s, size: %u\n", p->name().c_str(), p->value().c_str(), p->size());
+    } else if (p->isPost()) {
+      Serial.printf("POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
+    } else {
+      Serial.printf("GET[%s]: %s\n", p->name().c_str(), p->value().c_str());
+    }
+  }
+}
+
+void updateWs2812fx() {
+  ws2812fx.stop();
+  ws2812fx.strip_off();
+  ws2812fx.setLength(preset.numPixels);
+  ws2812fx.setPin(preset.pin);
+  ws2812fx.stop(); // reset strip again in case length was increased
+  ws2812fx.setBrightness(preset.brightness);
+  ws2812fx.resetSegments();
+  for (int i = 0; i < preset.numSegments; i++) {
+    WS2812FX::Segment seg = preset.segments[i];
+    ws2812fx.setSegment(i, seg.start, seg.stop, seg.mode, seg.colors, seg.speed, seg.options);
+  }
+  ws2812fx.start();
+}
+
+#define EEPROM_MAGIC_NUMBER 0x010e0d06
+void saveToEEPROM() {
+  Serial.println("saving to EEPROM");
+  EEPROM.put(sizeof(int) * 0, (int)EEPROM_MAGIC_NUMBER);
+  EEPROM.put(sizeof(int) * 1, preset);
+  EEPROM.put(sizeof(int) * 1 + sizeof(preset), presets);
+  EEPROM.commit(); // for ESP8266 (comment out if using an Arduino)
+}
+
+void restoreFromEEPROM() {
+  int magicNumber = 0;
+  EEPROM.get(sizeof(int) * 0, magicNumber);
+  if (magicNumber == EEPROM_MAGIC_NUMBER) {
+    Serial.println("restoring from EEPROM");
+    EEPROM.get(sizeof(int) * 1, preset);
+    EEPROM.get(sizeof(int) * 1 + sizeof(preset), presets);
+    updateWs2812fx();
+  }
+}
+
+void initOTA() {
   // Port defaults to 8266
   // ArduinoOTA.setPort(8266);
 
@@ -92,246 +329,11 @@ void setup() {
   });
   ArduinoOTA.onError([](ota_error_t error) {
     Serial.printf("Error[%u]: ", error);
-    if(error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-    else if(error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-    else if(error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-    else if(error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-    else if(error == OTA_END_ERROR) Serial.println("End Failed");
+    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+    else if (error == OTA_END_ERROR) Serial.println("End Failed");
   });
   ArduinoOTA.begin();
-
-  /* init web server */
-  // return the index.html file
-  server.on("/", [](){
-    server.send_P(200, "text/html", index_html);
-  });
-
-  // send the segment info in JSON format
-#if ARDUINOJSON_VERSION_MAJOR == 5
-  server.on("/getsegments", [](){
-    DynamicJsonBuffer jsonBuffer(1000);
-    JsonObject& root = jsonBuffer.createObject();
-
-    root["pin"] = ws2812fx.getPin();
-    root["numPixels"] = ws2812fx.numPixels();
-    root["brightness"] = ws2812fx.getBrightness();
-    root["numSegments"] = ws2812fx.getNumSegments();
-    JsonArray& jsonSegments = root.createNestedArray("segments");
-
-    WS2812FX::segment* segments = ws2812fx.getSegments();
-    for(int i=0; i<ws2812fx.getNumSegments(); i++) {
-      WS2812FX::segment seg = segments[i];
-      JsonObject& jsonSegment = jsonBuffer.createObject();
-      jsonSegment["start"] = seg.start;
-      jsonSegment["stop"] = seg.stop;
-      jsonSegment["mode"] = seg.mode;
-      jsonSegment["speed"] = seg.speed;
-      jsonSegment["options"] = seg.options;
-      JsonArray& jsonColors = jsonSegment.createNestedArray("colors");
-      jsonColors.add(seg.colors[0]); // the web interface expects three color values
-      jsonColors.add(seg.colors[1]);
-      jsonColors.add(seg.colors[2]);
-      jsonSegments.add(jsonSegment);
-    }
-//root.printTo(Serial); // debug
-
-    int bufferSize = root.measureLength() + 1;
-    char *json = (char*)malloc(sizeof(char) * (bufferSize));
-    root.printTo(json, sizeof(char) * bufferSize);
-    server.send(200, "application/json", json);
-    free(json);
-  });
-#endif
-#if ARDUINOJSON_VERSION_MAJOR == 6
-  server.on("/getsegments", [](){
-    int freeHeap = ESP.getFreeHeap();
-    DynamicJsonDocument doc(freeHeap - 3096); // allocate all of the available heap except 3kB
-
-    doc["pin"] = ws2812fx.getPin();
-    doc["numPixels"] = ws2812fx.numPixels();
-    doc["brightness"] = ws2812fx.getBrightness();
-    doc["numSegments"] = ws2812fx.getNumSegments();
-    JsonArray jsonSegments = doc.createNestedArray("segments");
-
-    WS2812FX::segment* segments = ws2812fx.getSegments();
-    for(int i=0; i<ws2812fx.getNumSegments(); i++) {
-      WS2812FX::segment seg = segments[i];
-      JsonObject jsonSegment = jsonSegments.createNestedObject();
-      jsonSegment["start"] = seg.start;
-      jsonSegment["stop"] = seg.stop;
-      jsonSegment["mode"] = seg.mode;
-      jsonSegment["speed"] = seg.speed;
-      jsonSegment["options"] = seg.options;
-      JsonArray jsonColors = jsonSegment.createNestedArray("colors");
-      jsonColors.add(seg.colors[0]); // the web interface expects three color values
-      jsonColors.add(seg.colors[1]);
-      jsonColors.add(seg.colors[2]);
-    }
-//serializeJson(doc, Serial); Serial.println(); // debug
-
-    int bufferSize = measureJson(doc) + 1;
-    char *json = (char*)malloc(sizeof(char) * (bufferSize));
-    serializeJson(doc, json, sizeof(char) * bufferSize);
-    server.send(200, "application/json", json);
-    free(json);
-  });
-#endif
-
-  // receive the segment info in JSON format and setup the WS2812 strip
-#if ARDUINOJSON_VERSION_MAJOR == 5
-  server.on("/setsegments", HTTP_POST, [](){
-    String data = server.arg("plain");
-    data = data.substring(1, data.length() - 1); // remove the surrounding quotes
-    data.replace("\\\"", "\""); // replace all the backslash quotes with just quotes
-//Serial.println(data); // debug
-
-    DynamicJsonBuffer jsonBuffer(1000);
-    JsonObject& root = jsonBuffer.parseObject(data);
-    if(root.success()) {
-      ws2812fx.stop();
-      ws2812fx.setLength(root["numPixels"]);
-      ws2812fx.stop(); // reset strip again in case length was increased
-      ws2812fx.setBrightness(root["brightness"]);
-      ws2812fx.setNumSegments(1); // reset number of segments
-      JsonArray segments = root["segments"];
-      for (int i=0; i<segments.size(); i++){
-        JsonObject seg = segments[i];
-        JsonArray colors = seg["colors"];
-        // the web interface sends three color values
-        uint32_t _colors[] = {colors[0], colors[1], colors[2]};
-        uint8_t _options = seg["options"];
-        ws2812fx.setSegment(i, seg["start"], seg["stop"], seg["mode"], _colors, seg["speed"], _options);
-      }
-      saveToEEPROM(); // save segment data to EEPROM
-      ws2812fx.start();
-    }
-    server.send(200, "text/plain", "OK");
-  });
-#endif
-#if ARDUINOJSON_VERSION_MAJOR == 6
-  server.on("/setsegments", HTTP_POST, [](){
-    String data = server.arg("plain");
-    data = data.substring(1, data.length() - 1); // remove the surrounding quotes
-    data.replace("\\\"", "\""); // replace all the backslash quotes with just quotes
-//Serial.println(data); // debug
-
-    int freeHeap = ESP.getFreeHeap();
-    DynamicJsonDocument doc(freeHeap - 3096); // allocate all of the available heap except 3kB
-    DeserializationError error = deserializeJson(doc, data);
-    if (!error) {
-      JsonObject root = doc.as<JsonObject>();
-      ws2812fx.stop();
-      ws2812fx.setLength(root["numPixels"]);
-      ws2812fx.stop(); // reset strip again in case length was increased
-      ws2812fx.setBrightness(root["brightness"]);
-      ws2812fx.setNumSegments(1); // reset number of segments
-      JsonArray segments = root["segments"];
-      for (int i=0; i<segments.size(); i++){
-        JsonObject seg = segments[i];
-        JsonArray colors = seg["colors"];
-        // the web interface sends three color values
-        uint32_t _colors[] = {colors[0], colors[1], colors[2]};
-        uint8_t _options = seg["options"];
-        ws2812fx.setSegment(i, seg["start"], seg["stop"], seg["mode"], _colors, seg["speed"], _options);
-      }
-      saveToEEPROM(); // save segment data to EEPROM
-      ws2812fx.start();
-    }
-    server.send(200, "text/plain", "OK");
-  });
-#endif
-
-  // send the WS2812FX mode info in JSON format
-  server.on("/getmodes", []() {
-    char modes[1000] = "[";
-    for (uint8_t i = 0; i < ws2812fx.getModeCount(); i++) {
-      strcat(modes, "\"");
-      strcat_P(modes, (PGM_P)ws2812fx.getModeName(i));
-      strcat(modes, "\",");
-    }
-    modes[strlen(modes) - 1] = ']';
-
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.send(200, "application/json", modes);
-  });
-
-  // control Run / stop / pause / resume
-  server.on("/runcontrol", HTTP_POST, [](){
-    String data = server.arg("plain");
-    //Serial.println(data);
-    if(data == "pause"){
-     ws2812fx.pause(); 
-    }
-    if(data == "resume"){
-     ws2812fx.resume(); 
-    }
-    if(data == "run"){
-     ws2812fx.start(); 
-    }
-    if(data == "stop"){
-     ws2812fx.stop(); 
-    }
-    server.send(200, "text/plain", "OK");
-  });
-
-  server.onNotFound([](){
-    server.send(404, "text/plain", "Page not found");
-  });
-
-  // start the web server
-  server.begin();
-
-  // init LED strip with a default segment
-  ws2812fx.init();
-  ws2812fx.setBrightness(127);
-  // parameters: seg index, start led, stop led, mode, color, speed, reverse
-  ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_SCAN, RED, 1000, false);
-
-  // if segment data had been previously saved to eeprom, load that data
-  restoreFromEEPROM();
-
-  ws2812fx.start();
-}
-
-void loop() {
-  ws2812fx.service();
-  server.handleClient();
-  ArduinoOTA.handle();
-}
-
-#define EEPROM_MAGIC_NUMBER 0x010e0d05
-void saveToEEPROM() {
-  WS2812FX::segment tmpSegments[MAX_NUM_SEGMENTS]; // tmp space for segment data
-  Serial.println("saving to EEPROM");
-  EEPROM.put(sizeof(int) * 0, (int)EEPROM_MAGIC_NUMBER);
-  EEPROM.put(sizeof(int) * 1, (int)ws2812fx.getPin());
-  EEPROM.put(sizeof(int) * 2, (int)ws2812fx.numPixels());
-  EEPROM.put(sizeof(int) * 3, (int)ws2812fx.getBrightness());
-  EEPROM.put(sizeof(int) * 4, (int)ws2812fx.getNumSegments());
-  memcpy(&tmpSegments, ws2812fx.getSegments(), sizeof(tmpSegments));
-  EEPROM.put(sizeof(int) * 5, tmpSegments);
-  EEPROM.commit(); // for ESP8266 (comment out if using an Arduino)
-}
-
-void restoreFromEEPROM() {
-  int magicNumber = 0;
-  int pin;
-  int length;
-  int brightness;
-  int numSegments;
-  WS2812FX::segment tmpSegments[MAX_NUM_SEGMENTS]; // tmp space for segment data
-  EEPROM.get(sizeof(int) * 0, magicNumber);
-  if(magicNumber == EEPROM_MAGIC_NUMBER) {
-    Serial.println("restoring from EEPROM");
-    EEPROM.get(sizeof(int) * 1, pin);
-    ws2812fx.setPin(pin);
-    EEPROM.get(sizeof(int) * 2, length);
-    ws2812fx.setLength(length);
-    EEPROM.get(sizeof(int) * 3, brightness);
-    ws2812fx.setBrightness(brightness);
-    EEPROM.get(sizeof(int) * 4, numSegments);
-    ws2812fx.setNumSegments(numSegments);
-    EEPROM.get(sizeof(int) * 5, tmpSegments);
-    memcpy(ws2812fx.getSegments(), &tmpSegments, sizeof(tmpSegments));
-  }
 }

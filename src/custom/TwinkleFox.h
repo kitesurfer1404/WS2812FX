@@ -32,6 +32,12 @@
   2019-11-25 initial version
 */
 
+/*
+Note: twinkleFOX is now one of the normal, built-in WS2812FX effects, so doesn't need to be
+included as a custom effect. I left it here just for historical reference. Eventually it'll
+be removed from the custom folder.
+*/
+
 #ifndef Twinklefox_h
 #define Twinklefox_h
 

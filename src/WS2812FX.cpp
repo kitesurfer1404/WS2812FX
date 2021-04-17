@@ -252,29 +252,29 @@ void WS2812FX::decreaseLength(uint16_t s) {
   if (s < seglen) setLength(seglen - s);
 }
 
-boolean WS2812FX::isRunning() {
+bool WS2812FX::isRunning() {
   return _running;
 }
 
-boolean WS2812FX::isTriggered() {
+bool WS2812FX::isTriggered() {
   return _triggered;
 }
 
-boolean WS2812FX::isFrame() {
+bool WS2812FX::isFrame(void) {
   return isFrame(0);
 }
 
-boolean WS2812FX::isFrame(uint8_t seg) {
+bool WS2812FX::isFrame(uint8_t seg) {
   uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
   if(ptr == NULL) return false; // segment not active
   return (_segment_runtimes[ptr - _active_segments].aux_param2 & FRAME);
 }
 
-boolean WS2812FX::isCycle() {
+bool WS2812FX::isCycle() {
   return isCycle(0);
 }
 
-boolean WS2812FX::isCycle(uint8_t seg) {
+bool WS2812FX::isCycle(uint8_t seg) {
   uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
   if(ptr == NULL) return false; // segment not active
   return (_segment_runtimes[ptr - _active_segments].aux_param2 & CYCLE);
@@ -457,7 +457,7 @@ void WS2812FX::swapActiveSegment(uint8_t oldSeg, uint8_t newSeg) {
   }
 }
 
-boolean WS2812FX::isActiveSegment(uint8_t seg) {
+bool WS2812FX::isActiveSegment(uint8_t seg) {
   uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
   if(ptr != NULL) return true;
   return false;
@@ -1479,7 +1479,7 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
   uint8_t *pixels = getPixels();
   uint8_t bytesPerPixel = getNumBytesPerPixel(); // 3=RGB, 4=RGBW
   uint16_t startPixel = _seg->start * bytesPerPixel + bytesPerPixel;
-  uint16_t stopPixel = _seg->stop * bytesPerPixel ;
+  uint16_t stopPixel = _seg->stop * bytesPerPixel;
   for(uint16_t i=startPixel; i <stopPixel; i++) {
     uint16_t tmpPixel = (pixels[i - bytesPerPixel] >> 2) +
       pixels[i] +
@@ -1567,7 +1567,7 @@ uint16_t WS2812FX::mode_fire_flicker_intense(void) {
 
 
 /*
- * ICU mode
+ * ICU mode (moved to the custom effect folder)
  */
 // uint16_t WS2812FX::mode_icu(void) {
 //   uint16_t dest = _seg_rt->counter_mode_step & 0xFFFF;
@@ -1602,6 +1602,59 @@ uint16_t WS2812FX::mode_fire_flicker_intense(void) {
 
 //   return (_seg->speed / _seg_len);
 // }
+
+// An adaptation of Mark Kriegsman's FastLED twinkeFOX effect
+// https://gist.github.com/kriegsman/756ea6dcae8e30845b5a
+uint16_t WS2812FX::mode_twinkleFOX(void) {
+  uint16_t mySeed = 0; // reset the random number generator seed
+
+  // Get and translate the segment's size option
+  uint8_t size = 1 << ((_seg->options >> 1) & 0x03); // 1,2,4,8
+
+  // Get the segment's colors array values
+  uint32_t color0 = _seg->colors[0];
+  uint32_t color1 = _seg->colors[1];
+  uint32_t color2 = _seg->colors[2];
+  uint32_t blendedColor;
+
+  for (uint16_t i = _seg->start; i <= _seg->stop; i+=size) {
+    // Use Mark Kriegsman's clever idea of using pseudo-random numbers to determine
+    // each LED's initial and increment blend values
+    mySeed = (mySeed * 2053) + 13849; // a random, but deterministic, number
+    uint16_t initValue = (mySeed + (mySeed >> 8)) & 0xff; // the LED's initial blend index (0-255)
+    mySeed = (mySeed * 2053) + 13849; // another random, but deterministic, number
+    uint16_t incrValue = (((mySeed + (mySeed >> 8)) & 0x07) + 1) * 2; // blend index increment (2,4,6,8,10,12,14,16)
+
+    // We're going to use a sine function to blend colors, instead of Mark's triangle
+    // function, simply because a sine lookup table is already built into the
+    // Adafruit_NeoPixel lib. Yes, I'm lazy.
+    // Use the counter_mode_call var as a clock "tick" counter and calc the blend index
+    uint8_t blendIndex = (initValue + (_seg_rt->counter_mode_call * incrValue)) & 0xff; // 0-255
+    // Index into the built-in Adafruit_NeoPixel sine table to lookup the blend amount
+    uint8_t blendAmt = Adafruit_NeoPixel::sine8(blendIndex); // 0-255
+
+    // If colors[0] is BLACK, blend random colors
+    if(color0 == BLACK) {
+      blendedColor = color_blend(color_wheel(initValue), color1, blendAmt);
+    // If colors[2] isn't BLACK, choose to blend colors[0]/colors[1] or colors[1]/colors[2]
+    // (which color pair to blend is picked randomly)
+    } else if((color2 != BLACK) && (initValue < 128) == 0) {
+      blendedColor = color_blend(color2, color1, blendAmt);
+    // Otherwise always blend colors[0]/colors[1]
+    } else {
+      blendedColor = color_blend(color0, color1, blendAmt);
+    }
+
+    // Assign the new color to the number of LEDs specified by the SIZE option
+    for(uint8_t j=0; j<size; j++) {
+      if((i + j) <= _seg->stop) {
+        setPixelColor(i + j, blendedColor);
+      }
+    }
+  }
+  setCycle();
+  return _seg->speed / 32;
+}
 
 /*
  * Custom modes
