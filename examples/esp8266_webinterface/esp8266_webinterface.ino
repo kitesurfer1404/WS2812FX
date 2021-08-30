@@ -39,8 +39,18 @@
   2018-01-06 added custom effects list option and auto-cycle feature
   
 */
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
+#ifdef ARDUINO_ARCH_ESP32
+  #include <WiFi.h>
+  #include <WebServer.h>
+  #define WEB_SERVER WebServer
+  #define ESP_RESET ESP.restart()
+#else
+  #include <ESP8266WiFi.h>
+  #include <ESP8266WebServer.h>
+  #define WEB_SERVER ESP8266WebServer
+  #define ESP_RESET ESP.reset()
+#endif
+
 #include <WS2812FX.h>
 
 extern const char index_html[];
@@ -78,7 +88,7 @@ uint8_t myModes[] = {}; // *** optionally create a custom list of effect/mode nu
 bool auto_cycle = false;
 
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
-ESP8266WebServer server(HTTP_PORT);
+WEB_SERVER server(HTTP_PORT);
 
 void setup(){
   Serial.begin(115200);
@@ -171,7 +181,7 @@ void wifi_setup() {
       Serial.print("Tried ");
       Serial.print(WIFI_TIMEOUT);
       Serial.print("ms. Resetting ESP now.");
-      ESP.reset();
+      ESP_RESET;
     }
   }
 

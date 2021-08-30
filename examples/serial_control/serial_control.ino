@@ -49,8 +49,8 @@
 //   NEO_RGBW    Pixels are wired for RGBW bitstream (NeoPixel RGBW products)
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
-char cmd[MAX_NUM_CHARS];    // char[] to store incoming serial commands
-bool cmd_complete = false;  // whether the command string is complete
+char scmd[MAX_NUM_CHARS];    // char[] to store incoming serial commands
+bool scmd_complete = false;  // whether the command string is complete
 
 void setup() {
   Serial.begin(115200);
@@ -70,7 +70,7 @@ void loop() {
 
   recvChar(); // read serial comm
 
-  if(cmd_complete) {
+  if(scmd_complete) {
     process_command();
   }
 }
@@ -79,46 +79,46 @@ void loop() {
  * Checks received command and calls corresponding functions.
  */
 void process_command() {
-  if (strcmp(cmd,"b+") == 0) {
+  if (strcmp(scmd,"b+") == 0) {
     ws2812fx.increaseBrightness(25);
     Serial.print(F("Increased brightness by 25 to: "));
     Serial.println(ws2812fx.getBrightness());
   }
 
-  if (strcmp(cmd,"b-") == 0) {
+  if (strcmp(scmd,"b-") == 0) {
     ws2812fx.decreaseBrightness(25); 
     Serial.print(F("Decreased brightness by 25 to: "));
     Serial.println(ws2812fx.getBrightness());
   }
 
-  if (strncmp(cmd,"b ",2) == 0) {
-    uint8_t b = (uint8_t)atoi(cmd + 2);
+  if (strncmp(scmd,"b ",2) == 0) {
+    uint8_t b = (uint8_t)atoi(scmd + 2);
     ws2812fx.setBrightness(b);
     Serial.print(F("Set brightness to: "));
     Serial.println(ws2812fx.getBrightness());
   }
 
-  if (strcmp(cmd,"s+") == 0) {
+  if (strcmp(scmd,"s+") == 0) {
     ws2812fx.setSpeed(ws2812fx.getSpeed() * 1.2);
     Serial.print(F("Increased speed by 20% to: "));
     Serial.println(ws2812fx.getSpeed());
   }
 
-  if (strcmp(cmd,"s-") == 0) {
+  if (strcmp(scmd,"s-") == 0) {
     ws2812fx.setSpeed(ws2812fx.getSpeed() * 0.8);
     Serial.print(F("Decreased speed by 20% to: "));
     Serial.println(ws2812fx.getSpeed());
   }
 
-  if (strncmp(cmd,"s ",2) == 0) {
-    uint16_t s = (uint16_t)atoi(cmd + 2);
+  if (strncmp(scmd,"s ",2) == 0) {
+    uint16_t s = (uint16_t)atoi(scmd + 2);
     ws2812fx.setSpeed(s); 
     Serial.print(F("Set speed to: "));
     Serial.println(ws2812fx.getSpeed());
   }
 
-  if (strncmp(cmd,"m ",2) == 0) {
-    uint8_t m = (uint8_t)atoi(cmd + 2);
+  if (strncmp(scmd,"m ",2) == 0) {
+    uint8_t m = (uint8_t)atoi(scmd + 2);
     ws2812fx.setMode(m);
     Serial.print(F("Set mode to: "));
     Serial.print(ws2812fx.getMode());
@@ -126,15 +126,15 @@ void process_command() {
     Serial.println(ws2812fx.getModeName(ws2812fx.getMode()));
   }
 
-  if (strncmp(cmd,"c ",2) == 0) {
-    uint32_t c = (uint32_t)strtoul(cmd + 2, NULL, 16);
+  if (strncmp(scmd,"c ",2) == 0) {
+    uint32_t c = (uint32_t)strtoul(scmd + 2, NULL, 16);
     ws2812fx.setColor(c);
     Serial.print(F("Set color to: 0x"));
     Serial.println(ws2812fx.getColor(), HEX);
   }
 
-  cmd[0] = '\0';         // reset the commandstring
-  cmd_complete = false;  // reset command complete
+  scmd[0] = '\0';         // reset the commandstring
+  scmd_complete = false;  // reset command complete
 }
 
 /*
@@ -179,19 +179,19 @@ void printModes() {
 
 
 /*
- * Reads new input from serial to cmd string. Command is completed on \n
+ * Reads new input from serial to scmd string. Command is completed on \n
  */
 void recvChar(void) {
   static byte index = 0;
-  while (Serial.available() > 0 && cmd_complete == false) {
+  while (Serial.available() > 0 && scmd_complete == false) {
     char rc = Serial.read();
     if (rc != '\n') {
-      if(index < MAX_NUM_CHARS) cmd[index++] = rc;
+      if(index < MAX_NUM_CHARS) scmd[index++] = rc;
     } else {
-      cmd[index] = '\0'; // terminate the string
+      scmd[index] = '\0'; // terminate the string
       index = 0;
-      cmd_complete = true;
-      Serial.print("received '"); Serial.print(cmd); Serial.println("'");
+      scmd_complete = true;
+      Serial.print("received '"); Serial.print(scmd); Serial.println("'");
     }
   }
 }

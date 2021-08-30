@@ -65,10 +65,10 @@ void WS2812FX::init() {
 //     }
 // }
 
-void WS2812FX::service() {
+bool WS2812FX::service() {
+  bool doShow = false;
   if(_running || _triggered) {
     unsigned long now = millis(); // Be aware, millis() rolls over every 49 days
-    bool doShow = false;
     for(uint8_t i=0; i < _active_segments_len; i++) {
       if(_active_segments[i] != INACTIVE_SEGMENT) {
         _seg     = &_segments[_active_segments[i]];
@@ -90,6 +90,7 @@ void WS2812FX::service() {
     }
     _triggered = false;
   }
+  return doShow;
 }
 
 // overload setPixelColor() functions so we can use gamma correction
@@ -378,28 +379,53 @@ const __FlashStringHelper* WS2812FX::getModeName(uint8_t m) {
   }
 }
 
-void WS2812FX::setIdleSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed, uint8_t options) {
-  uint32_t colors[] = {color, 0, 0};
-  setIdleSegment(n, start, stop, mode, colors, speed, options);
+void WS2812FX::setSegment() {
+  setSegment(0, 0, getLength()-1, DEFAULT_MODE, DEFAULT_COLOR, DEFAULT_SPEED, NO_OPTIONS);
 }
 
-void WS2812FX::setIdleSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options) {
-  setSegment(n, start, stop, mode, colors, speed, options);
-  if(n < _active_segments_len) removeActiveSegment(n);;
+void WS2812FX::setSegment(uint8_t n) {
+  setSegment(n, 0, getLength()-1, DEFAULT_MODE, DEFAULT_COLOR, DEFAULT_SPEED, NO_OPTIONS);
+}
+
+void WS2812FX::setSegment(uint8_t n, uint16_t start) {
+  setSegment(n, start, getLength()-1, DEFAULT_MODE, DEFAULT_COLOR, DEFAULT_SPEED, NO_OPTIONS);
+}
+
+void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop) {
+  setSegment(n, start, stop, DEFAULT_MODE, DEFAULT_COLOR, DEFAULT_SPEED, NO_OPTIONS);
+}
+
+void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode) {
+  setSegment(n, start, stop, mode, DEFAULT_COLOR, DEFAULT_SPEED, NO_OPTIONS);
+}
+
+void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color) {
+  setSegment(n, start, stop, mode, color, DEFAULT_SPEED, NO_OPTIONS);
+}
+
+void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed) {
+  setSegment(n, start, stop, mode, color, speed, NO_OPTIONS);
 }
 
 void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed, bool reverse) {
-  uint32_t colors[] = {color, 0, 0};
-  setSegment(n, start, stop, mode, colors, speed, (uint8_t)(reverse ? REVERSE : NO_OPTIONS));
-}
-
-void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse) {
-  setSegment(n, start, stop, mode, colors, speed, (uint8_t)(reverse ? REVERSE : NO_OPTIONS));
+  setSegment(n, start, stop, mode, color, speed, (uint8_t)(reverse ? REVERSE : NO_OPTIONS));
 }
 
 void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed, uint8_t options) {
   uint32_t colors[] = {color, 0, 0};
   setSegment(n, start, stop, mode, colors, speed, options);
+}
+
+void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[]) {
+  setSegment(n, start, stop, mode, colors, DEFAULT_SPEED, NO_OPTIONS);
+}
+
+void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed) {
+  setSegment(n, start, stop, mode, colors, speed, NO_OPTIONS);
+}
+
+void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, bool reverse) {
+  setSegment(n, start, stop, mode, colors, speed, (uint8_t)(reverse ? REVERSE : NO_OPTIONS));
 }
 
 void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options) {
@@ -415,6 +441,20 @@ void WS2812FX::setSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode
 
     if(n < _active_segments_len) addActiveSegment(n);
   }
+}
+
+void WS2812FX::setIdleSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed) {
+  setIdleSegment(n, start, stop, mode, color, speed, NO_OPTIONS);
+}
+
+void WS2812FX::setIdleSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, uint32_t color, uint16_t speed, uint8_t options) {
+  uint32_t colors[] = {color, 0, 0};
+  setIdleSegment(n, start, stop, mode, colors, speed, options);
+}
+
+void WS2812FX::setIdleSegment(uint8_t n, uint16_t start, uint16_t stop, uint8_t mode, const uint32_t colors[], uint16_t speed, uint8_t options) {
+  setSegment(n, start, stop, mode, colors, speed, options);
+  if(n < _active_segments_len) removeActiveSegment(n);;
 }
 
 void WS2812FX::addActiveSegment(uint8_t seg) {
@@ -525,28 +565,32 @@ uint8_t WS2812FX::get_random_wheel_index(uint8_t pos) {
   return r;
 }
 
+void WS2812FX::setRandomSeed(uint16_t seed) {
+  _rand16seed = seed;
+}
+
 // fast 8-bit random number generator shamelessly borrowed from FastLED
 uint8_t WS2812FX::random8() {
-    _rand16seed = (_rand16seed * 2053) + 13849;
-    return (uint8_t)((_rand16seed + (_rand16seed >> 8)) & 0xFF);
+  _rand16seed = (_rand16seed * 2053) + 13849;
+  return (uint8_t)((_rand16seed + (_rand16seed >> 8)) & 0xFF);
 }
 
 // note random8(lim) generates numbers in the range 0 to (lim -1)
 uint8_t WS2812FX::random8(uint8_t lim) {
-    uint8_t r = random8();
-    r = ((uint16_t)r * lim) >> 8;
-    return r;
+  uint8_t r = random8();
+  r = ((uint16_t)r * lim) >> 8;
+  return r;
 }
 
 uint16_t WS2812FX::random16() {
-    return (uint16_t)random8() * 256 + random8();
+  return (uint16_t)random8() * 256 + random8();
 }
 
 // note random16(lim) generates numbers in the range 0 to (lim - 1)
 uint16_t WS2812FX::random16(uint16_t lim) {
-    uint16_t r = random16();
-    r = ((uint32_t)r * lim) >> 16;
-    return r;
+  uint16_t r = random16();
+  r = ((uint32_t)r * lim) >> 16;
+  return r;
 }
 
 // Return the sum of all LED intensities (can be used for
@@ -1063,28 +1107,25 @@ void WS2812FX::fade_out(uint32_t targetColor) {
 /*
  * color blend function
  */
-uint32_t WS2812FX::color_blend(uint32_t color1, uint32_t color2, uint8_t blend) {
-  if(blend == 0)   return color1;
-  if(blend == 255) return color2;
-
-  uint8_t w1 = (color1 >> 24) & 0xff;
-  uint8_t r1 = (color1 >> 16) & 0xff;
-  uint8_t g1 = (color1 >>  8) & 0xff;
-  uint8_t b1 =  color1        & 0xff;
-
-  uint8_t w2 = (color2 >> 24) & 0xff;
-  uint8_t r2 = (color2 >> 16) & 0xff;
-  uint8_t g2 = (color2 >>  8) & 0xff;
-  uint8_t b2 =  color2        & 0xff;
-
-  uint32_t w3 = ((w2 * blend) + (w1 * (255U - blend))) / 256U;
-  uint32_t r3 = ((r2 * blend) + (r1 * (255U - blend))) / 256U;
-  uint32_t g3 = ((g2 * blend) + (g1 * (255U - blend))) / 256U;
-  uint32_t b3 = ((b2 * blend) + (b1 * (255U - blend))) / 256U;
-
-  return ((w3 << 24) | (r3 << 16) | (g3 << 8) | (b3));
+uint32_t WS2812FX::color_blend(uint32_t color1, uint32_t color2, uint8_t blendAmt) {
+  uint32_t blendedColor;
+  blend((uint8_t*)&blendedColor, (uint8_t*)&color1, (uint8_t*)&color2, sizeof(uint32_t), blendAmt);
+  return blendedColor;
 }
 
+uint8_t* WS2812FX::blend(uint8_t *dest, uint8_t *src1, uint8_t *src2, uint16_t cnt, uint8_t blendAmt) {
+  if(blendAmt == 0) {
+    memmove(dest, src1, cnt);
+  } else if(blendAmt == 255) {
+    memmove(dest, src2, cnt);
+  } else {
+    for(uint16_t i=0; i<cnt; i++) {
+//    dest[i] = map(blendAmt, 0, 255, src1[i], src2[i]);
+      dest[i] =  blendAmt * ((int)src2[i] - (int)src1[i]) / 256 + src1[i]; // map() function
+    }
+  }
+  return dest;
+}
 
 /*
  * twinkle_fade function
