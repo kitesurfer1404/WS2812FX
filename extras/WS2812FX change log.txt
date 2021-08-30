@@ -1,6 +1,45 @@
 WS2182FX Change Log
 
 
+v1.3.4 changes 8/21/2021
+------------------------
+
+1) Updated the web interface example sketches to be compatible
+    with ESP32 as suggested by kadu in PR #280. Although beware
+	of the ESP32 "flickering" issue when using more than a few
+	LEDs (issue #223). Use the RMT technique in the ws2812fx_esp32
+	example sketch as a workaround.
+
+2) Added setRandomSeed() function to allow greater control of
+    random number generation as suggested by schumar in issue #288.
+
+3) Added the ws2812fx_teensy example sketch to demo how to use
+    Paul Stoffregen's non-blocking WS2812Serial library for the
+	Teensy. Inspired by issue #277.
+
+4) If you aren't using any options in a setSegment() statement,
+    you can just omit the option parameter at the end.
+	Eg. ws2812fx.setSegment(0, 0, 31, FX_MODE_BLINK, RED, 1000);
+	Also setSegment() with no arguments will initialize segment 0
+	with reasonable default values.
+	Eg. ws2812fx.setSegment() is equivalent to
+	    ws2812fx.setSegment(0, 0, getLength()-1, DEFAULT_MODE, DEFAULT_COLOR, DEFAULT_SPEED)
+
+5) Created a generic blend() function, which will eventually be
+	used to merge pixel data to create effect transitions.
+
+6) Refactored the color_blend() function to use the new generic
+	blend() function. Better performance.
+
+7) Added a new WS2812FXT class to help create effect transitions
+	and the ws2812fx_transitions example sketch to demo its use.
+
+8) Started working on some API documentation.
+
+9) Fixed an odd bug in the serial_control example sketch that was
+	causing a compile error on Raspberry Pi Pico.
+
+
 v1.3.3 changes 4/15/2021
 ------------------------
 

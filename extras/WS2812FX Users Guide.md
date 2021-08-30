@@ -223,13 +223,28 @@ hardware setup.
 
 After you have the sketch working, you can play with the settings to get a feel
 for how each parameter affects the strip. Vary the speed and brightness. The
-color can be changed by specifying one of the built-in color keywords, like
-“RED”, “GREEN”, “BLUE” or “WHITE” or use a hexadecimal number, like 0x40c020, to
-create a unique color by mixing different intensities of red, green and blue.
+color can be changed by specifying one of the built-in color macros:
+```c++
+#define RED        (uint32_t)0xFF0000
+#define GREEN      (uint32_t)0x00FF00
+#define BLUE       (uint32_t)0x0000FF
+#define WHITE      (uint32_t)0xFFFFFF
+#define BLACK      (uint32_t)0x000000
+#define YELLOW     (uint32_t)0xFFFF00
+#define CYAN       (uint32_t)0x00FFFF
+#define MAGENTA    (uint32_t)0xFF00FF
+#define PURPLE     (uint32_t)0x400080
+#define ORANGE     (uint32_t)0xFF3000
+#define PINK       (uint32_t)0xFF1493
+#define GRAY       (uint32_t)0x101010
+#define ULTRAWHITE (uint32_t)0xFFFFFFFF /* for RGBW LEDs */
+```
+Or use a hexadecimal number, like 0x40c020, to create a unique color by
+mixing different intensities of red, green and blue.
 The [w3schools.com colors](https://www.w3schools.com/colors/) web page has a
 nice explanation about expressing colors as hexadecimal numbers. Note, the web
-page shows hex numbers as “\#aabbcc”, but in the Arduino IDE they are written
-“0xaabbcc”.
+page shows hex numbers as “\#RRGGBB”, but in the Arduino IDE they are written
+“0xRRGGBB”.
 
 The best part of WS2812FX is the many different animation effects that it can
 create. More than 50! The only way to get a feel for each one is to try them. In
@@ -276,7 +291,7 @@ program a segment that spans the entire length of the strip. Think about it; it
 makes sense.
 
 The next three parameters are effect/mode, color and speed, which you’ve seen
-before. The last parameter is new and specifies whether to run the animation in
+before. The last parameter is optional and specifies whether to run the animation in
 the reverse direction. It’s a boolean parameter, so it can be true or false, and
 applies only to effects that have a direction, like FX_MODE_COLOR_WIPE or
 FX_MODE_THEATER_CHASE. Specifying reverse=false will run the animation from
@@ -296,15 +311,15 @@ Segments provide a great deal of flexibility to subdivide the strip. You can
 hard code the first and last LED indexes like so:
 ```c++
 // divide a strip of 30 LEDs in half
-ws2812fx.setSegment(0,  0, 14, FX_MODE_FADE, RED,  2000, false);
-ws2812fx.setSegment(1, 15, 29, FX_MODE_SCAN, BLUE, 2000, false);
+ws2812fx.setSegment(0,  0, 14, FX_MODE_FADE, RED,  2000);
+ws2812fx.setSegment(1, 15, 29, FX_MODE_SCAN, BLUE, 2000);
 ```
 or you can use LED_COUNT and some math to specify the first and last LED
 indexes:
 ```c++
 // divide a strip of LEDs into thirds
 int size = LED_COUNT/3; // calc the size of each segment
-ws2812fx.setSegment(0, 0,      size-1,      FX_MODE_FADE,  RED,   2000, false);
+ws2812fx.setSegment(0, 0,      size-1,      FX_MODE_FADE,  RED,   2000);
 ws2812fx.setSegment(1, size,   size*2-1,    FX_MODE_SCAN,  BLUE,  2000, true);
 ws2812fx.setSegment(2, size*2, LED_COUNT-1, FX_MODE_COMET, GREEN, 2000, true);
 ```
@@ -314,11 +329,16 @@ changing the LED_COUNT value;
 setSegment() also allows you to specify up to three colors using this syntax:
 ```c++
 uint32_t colors[] = {RED, GREEN, BLUE}; // create an array of colors
-ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_BLINK, colors, 2000, false);
+ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_BLINK, colors, 2000);
 ```
-or more succinctly:
+or there's a COLORS(...) macro that can be used to express colors more succinctly:
 ```c++
-ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_BLINK, COLORS(RED, GREEN, BLUE), 2000, false);
+ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_BLINK, COLORS(RED, GREEN, BLUE), 2000);
+```
+There's also the DIM and DARK macros which can modify a color's intensity.
+DIM reduces a color's intensity by 74% and DARK reduces intensity by 94%.
+```c++
+uint32_t colors[] = {RED, DIM(GREEN), DARK(BLUE)};
 ```
 Not all modes support multiple colors. FX_MODE_COLOR_WIPE, for instance, will
 alternate between the first and second color. FX_MODE_TRICOLOR_CHASE creates a
@@ -466,7 +486,7 @@ custom effect function.
     ```
 3.  Create a segment using the FX_MODE_CUSTOM mode.
 ```c++
-ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_CUSTOM, RED, 300, NO_OPTIONS);
+ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_CUSTOM, RED, 300);
 ```
 ***
 
