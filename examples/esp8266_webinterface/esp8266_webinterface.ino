@@ -76,11 +76,6 @@ extern const char main_js[];
 #define WIFI_TIMEOUT 30000              // checks WiFi every ...ms. Reset after this time, if WiFi cannot reconnect.
 #define HTTP_PORT 80
 
-#define DEFAULT_COLOR 0xFF5900
-#define DEFAULT_BRIGHTNESS 128
-#define DEFAULT_SPEED 1000
-#define DEFAULT_MODE FX_MODE_STATIC
-
 unsigned long auto_last_change = 0;
 unsigned long last_wifi_check_time = 0;
 String modes = "";
@@ -100,10 +95,10 @@ void setup(){
 
   Serial.println("WS2812FX setup");
   ws2812fx.init();
-  ws2812fx.setMode(DEFAULT_MODE);
-  ws2812fx.setColor(DEFAULT_COLOR);
-  ws2812fx.setSpeed(DEFAULT_SPEED);
-  ws2812fx.setBrightness(DEFAULT_BRIGHTNESS);
+  ws2812fx.setMode(FX_MODE_STATIC);
+  ws2812fx.setColor(0xFF5900);
+  ws2812fx.setSpeed(1000);
+  ws2812fx.setBrightness(128);
   ws2812fx.start();
 
   Serial.println("Wifi setup");
@@ -231,7 +226,7 @@ void srv_handle_set() {
   for (uint8_t i=0; i < server.args(); i++){
     if(server.argName(i) == "c") {
       uint32_t tmp = (uint32_t) strtol(server.arg(i).c_str(), NULL, 10);
-      if(tmp >= 0x000000 && tmp <= 0xFFFFFF) {
+      if(tmp <= 0xFFFFFF) {
         ws2812fx.setColor(tmp);
       }
     }

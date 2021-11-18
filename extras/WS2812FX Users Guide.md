@@ -412,20 +412,20 @@ correction, fade rate and size.
 
 The options are spelled out in the ws2812fx.h file.
 ```c++
-#define NO_OPTIONS   (uint8_t)B00000000
-#define REVERSE      (uint8_t)B10000000
-#define FADE_XFAST   (uint8_t)B00010000
-#define FADE_FAST    (uint8_t)B00100000
-#define FADE_MEDIUM  (uint8_t)B00110000
-#define FADE_SLOW    (uint8_t)B01000000
-#define FADE_XSLOW   (uint8_t)B01010000
-#define FADE_XXSLOW  (uint8_t)B01100000
-#define FADE_GLACIAL (uint8_t)B01110000
-#define GAMMA        (uint8_t)B00001000
-#define SIZE_SMALL   (uint8_t)B00000000
-#define SIZE_MEDIUM  (uint8_t)B00000010
-#define SIZE_LARGE   (uint8_t)B00000100
-#define SIZE_XLARGE  (uint8_t)B00000110
+#define NO_OPTIONS   (uint8_t)0b00000000
+#define REVERSE      (uint8_t)0b10000000
+#define FADE_XFAST   (uint8_t)0b00010000
+#define FADE_FAST    (uint8_t)0b00100000
+#define FADE_MEDIUM  (uint8_t)0b00110000
+#define FADE_SLOW    (uint8_t)0b01000000
+#define FADE_XSLOW   (uint8_t)0b01010000
+#define FADE_XXSLOW  (uint8_t)0b01100000
+#define FADE_GLACIAL (uint8_t)0b01110000
+#define GAMMA        (uint8_t)0b00001000
+#define SIZE_SMALL   (uint8_t)0b00000000
+#define SIZE_MEDIUM  (uint8_t)0b00000010
+#define SIZE_LARGE   (uint8_t)0b00000100
+#define SIZE_XLARGE  (uint8_t)0b00000110
 ```
 
 Options can be combined. If you wanted to create a segment with both reverse

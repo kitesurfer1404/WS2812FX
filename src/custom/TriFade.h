@@ -35,7 +35,7 @@
 #ifndef TriFade_h
 #define TriFade_h
 
-#define TRIFADE_BLACK (uint8_t)B10000000 // same as REVERSE macro
+#define TRIFADE_BLACK (uint8_t)0b10000000 // same as REVERSE macro
 
 #include <WS2812FX.h>
 

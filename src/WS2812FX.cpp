@@ -211,19 +211,19 @@ void WS2812FX::setColors(uint8_t seg, uint32_t* c) {
 }
 
 void WS2812FX::setBrightness(uint8_t b) {
-  b = constrain(b, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
+//b = constrain(b, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
   Adafruit_NeoPixel::setBrightness(b);
   show();
 }
 
 void WS2812FX::increaseBrightness(uint8_t s) {
-  s = constrain(getBrightness() + s, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
-  setBrightness(s);
+//s = constrain(getBrightness() + s, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
+  setBrightness(getBrightness() + s);
 }
 
 void WS2812FX::decreaseBrightness(uint8_t s) {
-  s = constrain(getBrightness() - s, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
-  setBrightness(s);
+//s = constrain(getBrightness() - s, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
+  setBrightness(getBrightness() - s);
 }
 
 void WS2812FX::setLength(uint16_t b) {
@@ -486,7 +486,7 @@ void WS2812FX::swapActiveSegment(uint8_t oldSeg, uint8_t newSeg) {
 
       // reset all runtime parameters EXCEPT next_time,
       // allowing the current animation frame to complete
-      segment_runtime seg_rt = _segment_runtimes[i];
+      __attribute__ ((unused)) segment_runtime seg_rt = _segment_runtimes[i];
       seg_rt.counter_mode_step = 0;
       seg_rt.counter_mode_call = 0;
       seg_rt.aux_param = 0;
@@ -1135,7 +1135,8 @@ uint16_t WS2812FX::twinkle_fade(uint32_t color) {
 
   if(random8(3) == 0) {
     uint8_t size = 1 << SIZE_OPTION;
-    uint16_t index = _seg->start + random16(_seg_len - size);
+//  uint16_t index = _seg->start + random16(_seg_len - size);
+    uint16_t index = _seg->start + random16(_seg_len - size + 1);
     fill(color, index, size);
     SET_CYCLE;
   }

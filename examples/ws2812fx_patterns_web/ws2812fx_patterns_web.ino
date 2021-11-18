@@ -54,7 +54,7 @@ uint16_t numLeds = 30; // default number of LEDs on the strip
 
 #define MAX_NUM_PATTERNS 8
 //                       duration, brightness, numSegments, [ { first, last, speed, mode, options, colors[] } ]
-#define DEFAULT_PATTERN {30, 64, 1, { {0, numLeds-1, numLeds*20, FX_MODE_STATIC, NO_OPTIONS, {RED,  BLACK, BLACK}} }}
+#define DEFAULT_PATTERN {30, 64, 1, { {0, (uint16_t)(numLeds-1), (uint16_t)(numLeds*20), FX_MODE_STATIC, NO_OPTIONS, {RED,  BLACK, BLACK}} }}
 
 typedef struct Pattern { // 208 bytes/pattern
   int duration;
@@ -143,7 +143,7 @@ void loop() {
 
   // if it's time to change pattern, do it now
   unsigned long now = millis();
-  if (lastTime == 0 || (now - lastTime > patterns[currentPattern].duration * 1000)) {
+  if (lastTime == 0 || (now - lastTime > patterns[currentPattern].duration * 1000ul)) {
     ws2812fx.clear();
     ws2812fx.resetSegments();
 
@@ -176,7 +176,7 @@ void configServer() {
     String auxFunc = server.arg("auxFunc");
     if (auxFunc.length() > 0) {
       int auxFuncIndex = auxFunc.toInt();
-      if (auxFuncIndex >= 0 && auxFuncIndex < sizeof(customAuxFunc) / sizeof(customAuxFunc[0])) {
+      if (auxFuncIndex >= 0 && (size_t)auxFuncIndex < sizeof(customAuxFunc) / sizeof(customAuxFunc[0])) {
         customAuxFunc[auxFuncIndex]();
       }
     }
@@ -371,7 +371,7 @@ bool json2patterns(String &json) {
     JsonArray patternsJson = deviceJson["patterns"];
     if (patternsJson.size() > 0 ) {
       numPatterns = 0;
-      for (int i = 0; i < patternsJson.size(); i++) {
+      for (size_t i = 0; i < patternsJson.size(); i++) {
         JsonObject patt = patternsJson[i];
 //      bool isEnabled = patt["isEnabled"];
 //      if (! isEnabled) continue; // disabled patterns are not stored
@@ -383,7 +383,7 @@ bool json2patterns(String &json) {
         patterns[numPatterns].duration = patt["duration"];
 
         patterns[numPatterns].numSegments = segmentsJson.size();
-        for (int j = 0; j < segmentsJson.size(); j++) {
+        for (size_t j = 0; j < segmentsJson.size(); j++) {
           JsonObject seg = segmentsJson[j];
 //seg.printTo(Serial);Serial.println();
 
@@ -420,9 +420,9 @@ bool json2patterns(String &json) {
 
           JsonArray colors = seg["colors"]; // the web interface sends three color values
           // convert colors from strings ('#ffffff') to uint32_t
-          patterns[numPatterns].segments[j].colors[0] = strtoul(colors[0].as<char*>() + 1, 0, 16);
-          patterns[numPatterns].segments[j].colors[1] = strtoul(colors[1].as<char*>() + 1, 0, 16);
-          patterns[numPatterns].segments[j].colors[2] = strtoul(colors[2].as<char*>() + 1, 0, 16);
+          patterns[numPatterns].segments[j].colors[0] = strtoul(colors[0].as<const char*>() + 1, 0, 16);
+          patterns[numPatterns].segments[j].colors[1] = strtoul(colors[1].as<const char*>() + 1, 0, 16);
+          patterns[numPatterns].segments[j].colors[2] = strtoul(colors[2].as<const char*>() + 1, 0, 16);
         }
         numPatterns++;
         if (numPatterns >= MAX_NUM_PATTERNS)  break;

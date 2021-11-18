@@ -5,10 +5,10 @@
   
   FEATURES
     * example of running an LED animation with sound effects.
-    * The WAV audio files are stored in the ESP's SPIFFS 
+    * The WAV audio files are stored in the ESP8266's LittleFS 
     * filesystem and need to be uploaded to the ESP before
     * uploading the sketch, as described here:
-    * https://arduino-esp8266.readthedocs.io/en/stable/filesystem.html#file-system-object-spiffs
+    * https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html#uploading-files-to-file-system
     * 
     * We're using the fantastic ESP8266Audio library available here:
     * https://github.com/earlephilhower/ESP8266Audio.
@@ -67,7 +67,7 @@
 */
 
 #include <WS2812FX.h>
-#include "AudioFileSourceSPIFFS.h"
+#include "AudioFileSourceLittleFS.h"
 #include "AudioGeneratorWAV.h"
 #include "AudioOutputI2S.h"
 
@@ -77,15 +77,15 @@
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 AudioGeneratorWAV *wav = NULL;
-AudioFileSourceSPIFFS *file = NULL;
+AudioFileSourceLittleFS *file = NULL;
 AudioOutputI2S *out = NULL;
 
-char* soundfx = "/pew.wav";
+const char* soundfx = "/pew.wav";
 
 void setup() {
   Serial.begin(115200);
 
-  SPIFFS.begin(); // init SPIFFS file system where the audio samples are stored
+  LittleFS.begin(); // init LittleFS file system where the audio samples are stored
 
   ws2812fx.init();
   ws2812fx.setBrightness(255);
@@ -115,7 +115,7 @@ void playSound() {
   if(out  != NULL) delete out;
   if(wav  != NULL) delete wav;
 
-  file = new AudioFileSourceSPIFFS(soundfx);
+  file = new AudioFileSourceLittleFS(soundfx);
   out = new AudioOutputI2S();
   wav = new AudioGeneratorWAV();
 

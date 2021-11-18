@@ -93,30 +93,30 @@
 // bit    3: gamma correction
 // bits 1-2: size
 // bits   0: TBD
-#define NO_OPTIONS   (uint8_t)B00000000
-#define REVERSE      (uint8_t)B10000000
+#define NO_OPTIONS   (uint8_t)0b00000000
+#define REVERSE      (uint8_t)0b10000000
 #define IS_REVERSE   ((_seg->options & REVERSE) == REVERSE)
-#define FADE_XFAST   (uint8_t)B00010000
-#define FADE_FAST    (uint8_t)B00100000
-#define FADE_MEDIUM  (uint8_t)B00110000
-#define FADE_SLOW    (uint8_t)B01000000
-#define FADE_XSLOW   (uint8_t)B01010000
-#define FADE_XXSLOW  (uint8_t)B01100000
-#define FADE_GLACIAL (uint8_t)B01110000
+#define FADE_XFAST   (uint8_t)0b00010000
+#define FADE_FAST    (uint8_t)0b00100000
+#define FADE_MEDIUM  (uint8_t)0b00110000
+#define FADE_SLOW    (uint8_t)0b01000000
+#define FADE_XSLOW   (uint8_t)0b01010000
+#define FADE_XXSLOW  (uint8_t)0b01100000
+#define FADE_GLACIAL (uint8_t)0b01110000
 #define FADE_RATE    ((_seg->options >> 4) & 7)
-#define GAMMA        (uint8_t)B00001000
+#define GAMMA        (uint8_t)0b00001000
 #define IS_GAMMA     ((_seg->options & GAMMA) == GAMMA)
-#define SIZE_SMALL   (uint8_t)B00000000
-#define SIZE_MEDIUM  (uint8_t)B00000010
-#define SIZE_LARGE   (uint8_t)B00000100
-#define SIZE_XLARGE  (uint8_t)B00000110
+#define SIZE_SMALL   (uint8_t)0b00000000
+#define SIZE_MEDIUM  (uint8_t)0b00000010
+#define SIZE_LARGE   (uint8_t)0b00000100
+#define SIZE_XLARGE  (uint8_t)0b00000110
 #define SIZE_OPTION  ((_seg->options >> 1) & 3)
 
 // segment runtime options (aux_param2)
-#define FRAME           (uint8_t)B10000000
+#define FRAME           (uint8_t)0b10000000
 #define SET_FRAME       (_seg_rt->aux_param2 |=  FRAME)
 #define CLR_FRAME       (_seg_rt->aux_param2 &= ~FRAME)
-#define CYCLE           (uint8_t)B01000000
+#define CYCLE           (uint8_t)0b01000000
 #define SET_CYCLE       (_seg_rt->aux_param2 |=  CYCLE)
 #define CLR_CYCLE       (_seg_rt->aux_param2 &= ~CYCLE)
 #define CLR_FRAME_CYCLE (_seg_rt->aux_param2 &= ~(FRAME | CYCLE))
@@ -680,7 +680,7 @@ class WS2812FXT {
 
 // define static array of member function pointers.
 // function pointers MUST be in the same order as the corresponding name in the _name array.
-static WS2812FX::mode_ptr _modes[MODE_COUNT] = {
+__attribute__ ((unused)) static WS2812FX::mode_ptr _modes[MODE_COUNT] = {
   &WS2812FX::mode_static,
   &WS2812FX::mode_blink,
   &WS2812FX::mode_breath,

@@ -83,7 +83,7 @@ void myCustomShow(void) {
 
   // blend the pixel data from the virtual strips and save it
   // to the physical strip
-  for (int i=0; i < ws2812fx_p.getNumBytes(); i++) {
+  for (uint16_t i=0; i < ws2812fx_p.getNumBytes(); i++) {
     pixels_p[i] = (pixels_v1[i] / 2) + (pixels_v2[i] / 2);
   }
 
