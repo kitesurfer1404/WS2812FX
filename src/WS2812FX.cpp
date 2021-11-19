@@ -1606,44 +1606,6 @@ uint16_t WS2812FX::mode_fire_flicker_intense(void) {
   return fire_flicker(1);
 }
 
-
-/*
- * ICU mode (moved to the custom effect folder)
- */
-// uint16_t WS2812FX::mode_icu(void) {
-//   uint16_t dest = _seg_rt->counter_mode_step & 0xFFFF;
- 
-//   setPixelColor(_seg->start + dest, _seg->colors[0]);
-//   setPixelColor(_seg->start + dest + _seg_len/2, _seg->colors[0]);
-
-//   if(_seg_rt->aux_param3 == dest) { // pause between eye movements
-//     if(random8(6) == 0) { // blink once in a while
-//       setPixelColor(_seg->start + dest, BLACK);
-//       setPixelColor(_seg->start + dest + _seg_len/2, BLACK);
-//       return 200;
-//     }
-//     _seg_rt->aux_param3 = random16(_seg_len/2);
-//     SET_CYCLE;
-//     return 1000 + random16(2000);
-//   }
-
-//   setPixelColor(_seg->start + dest, BLACK);
-//   setPixelColor(_seg->start + dest + _seg_len/2, BLACK);
-
-//   if(_seg_rt->aux_param3 > _seg_rt->counter_mode_step) {
-//     _seg_rt->counter_mode_step++;
-//     dest++;
-//   } else if (_seg_rt->aux_param3 < _seg_rt->counter_mode_step) {
-//     _seg_rt->counter_mode_step--;
-//     dest--;
-//   }
-
-//   setPixelColor(_seg->start + dest, _seg->colors[0]);
-//   setPixelColor(_seg->start + dest + _seg_len/2, _seg->colors[0]);
-
-//   return (_seg->speed / _seg_len);
-// }
-
 // An adaptation of Mark Kriegsman's FastLED twinkeFOX effect
 // https://gist.github.com/kriegsman/756ea6dcae8e30845b5a
 uint16_t WS2812FX::mode_twinkleFOX(void) {
@@ -1695,6 +1657,27 @@ uint16_t WS2812FX::mode_twinkleFOX(void) {
   }
   setCycle();
   return _seg->speed / 32;
+}
+
+// A combination of the Fireworks effect and the running effect
+// to create an effect that looks like rain.
+uint16_t WS2812FX::mode_rain(void) {
+  // randomly choose colors[0] or colors[2]
+  uint32_t rainColor = (random8() & 1) == 0 ? _seg->colors[0] : _seg->colors[2];
+  // if colors[0] == colors[1], choose a random color
+  if(_seg->colors[0] == _seg->colors[1]) rainColor = color_wheel(random8());
+
+  // run the fireworks effect to create a "raindrop"
+  fireworks(rainColor);
+
+  // shift everything two pixels
+  if(IS_REVERSE) {
+    copyPixels(_seg->start + 2, _seg->start, _seg_len - 2);
+  } else {
+    copyPixels(_seg->start, _seg->start + 2, _seg_len - 2);
+  }
+
+  return (_seg->speed / 16);
 }
 
 /*

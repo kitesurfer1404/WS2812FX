@@ -23,6 +23,11 @@ v1.3.5 changes 11/18/2021
     a segment to always be off. See issue #299. Thanks @DanielWeigl
 	for catching that.
 
+7) moved the rain effect from a custon effect to a built-in effect.
+
+8) Added "headers": "WS2812FX.h" to the library.json file as
+    suggested by @ivankravets in PR #300.
+
 
 v1.3.4 changes 8/21/2021
 ------------------------

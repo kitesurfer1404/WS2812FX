@@ -23,7 +23,5 @@
       "version": ">=1.1.7"
     }
   ],
-  "examples": [
-    "examples/*/*.ino"
-  ]
+  "headers": "WS2812FX.h"
 }
