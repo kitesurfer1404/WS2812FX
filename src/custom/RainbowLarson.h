@@ -42,7 +42,7 @@
 
 #include <WS2812FX.h>
 
-#define DIR_BIT (uint8_t)B00000001 // segrt->aux_param2 direction bit
+#define DIR_BIT (uint8_t)0b00000001 // segrt->aux_param2 direction bit
 
 extern WS2812FX ws2812fx;
 

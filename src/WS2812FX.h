@@ -93,30 +93,30 @@
 // bit    3: gamma correction
 // bits 1-2: size
 // bits   0: TBD
-#define NO_OPTIONS   (uint8_t)B00000000
-#define REVERSE      (uint8_t)B10000000
+#define NO_OPTIONS   (uint8_t)0b00000000
+#define REVERSE      (uint8_t)0b10000000
 #define IS_REVERSE   ((_seg->options & REVERSE) == REVERSE)
-#define FADE_XFAST   (uint8_t)B00010000
-#define FADE_FAST    (uint8_t)B00100000
-#define FADE_MEDIUM  (uint8_t)B00110000
-#define FADE_SLOW    (uint8_t)B01000000
-#define FADE_XSLOW   (uint8_t)B01010000
-#define FADE_XXSLOW  (uint8_t)B01100000
-#define FADE_GLACIAL (uint8_t)B01110000
+#define FADE_XFAST   (uint8_t)0b00010000
+#define FADE_FAST    (uint8_t)0b00100000
+#define FADE_MEDIUM  (uint8_t)0b00110000
+#define FADE_SLOW    (uint8_t)0b01000000
+#define FADE_XSLOW   (uint8_t)0b01010000
+#define FADE_XXSLOW  (uint8_t)0b01100000
+#define FADE_GLACIAL (uint8_t)0b01110000
 #define FADE_RATE    ((_seg->options >> 4) & 7)
-#define GAMMA        (uint8_t)B00001000
+#define GAMMA        (uint8_t)0b00001000
 #define IS_GAMMA     ((_seg->options & GAMMA) == GAMMA)
-#define SIZE_SMALL   (uint8_t)B00000000
-#define SIZE_MEDIUM  (uint8_t)B00000010
-#define SIZE_LARGE   (uint8_t)B00000100
-#define SIZE_XLARGE  (uint8_t)B00000110
+#define SIZE_SMALL   (uint8_t)0b00000000
+#define SIZE_MEDIUM  (uint8_t)0b00000010
+#define SIZE_LARGE   (uint8_t)0b00000100
+#define SIZE_XLARGE  (uint8_t)0b00000110
 #define SIZE_OPTION  ((_seg->options >> 1) & 3)
 
 // segment runtime options (aux_param2)
-#define FRAME           (uint8_t)B10000000
+#define FRAME           (uint8_t)0b10000000
 #define SET_FRAME       (_seg_rt->aux_param2 |=  FRAME)
 #define CLR_FRAME       (_seg_rt->aux_param2 &= ~FRAME)
-#define CYCLE           (uint8_t)B01000000
+#define CYCLE           (uint8_t)0b01000000
 #define SET_CYCLE       (_seg_rt->aux_param2 |=  CYCLE)
 #define CLR_CYCLE       (_seg_rt->aux_param2 &= ~CYCLE)
 #define CLR_FRAME_CYCLE (_seg_rt->aux_param2 &= ~(FRAME | CYCLE))
@@ -179,15 +179,16 @@
 #define FX_MODE_BICOLOR_CHASE           53
 #define FX_MODE_TRICOLOR_CHASE          54
 #define FX_MODE_TWINKLEFOX              55
-#define FX_MODE_CUSTOM                  56  // keep this for backward compatiblity
-#define FX_MODE_CUSTOM_0                56  // custom modes need to go at the end
-#define FX_MODE_CUSTOM_1                57
-#define FX_MODE_CUSTOM_2                58
-#define FX_MODE_CUSTOM_3                59
-#define FX_MODE_CUSTOM_4                60
-#define FX_MODE_CUSTOM_5                61
-#define FX_MODE_CUSTOM_6                62
-#define FX_MODE_CUSTOM_7                63
+#define FX_MODE_RAIN                    56
+#define FX_MODE_CUSTOM                  57  // keep this for backward compatiblity
+#define FX_MODE_CUSTOM_0                57  // custom modes need to go at the end
+#define FX_MODE_CUSTOM_1                58
+#define FX_MODE_CUSTOM_2                59
+#define FX_MODE_CUSTOM_3                60
+#define FX_MODE_CUSTOM_4                61
+#define FX_MODE_CUSTOM_5                62
+#define FX_MODE_CUSTOM_6                63
+#define FX_MODE_CUSTOM_7                64
 
 // create GLOBAL names to allow WS2812FX to compile with sketches and other libs
 // that store strings in PROGMEM (get rid of the "section type conflict with __c"
@@ -248,14 +249,15 @@ const char name_52[] PROGMEM = "Halloween";
 const char name_53[] PROGMEM = "Bicolor Chase";
 const char name_54[] PROGMEM = "Tricolor Chase";
 const char name_55[] PROGMEM = "TwinkleFOX";
-const char name_56[] PROGMEM = "Custom 0"; // custom modes need to go at the end
-const char name_57[] PROGMEM = "Custom 1";
-const char name_58[] PROGMEM = "Custom 2";
-const char name_59[] PROGMEM = "Custom 3";
-const char name_60[] PROGMEM = "Custom 4";
-const char name_61[] PROGMEM = "Custom 5";
-const char name_62[] PROGMEM = "Custom 6";
-const char name_63[] PROGMEM = "Custom 7";
+const char name_56[] PROGMEM = "Rain";
+const char name_57[] PROGMEM = "Custom 0"; // custom modes need to go at the end
+const char name_58[] PROGMEM = "Custom 1";
+const char name_59[] PROGMEM = "Custom 2";
+const char name_60[] PROGMEM = "Custom 3";
+const char name_61[] PROGMEM = "Custom 4";
+const char name_62[] PROGMEM = "Custom 5";
+const char name_63[] PROGMEM = "Custom 6";
+const char name_64[] PROGMEM = "Custom 7";
 
 static const __FlashStringHelper* _names[] = {
   FSH(name_0),
@@ -321,7 +323,8 @@ static const __FlashStringHelper* _names[] = {
   FSH(name_60),
   FSH(name_61),
   FSH(name_62),
-  FSH(name_63)
+  FSH(name_63),
+  FSH(name_64)
 };
 
 class WS2812FX : public Adafruit_NeoPixel {
@@ -572,6 +575,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_bicolor_chase(void),
       mode_tricolor_chase(void),
       mode_twinkleFOX(void),
+      mode_rain(void),
       mode_custom_0(void),
       mode_custom_1(void),
       mode_custom_2(void),
@@ -680,7 +684,7 @@ class WS2812FXT {
 
 // define static array of member function pointers.
 // function pointers MUST be in the same order as the corresponding name in the _name array.
-static WS2812FX::mode_ptr _modes[MODE_COUNT] = {
+__attribute__ ((unused)) static WS2812FX::mode_ptr _modes[MODE_COUNT] = {
   &WS2812FX::mode_static,
   &WS2812FX::mode_blink,
   &WS2812FX::mode_breath,
@@ -737,6 +741,7 @@ static WS2812FX::mode_ptr _modes[MODE_COUNT] = {
   &WS2812FX::mode_bicolor_chase,
   &WS2812FX::mode_tricolor_chase,
   &WS2812FX::mode_twinkleFOX,
+  &WS2812FX::mode_rain,
   &WS2812FX::mode_custom_0,
   &WS2812FX::mode_custom_1,
   &WS2812FX::mode_custom_2,

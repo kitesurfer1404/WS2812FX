@@ -37,6 +37,12 @@
   2018-12-14 initial version
 */
 
+/*
+Note: rain is now one of the normal, built-in WS2812FX effects, so doesn't need to be
+included as a custom effect. I left it here just for historical reference. Eventually it'll
+be removed from the custom folder.
+*/
+
 #ifndef Rain_h
 #define Rain_h
 

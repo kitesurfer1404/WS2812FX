@@ -173,7 +173,7 @@ void recvChar(void) {
 #define MAX_CURRENT         500 // maximum allowed current draw for the entire strip (mA)
 #define QUIESCENT_CURRENT    56 // current draw for the entire strip with all LEDs off (mA)
 #define INCREMENTAL_CURRENT  40 // increase in current for each intensity step per RGB color (uA)
-#define MAX_INTENSITY_SUM   ((MAX_CURRENT - QUIESCENT_CURRENT) * 1000) / INCREMENTAL_CURRENT
+#define MAX_INTENSITY_SUM   ((MAX_CURRENT - QUIESCENT_CURRENT) * (uint32_t)1000) / INCREMENTAL_CURRENT
 void myCustomShow(void) {
   static uint32_t lastSum = 0;
   uint32_t intensitySum = ws2812fx.intensitySum(); // get intensity sum for all LEDs

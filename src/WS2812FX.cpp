@@ -211,19 +211,19 @@ void WS2812FX::setColors(uint8_t seg, uint32_t* c) {
 }
 
 void WS2812FX::setBrightness(uint8_t b) {
-  b = constrain(b, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
+//b = constrain(b, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
   Adafruit_NeoPixel::setBrightness(b);
   show();
 }
 
 void WS2812FX::increaseBrightness(uint8_t s) {
-  s = constrain(getBrightness() + s, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
-  setBrightness(s);
+//s = constrain(getBrightness() + s, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
+  setBrightness(getBrightness() + s);
 }
 
 void WS2812FX::decreaseBrightness(uint8_t s) {
-  s = constrain(getBrightness() - s, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
-  setBrightness(s);
+//s = constrain(getBrightness() - s, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
+  setBrightness(getBrightness() - s);
 }
 
 void WS2812FX::setLength(uint16_t b) {
@@ -486,7 +486,7 @@ void WS2812FX::swapActiveSegment(uint8_t oldSeg, uint8_t newSeg) {
 
       // reset all runtime parameters EXCEPT next_time,
       // allowing the current animation frame to complete
-      segment_runtime seg_rt = _segment_runtimes[i];
+      __attribute__ ((unused)) segment_runtime seg_rt = _segment_runtimes[i];
       seg_rt.counter_mode_step = 0;
       seg_rt.counter_mode_call = 0;
       seg_rt.aux_param = 0;
@@ -1135,7 +1135,7 @@ uint16_t WS2812FX::twinkle_fade(uint32_t color) {
 
   if(random8(3) == 0) {
     uint8_t size = 1 << SIZE_OPTION;
-    uint16_t index = _seg->start + random16(_seg_len - size);
+    uint16_t index = _seg->start + random16(_seg_len - size + 1);
     fill(color, index, size);
     SET_CYCLE;
   }
@@ -1171,7 +1171,7 @@ uint16_t WS2812FX::sparkle(uint32_t color1, uint32_t color2) {
   uint8_t size = 1 << SIZE_OPTION;
   fill(color1, _seg->start + _seg_rt->aux_param3, size);
 
-  _seg_rt->aux_param3 = random16(_seg_len - size); // aux_param3 stores the random led index
+  _seg_rt->aux_param3 = random16(_seg_len - size + 1); // aux_param3 stores the random led index
   fill(color2, _seg->start + _seg_rt->aux_param3, size);
 
   SET_CYCLE;
@@ -1206,7 +1206,7 @@ uint16_t WS2812FX::mode_hyper_sparkle(void) {
 
   uint8_t size = 1 << SIZE_OPTION;
   for(uint8_t i=0; i<8; i++) {
-    fill(WHITE, _seg->start + random16(_seg_len - size), size);
+    fill(WHITE, _seg->start + random16(_seg_len - size + 1), size);
   }
 
   SET_CYCLE;
@@ -1532,14 +1532,14 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
   if(!_triggered) {
     for(uint16_t i=0; i<max(1, _seg_len/20); i++) {
       if(random8(10) == 0) {
-        uint16_t index = _seg->start + random16(_seg_len - size);
+        uint16_t index = _seg->start + random16(_seg_len - size + 1);
         fill(color, index, size);
         SET_CYCLE;
       }
     }
   } else {
     for(uint16_t i=0; i<max(1, _seg_len/10); i++) {
-      uint16_t index = _seg->start + random16(_seg_len - size);
+      uint16_t index = _seg->start + random16(_seg_len - size + 1);
       fill(color, index, size);
       SET_CYCLE;
     }
@@ -1606,44 +1606,6 @@ uint16_t WS2812FX::mode_fire_flicker_intense(void) {
   return fire_flicker(1);
 }
 
-
-/*
- * ICU mode (moved to the custom effect folder)
- */
-// uint16_t WS2812FX::mode_icu(void) {
-//   uint16_t dest = _seg_rt->counter_mode_step & 0xFFFF;
- 
-//   setPixelColor(_seg->start + dest, _seg->colors[0]);
-//   setPixelColor(_seg->start + dest + _seg_len/2, _seg->colors[0]);
-
-//   if(_seg_rt->aux_param3 == dest) { // pause between eye movements
-//     if(random8(6) == 0) { // blink once in a while
-//       setPixelColor(_seg->start + dest, BLACK);
-//       setPixelColor(_seg->start + dest + _seg_len/2, BLACK);
-//       return 200;
-//     }
-//     _seg_rt->aux_param3 = random16(_seg_len/2);
-//     SET_CYCLE;
-//     return 1000 + random16(2000);
-//   }
-
-//   setPixelColor(_seg->start + dest, BLACK);
-//   setPixelColor(_seg->start + dest + _seg_len/2, BLACK);
-
-//   if(_seg_rt->aux_param3 > _seg_rt->counter_mode_step) {
-//     _seg_rt->counter_mode_step++;
-//     dest++;
-//   } else if (_seg_rt->aux_param3 < _seg_rt->counter_mode_step) {
-//     _seg_rt->counter_mode_step--;
-//     dest--;
-//   }
-
-//   setPixelColor(_seg->start + dest, _seg->colors[0]);
-//   setPixelColor(_seg->start + dest + _seg_len/2, _seg->colors[0]);
-
-//   return (_seg->speed / _seg_len);
-// }
-
 // An adaptation of Mark Kriegsman's FastLED twinkeFOX effect
 // https://gist.github.com/kriegsman/756ea6dcae8e30845b5a
 uint16_t WS2812FX::mode_twinkleFOX(void) {
@@ -1695,6 +1657,27 @@ uint16_t WS2812FX::mode_twinkleFOX(void) {
   }
   setCycle();
   return _seg->speed / 32;
+}
+
+// A combination of the Fireworks effect and the running effect
+// to create an effect that looks like rain.
+uint16_t WS2812FX::mode_rain(void) {
+  // randomly choose colors[0] or colors[2]
+  uint32_t rainColor = (random8() & 1) == 0 ? _seg->colors[0] : _seg->colors[2];
+  // if colors[0] == colors[1], choose a random color
+  if(_seg->colors[0] == _seg->colors[1]) rainColor = color_wheel(random8());
+
+  // run the fireworks effect to create a "raindrop"
+  fireworks(rainColor);
+
+  // shift everything two pixels
+  if(IS_REVERSE) {
+    copyPixels(_seg->start + 2, _seg->start, _seg_len - 2);
+  } else {
+    copyPixels(_seg->start, _seg->start + 2, _seg_len - 2);
+  }
+
+  return (_seg->speed / 16);
 }
 
 /*

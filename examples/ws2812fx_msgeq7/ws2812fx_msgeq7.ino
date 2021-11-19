@@ -35,7 +35,7 @@
 #include <WS2812FX.h>
 
 #define LED_COUNT 140
-#define LED_PIN   D1
+#define LED_PIN   4
 
 // include and config the VUMeter custom effect
 #define NUM_BANDS 7
@@ -43,8 +43,8 @@
 #include "custom/VUMeter.h"
 
 // MSGEQ7 pin assignments
-#define STROBE D5
-#define RESET  D6
+#define STROBE 5
+#define RESET  6
 #define OUT    A0
 #define MSGEQ7_DELAY 50
 

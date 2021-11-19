@@ -72,7 +72,7 @@
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 AsyncWebServer server(80);
 
-typedef struct Preset {
+struct Preset {
   int  pin = LED_PIN;
   int  numPixels = LED_COUNT;
   int  brightness = 64;
@@ -203,7 +203,7 @@ void initWebAPI() {
 
     JsonArray segments = jsonObj["segments"];
     preset.numSegments = segments.size();
-    for (int i = 0; i < segments.size(); i++) {
+    for (size_t i = 0; i < segments.size(); i++) {
       JsonObject seg = segments[i];
 
       preset.segments[i].start = seg["start"];

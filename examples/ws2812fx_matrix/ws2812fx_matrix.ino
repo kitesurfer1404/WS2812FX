@@ -8,7 +8,7 @@
  #define PSTR // Make Arduino Due happy
 #endif
 
-#define PIN D5
+#define PIN 4
 
 // MATRIX DECLARATION:
 // Parameter 1 = width of NeoPixel matrix
