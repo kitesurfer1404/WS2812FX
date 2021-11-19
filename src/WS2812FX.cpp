@@ -1135,7 +1135,6 @@ uint16_t WS2812FX::twinkle_fade(uint32_t color) {
 
   if(random8(3) == 0) {
     uint8_t size = 1 << SIZE_OPTION;
-//  uint16_t index = _seg->start + random16(_seg_len - size);
     uint16_t index = _seg->start + random16(_seg_len - size + 1);
     fill(color, index, size);
     SET_CYCLE;
@@ -1172,7 +1171,7 @@ uint16_t WS2812FX::sparkle(uint32_t color1, uint32_t color2) {
   uint8_t size = 1 << SIZE_OPTION;
   fill(color1, _seg->start + _seg_rt->aux_param3, size);
 
-  _seg_rt->aux_param3 = random16(_seg_len - size); // aux_param3 stores the random led index
+  _seg_rt->aux_param3 = random16(_seg_len - size + 1); // aux_param3 stores the random led index
   fill(color2, _seg->start + _seg_rt->aux_param3, size);
 
   SET_CYCLE;
@@ -1207,7 +1206,7 @@ uint16_t WS2812FX::mode_hyper_sparkle(void) {
 
   uint8_t size = 1 << SIZE_OPTION;
   for(uint8_t i=0; i<8; i++) {
-    fill(WHITE, _seg->start + random16(_seg_len - size), size);
+    fill(WHITE, _seg->start + random16(_seg_len - size + 1), size);
   }
 
   SET_CYCLE;
@@ -1533,14 +1532,14 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
   if(!_triggered) {
     for(uint16_t i=0; i<max(1, _seg_len/20); i++) {
       if(random8(10) == 0) {
-        uint16_t index = _seg->start + random16(_seg_len - size);
+        uint16_t index = _seg->start + random16(_seg_len - size + 1);
         fill(color, index, size);
         SET_CYCLE;
       }
     }
   } else {
     for(uint16_t i=0; i<max(1, _seg_len/10); i++) {
-      uint16_t index = _seg->start + random16(_seg_len - size);
+      uint16_t index = _seg->start + random16(_seg_len - size + 1);
       fill(color, index, size);
       SET_CYCLE;
     }
