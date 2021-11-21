@@ -56,6 +56,9 @@
 extern const char index_html[];
 extern const char main_js[];
 
+// Uncomment to use SOFT_AP mode, the controller can be found at 192.168.4.1
+// #define USE_SOFTAP
+
 #define WIFI_SSID "YOURSSID"
 #define WIFI_PASSWORD "YOURPASSWORD"
 
@@ -123,6 +126,7 @@ void loop() {
   server.handleClient();
   ws2812fx.service();
 
+#ifndef USE_SOFTAP
   if(now - last_wifi_check_time > WIFI_TIMEOUT) {
     Serial.print("Checking WiFi... ");
     if(WiFi.status() != WL_CONNECTED) {
@@ -133,7 +137,8 @@ void loop() {
     }
     last_wifi_check_time = now;
   }
-
+#endif
+  
   if(auto_cycle && (now - auto_last_change > 10000)) { // cycle effect mode every 10 seconds
     uint8_t next_mode = (ws2812fx.getMode() + 1) % ws2812fx.getModeCount();
     if(sizeof(myModes) > 0) { // if custom list of modes exists
@@ -156,6 +161,16 @@ void loop() {
  * Connect to WiFi. If no connection is made within WIFI_TIMEOUT, ESP gets resettet.
  */
 void wifi_setup() {
+#ifdef USE_SOFTAP
+  /* set up access point */
+  WiFi.mode(WIFI_AP);
+
+  Serial.print(F("SoftAP SSID="));
+  Serial.println(WIFI_SSID);
+  WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
+  Serial.print(F("IP: "));
+  Serial.println(WiFi.softAPIP());
+#else // USE_SOFTAP
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(WIFI_SSID);
@@ -164,7 +179,7 @@ void wifi_setup() {
   WiFi.mode(WIFI_STA);
   #ifdef STATIC_IP  
     WiFi.config(ip, gateway, subnet);
-  #endif
+  #endif // STATIC_IP  
 
   unsigned long connect_start = millis();
   while(WiFi.status() != WL_CONNECTED) {
@@ -185,6 +200,7 @@ void wifi_setup() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
   Serial.println();
+#endif // USE_SOFTAP
 }
 
 
