@@ -1,6 +1,15 @@
 WS2182FX Change Log
 
 
+v1.3.6 changes xx/xx/xxxx
+------------------------
+
+1) Added REVERSE option for rainbow_cycle effect and fixed direction
+   for rainbow_cycle, theater_chase_rainbow and rain effects so they
+   are consistent with he other effects. Thanks @DominikGrudzinski.
+   See issue #304.
+
+
 v1.3.5 changes 11/18/2021
 ------------------------
 
