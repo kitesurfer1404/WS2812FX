@@ -235,6 +235,7 @@ void srv_handle_set() {
       uint8_t tmp = (uint8_t) strtol(server.arg(i).c_str(), NULL, 10);
       uint8_t new_mode = sizeof(myModes) > 0 ? myModes[tmp % sizeof(myModes)] : tmp % ws2812fx.getModeCount();
       ws2812fx.setMode(new_mode);
+      auto_cycle = false;
       Serial.print("mode is "); Serial.println(ws2812fx.getModeName(ws2812fx.getMode()));
     }
 

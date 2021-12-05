@@ -9,6 +9,10 @@ v1.3.6 changes xx/xx/xxxx
    are consistent with he other effects. Thanks @DominikGrudzinski.
    See issue #304.
 
+2) Implemented @FedericoBusero's idea to disable auto_cycle in the
+   esp8266_webinterface example sketch when a mode is selected.
+   See PR #302.
+
 
 v1.3.5 changes 11/18/2021
 ------------------------
