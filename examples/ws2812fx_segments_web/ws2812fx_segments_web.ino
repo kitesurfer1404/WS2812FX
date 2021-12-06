@@ -78,7 +78,7 @@ struct Preset {
   int  brightness = 64;
   int  numSegments = 1;
   WS2812FX::Segment segments[MAX_NUM_SEGMENTS] = {
-    {0, LED_COUNT - 1, 1000, 0, 0, {RED, GREEN, BLUE}}
+    {0, LED_COUNT - 1, 1000, FX_MODE_STATIC, NO_OPTIONS, {RED, GREEN, BLUE}}
   };
 };
 Preset preset; // note: "preset" is a Preset data struct

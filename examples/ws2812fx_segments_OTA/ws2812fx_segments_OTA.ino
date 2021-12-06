@@ -97,7 +97,7 @@ void setup() {
   ws2812fx.setBrightness(127);
 
   // parameters: index, start, stop, mode, color, speed, reverse
-  ws2812fx.setSegment(0, 0, 29, 9, (const uint32_t[]) {0xff0000, 0x000000, 0x000000}, 1000, false);
+  ws2812fx.setSegment(0, 0, LED_COUNT-1, FX_MODE_SINGLE_DYNAMIC, (const uint32_t[]) {0xff0000, 0x000000, 0x000000}, 1000, false);
   ws2812fx.start();
 }
 
