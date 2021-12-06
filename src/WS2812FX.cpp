@@ -923,7 +923,11 @@ uint16_t WS2812FX::mode_rainbow(void) {
 uint16_t WS2812FX::mode_rainbow_cycle(void) {
   for(uint16_t i=0; i < _seg_len; i++) {
 	  uint32_t color = color_wheel(((i * 256 / _seg_len) + _seg_rt->counter_mode_step) & 0xFF);
-    setPixelColor(_seg->start + i, color);
+    if(IS_REVERSE) {
+      setPixelColor(_seg->stop - i, color);
+    } else {
+      setPixelColor(_seg->start + i, color);
+    }
   }
 
   _seg_rt->counter_mode_step = (_seg_rt->counter_mode_step + 1) & 0xFF;
@@ -993,8 +997,8 @@ uint16_t WS2812FX::mode_theater_chase(void) {
  * Inspired by the Adafruit examples.
  */
 uint16_t WS2812FX::mode_theater_chase_rainbow(void) {
-  _seg_rt->counter_mode_step = (_seg_rt->counter_mode_step + 1) & 0xFF;
-  uint32_t color = color_wheel(_seg_rt->counter_mode_step);
+  _seg_rt->aux_param = (_seg_rt->aux_param + 1) & 0xFF;
+  uint32_t color = color_wheel(_seg_rt->aux_param);
   return tricolor_chase(color, _seg->colors[1], _seg->colors[1]);
 }
 
@@ -1672,9 +1676,9 @@ uint16_t WS2812FX::mode_rain(void) {
 
   // shift everything two pixels
   if(IS_REVERSE) {
-    copyPixels(_seg->start + 2, _seg->start, _seg_len - 2);
-  } else {
     copyPixels(_seg->start, _seg->start + 2, _seg_len - 2);
+  } else {
+    copyPixels(_seg->start + 2, _seg->start, _seg_len - 2);
   }
 
   return (_seg->speed / 16);
