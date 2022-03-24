@@ -133,7 +133,7 @@ uint16_t WS2812FX::tricolor_chase(uint32_t color1, uint32_t color2, uint32_t col
   _seg_rt->counter_mode_step++;
   if(_seg_rt->counter_mode_step % _seg_len == 0) SET_CYCLE;
 
-  return (_seg->speed / _seg_len);
+  return (_seg->speed / 16);
 }
 
 /*
@@ -237,7 +237,7 @@ uint16_t WS2812FX::twinkle_fade(uint32_t color) {
     fill(color, index, size);
     SET_CYCLE;
   }
-  return (_seg->speed / 8);
+  return (_seg->speed / 16);
 }
 
 /*
@@ -337,7 +337,7 @@ uint16_t WS2812FX::running(uint32_t color1, uint32_t color2) {
 
   _seg_rt->counter_mode_step = (_seg_rt->counter_mode_step + 1) % _seg_len;
   if(_seg_rt->counter_mode_step == 0) SET_CYCLE;
-  return (_seg->speed / _seg_len);
+  return (_seg->speed / 16);
 }
 
 /*
@@ -375,7 +375,7 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
     }
   }
 
-  return (_seg->speed / _seg_len);
+  return (_seg->speed / 16);
 }
 
 /*

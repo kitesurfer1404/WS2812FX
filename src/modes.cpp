@@ -143,7 +143,7 @@ uint16_t WS2812FX::mode_single_dynamic(void) {
 
   setPixelColor(_seg->start + random16(_seg_len), color_wheel(random8()));
   SET_CYCLE;
-  return _seg->speed;
+  return (_seg->speed / 16) ;
 }
 
 /*
@@ -155,7 +155,7 @@ uint16_t WS2812FX::mode_multi_dynamic(void) {
     setPixelColor(i, color_wheel(random8()));
   }
   SET_CYCLE;
-  return _seg->speed;
+  return (_seg->speed / 4);
 }
 
 /*
