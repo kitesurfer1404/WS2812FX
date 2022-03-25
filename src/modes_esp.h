@@ -187,7 +187,7 @@ const char name_63[] PROGMEM = "Custom 6";
 const char name_64[] PROGMEM = "Custom 7";
 
 // define static array of member function pointers.
-// make sure the order of the _modes array elements matches the mode indexes in modes.h
+// make sure the order of the _modes array elements matches the FX_MODE_* values
 __attribute__ ((unused)) static mode _modes[] = {
   { FSH(name_0),  FSH(cat_simple),  &WS2812FX::mode_static },
   { FSH(name_1),  FSH(cat_simple),  &WS2812FX::mode_blink },
