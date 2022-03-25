@@ -11,48 +11,37 @@ v1.4.0 changes 03/23/2022
 2) The Arduino's memory limitations are starting to really hinder
 	expanding the library's feature set, so I split the header file into
 	seperate files for ESP (modes_esp.h) and Arduino (modes_arduino.h).
-	Hopefully this will make it easer to add features for ESP devices,
-	and not blow up the memory footprint for Arduino devices.
+	Hopefully this will make it easer to add new features/effects for
+	ESP devices, and not blow up the memory footprint for Arduino devices.
 
-3) Converted four custom effects (Block Dissolve, ICU, Dual Larson and
-	Random Chase) to built-in effects for ESP devices only.
-
-4) Updated the ws2812fx_patterns_web example sketch to use the
+3) Updated the ws2812fx_patterns_web example sketch to use the
 	async web server (ESPAsyncWebServer) instead of ESP8266WebServer,
 	so the sketch now supports ESP8266 and ESP32.
 
-5) removed support for the lagacy AduinoJson v5 library in the
+4) removed support for the lagacy AduinoJson v5 library in the
 	ws2812fx_patterns_web example sketch. You must use the
 	ArduinoJson v6 library.
 
-6) Again in the ws2812fx_patterns_web example sketch, a char array
-	that holds a JSON string of effect names was allocated 1000 bytes.
-	Unfortunately, the addition of 4 more effects for ESP devices
-	overflows this array, so it has been enlarged to 1200 bytes.
-	If anyone is using the ledFX Android app 
-	(https://play.google.com/store/apps/details?id=com.champlainsystems.ledfx&hl=en_US&gl=US)
-	in conjunction with this sketch, they will need to reflash their
-	ESP with the latest ws2812fx_patterns_web sketch to pick up this
-	update.
-
-7) Added the tester.zsh script to verify all the example sketches
+5) Added the tester.zsh script to verify all the example sketches
 	for Arduino, ESP8266 and ESP32 devices. Automated
 	testing??? What a concept! :)
 
-8) Refactored the modes for ESP devices, so the mode data is stored
+6) Refactored the modes for ESP devices, so the mode data is stored
 	in a struct, and added an effect category to the struct. This
 	should have been done long ago, but the tight coupling of Arduino
 	and ESP code made it problematic. Hopefully this will spur more
 	innovative GUI designs that don't just show one gigantic list
 	of effects.
 
-9) POTENTIALLY BREAKING CHANGE
+7) POTENTIALLY BREAKING CHANGE
 	Changed the timing of the CHASE, TWINKLE_FADE, RUNNING, DYNAMIC
 	and Fireworks effects to make them more consistent with the other
 	effects. A speed setting of 1000 should give reasonable results
 	for all effects. While this isn't strictly a breaking change,
 	your speed settings for these effects might need to be tweeked
 	to get the same animation rate you had before.
+
+8) Refactored the rainbow_chase effect to be more efficient.
 
 
 v1.3.6 changes xx/xx/xxxx

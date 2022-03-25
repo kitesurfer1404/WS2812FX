@@ -94,19 +94,15 @@
 #define FX_MODE_TRICOLOR_CHASE          54
 #define FX_MODE_TWINKLEFOX              55
 #define FX_MODE_RAIN                    56
-#define FX_MODE_BLOCK_DISSOLVE          57
-#define FX_MODE_ICU                     58
-#define FX_MODE_DUAL_LARSON             59
-#define FX_MODE_RUNNING_RANDOM_BRIGHT   60
-#define FX_MODE_CUSTOM                  61  // keep this for backward compatiblity
-#define FX_MODE_CUSTOM_0                61  // custom modes need to go at the end
-#define FX_MODE_CUSTOM_1                62
-#define FX_MODE_CUSTOM_2                63
-#define FX_MODE_CUSTOM_3                64
-#define FX_MODE_CUSTOM_4                65
-#define FX_MODE_CUSTOM_5                66
-#define FX_MODE_CUSTOM_6                67
-#define FX_MODE_CUSTOM_7                68
+#define FX_MODE_CUSTOM                  57  // keep this for backward compatiblity
+#define FX_MODE_CUSTOM_0                57  // custom modes need to go at the end
+#define FX_MODE_CUSTOM_1                58
+#define FX_MODE_CUSTOM_2                59
+#define FX_MODE_CUSTOM_3                60
+#define FX_MODE_CUSTOM_4                61
+#define FX_MODE_CUSTOM_5                62
+#define FX_MODE_CUSTOM_6                63
+#define FX_MODE_CUSTOM_7                64
 
 typedef struct Mode {
   const __FlashStringHelper* name;
