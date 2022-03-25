@@ -372,7 +372,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_block_dissolve(void),
       mode_icu(void),
       mode_dual_larson(void),
-      mode_running_random_bright(void),
+      mode_random_wipe_bright(void),
       mode_custom_0(void),
       mode_custom_1(void),
       mode_custom_2(void),

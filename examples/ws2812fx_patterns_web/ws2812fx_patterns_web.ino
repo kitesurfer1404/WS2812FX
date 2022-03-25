@@ -214,7 +214,7 @@ void configServer() {
 
   // send the WS2812FX mode info in JSON format
   server.on("/getModes", [](AsyncWebServerRequest * request) {
-    char modes[1200] = "[";
+    char modes[1300] = "[";
     for (uint8_t i = 0; i < ws2812fx.getModeCount(); i++) {
       strcat(modes, "\"");
       strcat_P(modes, (PGM_P)ws2812fx.getModeName(i));

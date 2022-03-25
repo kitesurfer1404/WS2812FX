@@ -237,17 +237,16 @@ uint16_t WS2812FX::mode_rainbow(void) {
  * Cycles a rainbow over the entire string of LEDs.
  */
 uint16_t WS2812FX::mode_rainbow_cycle(void) {
-  for(uint16_t i=0; i < _seg_len; i++) {
-	  uint32_t color = color_wheel(((i * 256 / _seg_len) + _seg_rt->counter_mode_step) & 0xFF);
-    if(IS_REVERSE) {
-      setPixelColor(_seg->stop - i, color);
-    } else {
-      setPixelColor(_seg->start + i, color);
-    }
+  uint32_t color = color_wheel(_seg_rt->counter_mode_step);
+  if(IS_REVERSE) {
+    copyPixels(_seg->start, _seg->start + 1, _seg_len - 1);
+    setPixelColor(_seg->stop, color);
+  } else {
+    copyPixels(_seg->start + 1, _seg->start, _seg_len - 1);
+    setPixelColor(_seg->start, color);
   }
 
   _seg_rt->counter_mode_step = (_seg_rt->counter_mode_step + 1) & 0xFF;
-
   if(_seg_rt->counter_mode_step == 0) SET_CYCLE;
 
   return (_seg->speed / 256);
@@ -753,8 +752,8 @@ uint16_t WS2812FX::mode_dual_larson(void) {
   return (_seg->speed / (_seg_len * 2));
 }
 
-// Running Random Bright effect (same as custom RandomChase effect)
-uint16_t WS2812FX::mode_running_random_bright(void) {
+// Random Wipe Bright effect (same as custom RandomChase effect)
+uint16_t WS2812FX::mode_random_wipe_bright(void) {
   uint32_t color = IS_REVERSE ? getPixelColor(_seg->stop): getPixelColor(_seg->start);
 
   // periodically change each RGB component to a random value

@@ -181,90 +181,82 @@ const char name_53[] PROGMEM = "Bicolor Chase";
 const char name_54[] PROGMEM = "Tricolor Chase";
 const char name_55[] PROGMEM = "TwinkleFOX";
 const char name_56[] PROGMEM = "Rain";
-const char name_57[] PROGMEM = "Block Dissolve";
-const char name_58[] PROGMEM = "ICU";
-const char name_59[] PROGMEM = "Dual Larson";
-const char name_60[] PROGMEM = "Running Random Bright";
-const char name_61[] PROGMEM = "Custom 0"; // custom modes need to go at the end
-const char name_62[] PROGMEM = "Custom 1";
-const char name_63[] PROGMEM = "Custom 2";
-const char name_64[] PROGMEM = "Custom 3";
-const char name_65[] PROGMEM = "Custom 4";
-const char name_66[] PROGMEM = "Custom 5";
-const char name_67[] PROGMEM = "Custom 6";
-const char name_68[] PROGMEM = "Custom 7";
+const char name_57[] PROGMEM = "Custom 0"; // custom modes need to go at the end
+const char name_58[] PROGMEM = "Custom 1";
+const char name_59[] PROGMEM = "Custom 2";
+const char name_60[] PROGMEM = "Custom 3";
+const char name_61[] PROGMEM = "Custom 4";
+const char name_62[] PROGMEM = "Custom 5";
+const char name_63[] PROGMEM = "Custom 6";
+const char name_64[] PROGMEM = "Custom 7";
 
 // define static array of member function pointers.
 // make sure the order of the _modes array elements matches the mode indexes in modes.h
 __attribute__ ((unused)) static mode _modes[] = {
-/*  0 */  { FSH(name_0),  FSH(cat_simple),  &WS2812FX::mode_static },
-/*  1 */  { FSH(name_1),  FSH(cat_simple),  &WS2812FX::mode_blink },
-/*  2 */  { FSH(name_2),  FSH(cat_special), &WS2812FX::mode_breath },
-/*  3 */  { FSH(name_3),  FSH(cat_wipe),    &WS2812FX::mode_color_wipe },
-/*  4 */  { FSH(name_4),  FSH(cat_wipe),    &WS2812FX::mode_color_wipe_inv },
-/*  5 */  { FSH(name_5),  FSH(cat_sweep),   &WS2812FX::mode_color_wipe_rev },
-/*  6 */  { FSH(name_6),  FSH(cat_sweep),   &WS2812FX::mode_color_wipe_rev_inv },
-/*  7 */  { FSH(name_7),  FSH(cat_wipe),    &WS2812FX::mode_color_wipe_random },
-/*  8 */  { FSH(name_8),  FSH(cat_simple),  &WS2812FX::mode_random_color },
-/*  9 */  { FSH(name_9),  FSH(cat_simple),  &WS2812FX::mode_single_dynamic },
-/* 10 */  { FSH(name_10), FSH(cat_simple),  &WS2812FX::mode_multi_dynamic },
-/* 11 */  { FSH(name_11), FSH(cat_simple),  &WS2812FX::mode_rainbow },
-/* 12 */  { FSH(name_12), FSH(cat_wipe),    &WS2812FX::mode_rainbow_cycle },
-/* 13 */  { FSH(name_13), FSH(cat_sweep),   &WS2812FX::mode_scan },
-/* 14 */  { FSH(name_14), FSH(cat_sweep),   &WS2812FX::mode_dual_scan },
-/* 15 */  { FSH(name_15), FSH(cat_sweep),   &WS2812FX::mode_fade },
-/* 16 */  { FSH(name_16), FSH(cat_wipe),    &WS2812FX::mode_theater_chase },
-/* 17 */  { FSH(name_17), FSH(cat_wipe),    &WS2812FX::mode_theater_chase_rainbow },
-/* 18 */  { FSH(name_18), FSH(cat_wipe),    &WS2812FX::mode_running_lights },
-/* 19 */  { FSH(name_19), FSH(cat_simple),  &WS2812FX::mode_twinkle },
-/* 20 */  { FSH(name_20), FSH(cat_simple),  &WS2812FX::mode_twinkle_random },
-/* 21 */  { FSH(name_21), FSH(cat_simple),  &WS2812FX::mode_twinkle_fade },
-/* 22 */  { FSH(name_22), FSH(cat_simple),  &WS2812FX::mode_twinkle_fade_random },
-/* 23 */  { FSH(name_23), FSH(cat_simple),  &WS2812FX::mode_sparkle },
-/* 24 */  { FSH(name_24), FSH(cat_simple),  &WS2812FX::mode_flash_sparkle },
-/* 25 */  { FSH(name_25), FSH(cat_simple),  &WS2812FX::mode_hyper_sparkle },
-/* 26 */  { FSH(name_26), FSH(cat_simple),  &WS2812FX::mode_strobe },
-/* 27 */  { FSH(name_27), FSH(cat_simple),  &WS2812FX::mode_strobe_rainbow },
-/* 28 */  { FSH(name_28), FSH(cat_simple),  &WS2812FX::mode_multi_strobe },
-/* 29 */  { FSH(name_29), FSH(cat_simple),  &WS2812FX::mode_blink_rainbow },
-/* 30 */  { FSH(name_30), FSH(cat_wipe),    &WS2812FX::mode_chase_white },
-/* 31 */  { FSH(name_31), FSH(cat_wipe),    &WS2812FX::mode_chase_color },
-/* 32 */  { FSH(name_32), FSH(cat_wipe),    &WS2812FX::mode_chase_random },
-/* 33 */  { FSH(name_33), FSH(cat_wipe),    &WS2812FX::mode_chase_rainbow },
-/* 34 */  { FSH(name_34), FSH(cat_wipe),    &WS2812FX::mode_chase_flash },
-/* 35 */  { FSH(name_35), FSH(cat_wipe),    &WS2812FX::mode_chase_flash_random },
-/* 36 */  { FSH(name_36), FSH(cat_wipe),    &WS2812FX::mode_chase_rainbow_white },
-/* 37 */  { FSH(name_37), FSH(cat_wipe),    &WS2812FX::mode_chase_blackout },
-/* 38 */  { FSH(name_38), FSH(cat_wipe),    &WS2812FX::mode_chase_blackout_rainbow },
-/* 39 */  { FSH(name_39), FSH(cat_sweep),   &WS2812FX::mode_color_sweep_random },
-/* 40 */  { FSH(name_40), FSH(cat_wipe),    &WS2812FX::mode_running_color },
-/* 41 */  { FSH(name_41), FSH(cat_wipe),    &WS2812FX::mode_running_red_blue },
-/* 42 */  { FSH(name_42), FSH(cat_wipe),    &WS2812FX::mode_running_random },
-/* 43 */  { FSH(name_43), FSH(cat_sweep),   &WS2812FX::mode_larson_scanner },
-/* 44 */  { FSH(name_44), FSH(cat_wipe),    &WS2812FX::mode_comet },
-/* 45 */  { FSH(name_45), FSH(cat_simple),  &WS2812FX::mode_fireworks },
-/* 46 */  { FSH(name_46), FSH(cat_simple),  &WS2812FX::mode_fireworks_random },
-/* 47 */  { FSH(name_47), FSH(cat_wipe),    &WS2812FX::mode_merry_christmas },
-/* 48 */  { FSH(name_48), FSH(cat_simple),  &WS2812FX::mode_fire_flicker },
-/* 49 */  { FSH(name_49), FSH(cat_simple),  &WS2812FX::mode_fire_flicker_soft },
-/* 50 */  { FSH(name_50), FSH(cat_simple),  &WS2812FX::mode_fire_flicker_intense },
-/* 51 */  { FSH(name_51), FSH(cat_wipe),    &WS2812FX::mode_circus_combustus },
-/* 52 */  { FSH(name_52), FSH(cat_wipe),    &WS2812FX::mode_halloween },
-/* 53 */  { FSH(name_53), FSH(cat_wipe),    &WS2812FX::mode_bicolor_chase },
-/* 54 */  { FSH(name_54), FSH(cat_wipe),    &WS2812FX::mode_tricolor_chase },
-/* 55 */  { FSH(name_55), FSH(cat_special), &WS2812FX::mode_twinkleFOX },
-/* 56 */  { FSH(name_56), FSH(cat_special), &WS2812FX::mode_rain },
-/* 57 */  { FSH(name_57), FSH(cat_simple),  &WS2812FX::mode_block_dissolve },
-/* 58 */  { FSH(name_58), FSH(cat_special), &WS2812FX::mode_icu },
-/* 59 */  { FSH(name_59), FSH(cat_sweep),   &WS2812FX::mode_dual_larson },
-/* 60 */  { FSH(name_60), FSH(cat_wipe),    &WS2812FX::mode_running_random_bright },
-/* 61 */  { FSH(name_61), FSH(cat_custom),  &WS2812FX::mode_custom_0 },
-/* 62 */  { FSH(name_62), FSH(cat_custom),  &WS2812FX::mode_custom_1 },
-/* 63 */  { FSH(name_63), FSH(cat_custom),  &WS2812FX::mode_custom_2 },
-/* 64 */  { FSH(name_64), FSH(cat_custom),  &WS2812FX::mode_custom_3 },
-/* 65 */  { FSH(name_65), FSH(cat_custom),  &WS2812FX::mode_custom_4 },
-/* 66 */  { FSH(name_66), FSH(cat_custom),  &WS2812FX::mode_custom_5 },
-/* 67 */  { FSH(name_67), FSH(cat_custom),  &WS2812FX::mode_custom_6 },
-/* 68 */  { FSH(name_68), FSH(cat_custom),  &WS2812FX::mode_custom_7 }
+  { FSH(name_0),  FSH(cat_simple),  &WS2812FX::mode_static },
+  { FSH(name_1),  FSH(cat_simple),  &WS2812FX::mode_blink },
+  { FSH(name_2),  FSH(cat_special), &WS2812FX::mode_breath },
+  { FSH(name_3),  FSH(cat_wipe),    &WS2812FX::mode_color_wipe },
+  { FSH(name_4),  FSH(cat_wipe),    &WS2812FX::mode_color_wipe_inv },
+  { FSH(name_5),  FSH(cat_sweep),   &WS2812FX::mode_color_wipe_rev },
+  { FSH(name_6),  FSH(cat_sweep),   &WS2812FX::mode_color_wipe_rev_inv },
+  { FSH(name_7),  FSH(cat_wipe),    &WS2812FX::mode_color_wipe_random },
+  { FSH(name_8),  FSH(cat_simple),  &WS2812FX::mode_random_color },
+  { FSH(name_9),  FSH(cat_simple),  &WS2812FX::mode_single_dynamic },
+  { FSH(name_10), FSH(cat_simple),  &WS2812FX::mode_multi_dynamic },
+  { FSH(name_11), FSH(cat_simple),  &WS2812FX::mode_rainbow },
+  { FSH(name_12), FSH(cat_wipe),    &WS2812FX::mode_rainbow_cycle },
+  { FSH(name_13), FSH(cat_sweep),   &WS2812FX::mode_scan },
+  { FSH(name_14), FSH(cat_sweep),   &WS2812FX::mode_dual_scan },
+  { FSH(name_15), FSH(cat_sweep),   &WS2812FX::mode_fade },
+  { FSH(name_16), FSH(cat_wipe),    &WS2812FX::mode_theater_chase },
+  { FSH(name_17), FSH(cat_wipe),    &WS2812FX::mode_theater_chase_rainbow },
+  { FSH(name_18), FSH(cat_wipe),    &WS2812FX::mode_running_lights },
+  { FSH(name_19), FSH(cat_simple),  &WS2812FX::mode_twinkle },
+  { FSH(name_20), FSH(cat_simple),  &WS2812FX::mode_twinkle_random },
+  { FSH(name_21), FSH(cat_simple),  &WS2812FX::mode_twinkle_fade },
+  { FSH(name_22), FSH(cat_simple),  &WS2812FX::mode_twinkle_fade_random },
+  { FSH(name_23), FSH(cat_simple),  &WS2812FX::mode_sparkle },
+  { FSH(name_24), FSH(cat_simple),  &WS2812FX::mode_flash_sparkle },
+  { FSH(name_25), FSH(cat_simple),  &WS2812FX::mode_hyper_sparkle },
+  { FSH(name_26), FSH(cat_simple),  &WS2812FX::mode_strobe },
+  { FSH(name_27), FSH(cat_simple),  &WS2812FX::mode_strobe_rainbow },
+  { FSH(name_28), FSH(cat_simple),  &WS2812FX::mode_multi_strobe },
+  { FSH(name_29), FSH(cat_simple),  &WS2812FX::mode_blink_rainbow },
+  { FSH(name_30), FSH(cat_wipe),    &WS2812FX::mode_chase_white },
+  { FSH(name_31), FSH(cat_wipe),    &WS2812FX::mode_chase_color },
+  { FSH(name_32), FSH(cat_wipe),    &WS2812FX::mode_chase_random },
+  { FSH(name_33), FSH(cat_wipe),    &WS2812FX::mode_chase_rainbow },
+  { FSH(name_34), FSH(cat_wipe),    &WS2812FX::mode_chase_flash },
+  { FSH(name_35), FSH(cat_wipe),    &WS2812FX::mode_chase_flash_random },
+  { FSH(name_36), FSH(cat_wipe),    &WS2812FX::mode_chase_rainbow_white },
+  { FSH(name_37), FSH(cat_wipe),    &WS2812FX::mode_chase_blackout },
+  { FSH(name_38), FSH(cat_wipe),    &WS2812FX::mode_chase_blackout_rainbow },
+  { FSH(name_39), FSH(cat_sweep),   &WS2812FX::mode_color_sweep_random },
+  { FSH(name_40), FSH(cat_wipe),    &WS2812FX::mode_running_color },
+  { FSH(name_41), FSH(cat_wipe),    &WS2812FX::mode_running_red_blue },
+  { FSH(name_42), FSH(cat_wipe),    &WS2812FX::mode_running_random },
+  { FSH(name_43), FSH(cat_sweep),   &WS2812FX::mode_larson_scanner },
+  { FSH(name_44), FSH(cat_wipe),    &WS2812FX::mode_comet },
+  { FSH(name_45), FSH(cat_simple),  &WS2812FX::mode_fireworks },
+  { FSH(name_46), FSH(cat_simple),  &WS2812FX::mode_fireworks_random },
+  { FSH(name_47), FSH(cat_wipe),    &WS2812FX::mode_merry_christmas },
+  { FSH(name_48), FSH(cat_simple),  &WS2812FX::mode_fire_flicker },
+  { FSH(name_49), FSH(cat_simple),  &WS2812FX::mode_fire_flicker_soft },
+  { FSH(name_50), FSH(cat_simple),  &WS2812FX::mode_fire_flicker_intense },
+  { FSH(name_51), FSH(cat_wipe),    &WS2812FX::mode_circus_combustus },
+  { FSH(name_52), FSH(cat_wipe),    &WS2812FX::mode_halloween },
+  { FSH(name_53), FSH(cat_wipe),    &WS2812FX::mode_bicolor_chase },
+  { FSH(name_54), FSH(cat_wipe),    &WS2812FX::mode_tricolor_chase },
+  { FSH(name_55), FSH(cat_special), &WS2812FX::mode_twinkleFOX },
+  { FSH(name_56), FSH(cat_special), &WS2812FX::mode_rain },
+  { FSH(name_57), FSH(cat_custom),  &WS2812FX::mode_custom_0 },
+  { FSH(name_58), FSH(cat_custom),  &WS2812FX::mode_custom_1 },
+  { FSH(name_59), FSH(cat_custom),  &WS2812FX::mode_custom_2 },
+  { FSH(name_60), FSH(cat_custom),  &WS2812FX::mode_custom_3 },
+  { FSH(name_61), FSH(cat_custom),  &WS2812FX::mode_custom_4 },
+  { FSH(name_62), FSH(cat_custom),  &WS2812FX::mode_custom_5 },
+  { FSH(name_63), FSH(cat_custom),  &WS2812FX::mode_custom_6 },
+  { FSH(name_64), FSH(cat_custom),  &WS2812FX::mode_custom_7 }
 };
 #endif
