@@ -40,7 +40,7 @@
 #include <WS2812FX.h>
 #include <ArduinoOTA.h>
 
-#define LED_PIN   D1  // digital pin used to drive the LED strip
+#define LED_PIN   14  // digital pin used to drive the LED strip
 #define LED_COUNT 30  // number of LEDs on the strip
 
 #define WIFI_SSID "xxxxxxxx"     // WiFi network

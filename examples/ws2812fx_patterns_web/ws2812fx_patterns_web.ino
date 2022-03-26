@@ -37,15 +37,18 @@
   2018-11-30 added custom aux functions and OTA update
 */
 
+#define DYNAMIC_JSON_DOCUMENT_SIZE 4096 /* used by AsyncJson. Default 1024 bytes is too small */
+
 #include <WS2812FX.h>
-#include <ESP8266WebServer.h>
+#include <ESPAsyncWebServer.h>
+#include <AsyncJson.h>
 #include <ArduinoJson.h>
 #include <EEPROM.h>
 #include <ArduinoOTA.h>
 
-#define VERSION "2.1.0"
+#define VERSION "2.4.0"
 
-uint8_t  dataPin = D1; // default digital pin used to drive the LED strip
+uint8_t  dataPin = 14; // default digital pin used to drive the LED strip
 uint16_t numLeds = 30; // default number of LEDs on the strip
 
 #define WIFI_SSID "xxxxxxxx"     // WiFi network
@@ -53,8 +56,6 @@ uint16_t numLeds = 30; // default number of LEDs on the strip
 #define HTTP_PORT 80
 
 #define MAX_NUM_PATTERNS 8
-//                       duration, brightness, numSegments, [ { first, last, speed, mode, options, colors[] } ]
-#define DEFAULT_PATTERN {30, 64, 1, { {0, (uint16_t)(numLeds-1), (uint16_t)(numLeds*20), FX_MODE_STATIC, NO_OPTIONS, {RED,  BLACK, BLACK}} }}
 
 typedef struct Pattern { // 208 bytes/pattern
   int duration;
@@ -64,13 +65,19 @@ typedef struct Pattern { // 208 bytes/pattern
 } pattern;
 
 // setup a default patterns array
-Pattern patterns[MAX_NUM_PATTERNS] = { DEFAULT_PATTERN };
+Pattern patterns[MAX_NUM_PATTERNS] = {
+  { 300, 32, 1, { // duration, brightness, numSegments
+      // first, last, speed, mode, options, colors[]
+      {0, (uint16_t)(numLeds - 1), 5000, FX_MODE_STATIC, NO_OPTIONS, {BLUE,  BLACK, BLACK}}
+    }
+  }
+};
 int numPatterns = 1;
 int currentPattern = 0;
 unsigned long lastTime = 0;
 
 WS2812FX ws2812fx = WS2812FX(numLeds, dataPin, NEO_GRB + NEO_KHZ800);
-ESP8266WebServer server(HTTP_PORT);
+AsyncWebServer server(HTTP_PORT);
 
 void (*customAuxFunc[])(void) { // define custom auxiliary functions here
   [] { Serial.println("running customAuxFunc[0]"); },
@@ -83,7 +90,14 @@ void setup() {
   delay(500);
   Serial.println("\r\n");
 
-  EEPROM.begin(2048); // for ESP8266 (comment out if using an Arduino)
+  // init LED strip with a default segment
+  ws2812fx.init();
+  ws2812fx.setBrightness(64);
+  ws2812fx.setSegment(0, 0, numLeds - 1, FX_MODE_STATIC, GREEN, 1000);
+  ws2812fx.start();
+  Serial.println("LED strip initialized");
+
+  EEPROM.begin(4096); // for ESP (comment out if using an Arduino)
 
   // init WiFi
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -117,29 +131,35 @@ void setup() {
   });
   ArduinoOTA.begin();
 
-  // init LED strip with a default segment
-  ws2812fx.init();
-  ws2812fx.setBrightness(128);
-  ws2812fx.setSegment(0, 0, numLeds - 1, FX_MODE_STATIC, RED, 3000, false);
 
+#ifdef ARDUINO_ARCH_ESP8266
   // if not rebooting due to catastrophic error, restore pattern data from eeprom
-  struct  rst_info  *rstInfo = system_get_rst_info();
-  //Serial.print("rstInfo->reason:"); Serial.println(rstInfo->reason);
+  struct rst_info  *rstInfo = system_get_rst_info(); // ESP8266
+  Serial.print("rstInfo->reason:"); Serial.println(rstInfo->reason);
+  Serial.print("ESP.getResetReason():"); Serial.println(ESP.getResetReason());
   if (rstInfo->reason !=  REASON_EXCEPTION_RST) { // not reason 2
     restoreFromEEPROM();
   }
+#endif
 
-  ws2812fx.start();
+#ifdef ARDUINO_ARCH_ESP32
+  // if esp32 was reset by powering on or uploading a program via the serial port or
+  // uploading a program via OTA, restore pattern data from eeprom
+  esp_reset_reason_t rstInfo = esp_reset_reason(); // ESP32
+  if (rstInfo == ESP_RST_POWERON || rstInfo == ESP_RST_WDT || rstInfo == ESP_RST_SW) {
+    restoreFromEEPROM();
+  }
+#endif
 
   // config and start the web server
   configServer();
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*"); // add CORS header
   server.begin();
 }
 
 void loop() {
   ArduinoOTA.handle();
   ws2812fx.service();
-  server.handleClient();
 
   // if it's time to change pattern, do it now
   unsigned long now = millis();
@@ -153,30 +173,32 @@ void loop() {
       WS2812FX::segment seg = patterns[currentPattern].segments[i];
       ws2812fx.setSegment(i, seg.start, seg.stop, seg.mode, seg.colors, seg.speed, seg.options);
     }
+    ws2812fx.start();
     lastTime = now;
   }
 }
 
 void configServer() {
-  server.onNotFound([]() {
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.send(404, "text/plain", "Page not found");
+
+  server.onNotFound([](AsyncWebServerRequest * request) {
+    request->send(404, "text/plain", "Page not found");
   });
 
   // return the WS2812FX status
   // optionally set the running state or run custom auxiliary functions
-  server.on("/status", []() {
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    String running = server.arg("running");
-    if (running.length() > 0) {
-      if (running == "true") ws2812fx.start();
+  server.on("/status", [](AsyncWebServerRequest * request) {
+    if (request->hasParam("running")) {
+      AsyncWebParameter* p = request->getParam("running");
+      const char* running = p->value().c_str();
+      if (strcmp(running, "true") == 0) ws2812fx.start();
       else ws2812fx.stop();
     }
 
-    String auxFunc = server.arg("auxFunc");
-    if (auxFunc.length() > 0) {
-      int auxFuncIndex = auxFunc.toInt();
-      if (auxFuncIndex >= 0 && (size_t)auxFuncIndex < sizeof(customAuxFunc) / sizeof(customAuxFunc[0])) {
+    if (request->hasParam("auxFunc")) {
+      AsyncWebParameter* p = request->getParam("auxFunc");
+      int auxFuncIndex = atoi(p->value().c_str());
+      size_t customAuxFuncSize = sizeof(customAuxFunc) / sizeof(customAuxFunc[0]);
+      if (auxFuncIndex >= 0 && (size_t)auxFuncIndex < customAuxFuncSize) {
         customAuxFunc[auxFuncIndex]();
       }
     }
@@ -186,12 +208,13 @@ void configServer() {
     strcat(status, "\",\"isRunning\":");
     strcat(status, ws2812fx.isRunning() ? "true" : "false");
     strcat(status, "}");
-    server.send(200, "application/json", status);
+
+    request->send(200, "application/json", status);
   });
 
   // send the WS2812FX mode info in JSON format
-  server.on("/getModes", []() {
-    char modes[1000] = "[";
+  server.on("/getModes", [](AsyncWebServerRequest * request) {
+    char modes[1300] = "[";
     for (uint8_t i = 0; i < ws2812fx.getModeCount(); i++) {
       strcat(modes, "\"");
       strcat_P(modes, (PGM_P)ws2812fx.getModeName(i));
@@ -199,24 +222,24 @@ void configServer() {
     }
     modes[strlen(modes) - 1] = ']';
 
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.send(200, "application/json", modes);
+    request->send(200, "application/json", modes);
   });
 
-  server.on("/upload", HTTP_OPTIONS, []() { // CORS preflight request
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.sendHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    server.sendHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-    server.send(200, "text/plain", "OK");
+  server.on("/upload", HTTP_OPTIONS, [](AsyncWebServerRequest * request) { // CORS preflight request
+    AsyncWebServerResponse *response = request->beginResponse(200, "text/plain", "OK");
+    response->addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    response->addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+    request->send(response);
   });
 
   // receive the device info in JSON format and update the pattern data
-  server.on("/upload", HTTP_POST, []() {
-    String data = server.arg("plain");
-    Serial.println(data);
+  AsyncCallbackJsonWebHandler* uploadHandler = new AsyncCallbackJsonWebHandler("/upload",
+  [](AsyncWebServerRequest * request, JsonVariant & json) {
+    if (request->method() == HTTP_POST) {
+      JsonObject jsonObj = json.as<JsonObject>();
+      serializeJson(jsonObj, Serial); Serial.println(); // debug
 
-    bool isParseOk = json2patterns(data);
-
+      bool isParseOk = json2patterns(jsonObj);
     if (isParseOk && numPatterns > 0) {
       ws2812fx.stop();
       ws2812fx.clear();
@@ -229,9 +252,11 @@ void configServer() {
       ws2812fx.start();
     }
 
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.send(200, "application/json", "{\"status\":200, \"message\":\"OK\"}");
+      AsyncWebServerResponse *response = request->beginResponse(200, "application/json", "{\"status\":200, \"message\":\"OK\"}");
+      request->send(response);
+    }
   });
+  server.addHandler(uploadHandler);
 }
 
 #define EEPROM_MAGIC_NUMBER 0x010e0d05
@@ -252,6 +277,7 @@ void restoreFromEEPROM() {
   EEPROM.get(sizeof(int) * 0, magicNumber);
   if (magicNumber == EEPROM_MAGIC_NUMBER) {
     Serial.println("restoring from EEPROM");
+    ws2812fx.stop();
     EEPROM.get(sizeof(int) * 1, pin);
     if (ws2812fx.getPin() != pin) {
       ws2812fx.setPin(pin);
@@ -262,6 +288,7 @@ void restoreFromEEPROM() {
     }
     EEPROM.get(sizeof(int) * 3, numPatterns);
     EEPROM.get(sizeof(int) * 4, patterns);
+    ws2812fx.start();
   }
 }
 
@@ -274,166 +301,73 @@ int modeName2Index(const char* name) {
   return 0;
 }
 
-#if ARDUINOJSON_VERSION_MAJOR == 5
-//#pragma message("Compiling for ArduinoJson v5")
-bool json2patterns(String &json) {
-  DynamicJsonBuffer jsonBuffer(2000);
-  JsonObject& deviceJson = jsonBuffer.parseObject(json);
-  if (deviceJson.success()) {
-    ws2812fx.setPin(deviceJson["dataPin"]);
-    ws2812fx.setLength(deviceJson["numLeds"]);
-
-    JsonArray& patternsJson = deviceJson["patterns"];
-    if (patternsJson.size() > 0 ) {
-      numPatterns = 0;
-      for (int i = 0; i < patternsJson.size(); i++) {
-        JsonObject& patt = patternsJson[i];
-//      bool isEnabled = patt["isEnabled"];
-//      if (! isEnabled) continue; // disabled patterns are not stored
-
-        JsonArray& segmentsJson = patt["segments"];
-        if (segmentsJson.size() == 0 ) continue;
-
-        patterns[numPatterns].brightness = patt["brightness"];
-        patterns[numPatterns].duration = patt["duration"];
-
-        patterns[numPatterns].numSegments = segmentsJson.size();
-        for (int j = 0; j < segmentsJson.size(); j++) {
-          JsonObject& seg = segmentsJson[j];
-          //seg.printTo(Serial);Serial.println();
-          int start = seg["start"];
-          if (start < 0 || start >= ws2812fx.getLength()) start = 0;
-          patterns[numPatterns].segments[j].start = start;
-
-          int stop = seg["stop"];
-          if (stop < 0 || stop >= ws2812fx.getLength()) stop = ws2812fx.getLength() - 1;
-          patterns[numPatterns].segments[j].stop = stop;
-
-          if (seg["mode"].is<unsigned int>()) { // seg["mode"] can be a mode number or a mode name
-            patterns[numPatterns].segments[j].mode = seg["mode"];
-          } else {
-            patterns[numPatterns].segments[j].mode = modeName2Index(seg["mode"]);
-          }
-
-          int speed = seg["speed"];
-          if (speed < SPEED_MIN || speed >= SPEED_MAX) speed = 1000;
-          patterns[numPatterns].segments[j].speed = speed;
-
-          patterns[numPatterns].segments[j].options = 0;
-          bool reverse = seg["reverse"];
-          if (reverse) patterns[numPatterns].segments[j].options |= REVERSE;
-
-          bool gamma = seg["gamma"];
-          if (gamma) patterns[numPatterns].segments[j].options |= GAMMA;
-
-          int fadeRate = seg["fadeRate"];
-          if (fadeRate > 0) patterns[numPatterns].segments[j].options |= (fadeRate & 0x7) << 4;
-
-          int size = seg["size"];
-          if (size > 0) patterns[numPatterns].segments[j].options |= (size & 0x3) << 1;
-
-          JsonArray& colors = seg["colors"]; // the web interface sends three color values
-          // convert colors from strings ('#ffffff') to uint32_t
-          patterns[numPatterns].segments[j].colors[0] = strtoul(colors[0].as<char*>() + 1, 0, 16);
-          patterns[numPatterns].segments[j].colors[1] = strtoul(colors[1].as<char*>() + 1, 0, 16);
-          patterns[numPatterns].segments[j].colors[2] = strtoul(colors[2].as<char*>() + 1, 0, 16);
-        }
-        numPatterns++;
-        if (numPatterns >= MAX_NUM_PATTERNS) break;
-      }
-    } else {
-      Serial.println(F("JSON contains no pattern data"));
-      return false;
-    }
-  } else {
-    Serial.println(F("Could not parse JSON payload"));
-    return false;
-  }
-  return true;
-}
-#endif
-
 #if ARDUINOJSON_VERSION_MAJOR == 6
 //#pragma message("Compiling for ArduinoJson v6")
-bool json2patterns(String &json) {
-  // in ArduinoJson v6 a DynamicJsonDocument does not expand as needed
-  // like it did in ArduinoJson v5. So rather then try to compute the
-  // optimum heap size, we'll just allocated a bunch of space on the
-  // heap and hope it's enough.
-  int freeHeap = ESP.getFreeHeap();
-  DynamicJsonDocument doc(freeHeap - 3096); // allocate all of the available heap except 3kB
-  DeserializationError error = deserializeJson(doc, json);
-  if (!error) {
-    JsonObject deviceJson = doc.as<JsonObject>();
-    ws2812fx.setPin(deviceJson["dataPin"]);
-    ws2812fx.setLength(deviceJson["numLeds"]);
+bool json2patterns(JsonObject deviceJson) {
+  ws2812fx.setPin(deviceJson["dataPin"]);
+  ws2812fx.setLength(deviceJson["numLeds"]);
 
-    JsonArray patternsJson = deviceJson["patterns"];
-    if (patternsJson.size() > 0 ) {
-      numPatterns = 0;
-      for (size_t i = 0; i < patternsJson.size(); i++) {
-        JsonObject patt = patternsJson[i];
+  JsonArray patternsJson = deviceJson["patterns"];
+  if (patternsJson.size() > 0 ) {
+    numPatterns = 0;
+    for (size_t i = 0; i < patternsJson.size(); i++) {
+      JsonObject patt = patternsJson[i];
 //      bool isEnabled = patt["isEnabled"];
 //      if (! isEnabled) continue; // disabled patterns are not stored
 
-        JsonArray segmentsJson = patt["segments"];
-        if (segmentsJson.size() == 0 ) continue;
+      JsonArray segmentsJson = patt["segments"];
+      if (segmentsJson.size() == 0 ) continue;
 
-        patterns[numPatterns].brightness = patt["brightness"];
-        patterns[numPatterns].duration = patt["duration"];
+      patterns[numPatterns].brightness = patt["brightness"];
+      patterns[numPatterns].duration = patt["duration"];
 
-        patterns[numPatterns].numSegments = segmentsJson.size();
-        for (size_t j = 0; j < segmentsJson.size(); j++) {
-          JsonObject seg = segmentsJson[j];
+      patterns[numPatterns].numSegments = segmentsJson.size();
+      for (size_t j = 0; j < segmentsJson.size(); j++) {
+        JsonObject seg = segmentsJson[j];
 //seg.printTo(Serial);Serial.println();
 
-          int start = seg["start"];
-          if (start < 0 || start >= ws2812fx.getLength()) start = 0;
-          patterns[numPatterns].segments[j].start = start;
+        int start = seg["start"];
+        if (start < 0 || start >= ws2812fx.getLength()) start = 0;
+        patterns[numPatterns].segments[j].start = start;
 
-          int stop = seg["stop"];
-          if (stop < 0 || stop >= ws2812fx.getLength()) stop = ws2812fx.getLength() - 1;
-          patterns[numPatterns].segments[j].stop = stop;
+        int stop = seg["stop"];
+        if (stop < 0 || stop >= ws2812fx.getLength()) stop = ws2812fx.getLength() - 1;
+        patterns[numPatterns].segments[j].stop = stop;
 
-          if (seg["mode"].is<unsigned int>()) { // seg["mode"] can be a mode number or a mode name
-            patterns[numPatterns].segments[j].mode = seg["mode"];
-          } else {
-            patterns[numPatterns].segments[j].mode = modeName2Index(seg["mode"]);
-          }
-
-          int speed = seg["speed"];
-          if (speed < SPEED_MIN || speed >= SPEED_MAX) speed = 1000;
-          patterns[numPatterns].segments[j].speed = speed;
-
-          patterns[numPatterns].segments[j].options = 0;
-          bool reverse = seg["reverse"];
-          if (reverse) patterns[numPatterns].segments[j].options |= REVERSE;
-
-          bool gamma = seg["gamma"];
-          if (gamma) patterns[numPatterns].segments[j].options |= GAMMA;
-
-          int fadeRate = seg["fadeRate"];
-          if (fadeRate > 0) patterns[numPatterns].segments[j].options |= (fadeRate & 0x7) << 4;
-
-          int size = seg["size"];
-          if (size > 0) patterns[numPatterns].segments[j].options |= (size & 0x3) << 1;
-
-          JsonArray colors = seg["colors"]; // the web interface sends three color values
-          // convert colors from strings ('#ffffff') to uint32_t
-          patterns[numPatterns].segments[j].colors[0] = strtoul(colors[0].as<const char*>() + 1, 0, 16);
-          patterns[numPatterns].segments[j].colors[1] = strtoul(colors[1].as<const char*>() + 1, 0, 16);
-          patterns[numPatterns].segments[j].colors[2] = strtoul(colors[2].as<const char*>() + 1, 0, 16);
+        if (seg["mode"].is<unsigned int>()) { // seg["mode"] can be a mode number or a mode name
+          patterns[numPatterns].segments[j].mode = seg["mode"];
+        } else {
+          patterns[numPatterns].segments[j].mode = modeName2Index(seg["mode"]);
         }
-        numPatterns++;
-        if (numPatterns >= MAX_NUM_PATTERNS)  break;
+
+        int speed = seg["speed"];
+        if (speed < SPEED_MIN || speed >= SPEED_MAX) speed = 1000;
+        patterns[numPatterns].segments[j].speed = speed;
+
+        patterns[numPatterns].segments[j].options = 0;
+        bool reverse = seg["reverse"];
+        if (reverse) patterns[numPatterns].segments[j].options |= REVERSE;
+
+        bool gamma = seg["gamma"];
+        if (gamma) patterns[numPatterns].segments[j].options |= GAMMA;
+
+        int fadeRate = seg["fadeRate"];
+        if (fadeRate > 0) patterns[numPatterns].segments[j].options |= (fadeRate & 0x7) << 4;
+
+        int size = seg["size"];
+        if (size > 0) patterns[numPatterns].segments[j].options |= (size & 0x3) << 1;
+
+        JsonArray colors = seg["colors"]; // the web interface sends three color values
+        // convert colors from strings ('#ffffff') to uint32_t
+        patterns[numPatterns].segments[j].colors[0] = strtoul(colors[0].as<const char*>() + 1, 0, 16);
+        patterns[numPatterns].segments[j].colors[1] = strtoul(colors[1].as<const char*>() + 1, 0, 16);
+        patterns[numPatterns].segments[j].colors[2] = strtoul(colors[2].as<const char*>() + 1, 0, 16);
       }
-    } else {
-      Serial.println(F("JSON contains no pattern data"));
-      return false;
+      numPatterns++;
+      if (numPatterns >= MAX_NUM_PATTERNS)  break;
     }
   } else {
-    Serial.print(F("Could not parse JSON payload: "));
-    Serial.println(error.c_str());
+    Serial.println(F("JSON contains no pattern data"));
     return false;
   }
   return true;
