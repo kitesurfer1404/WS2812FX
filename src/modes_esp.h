@@ -94,15 +94,23 @@
 #define FX_MODE_TRICOLOR_CHASE          54
 #define FX_MODE_TWINKLEFOX              55
 #define FX_MODE_RAIN                    56
-#define FX_MODE_CUSTOM                  57  // keep this for backward compatiblity
-#define FX_MODE_CUSTOM_0                57  // custom modes need to go at the end
-#define FX_MODE_CUSTOM_1                58
-#define FX_MODE_CUSTOM_2                59
-#define FX_MODE_CUSTOM_3                60
-#define FX_MODE_CUSTOM_4                61
-#define FX_MODE_CUSTOM_5                62
-#define FX_MODE_CUSTOM_6                63
-#define FX_MODE_CUSTOM_7                64
+#define FX_MODE_BLOCK_DISSOLVE          57
+#define FX_MODE_ICU                     58
+#define FX_MODE_DUAL_LARSON             59
+#define FX_MODE_RUNNING_RANDOM2         60
+#define FX_MODE_FILLER_UP               61
+#define FX_MODE_RAINBOW_LARSON          62
+#define FX_MODE_RAINBOW_FIREWORKS       63
+#define FX_MODE_TRIFADE                 64
+#define FX_MODE_CUSTOM                  65  // keep this for backward compatiblity
+#define FX_MODE_CUSTOM_0                65  // custom modes need to go at the end
+#define FX_MODE_CUSTOM_1                66
+#define FX_MODE_CUSTOM_2                67
+#define FX_MODE_CUSTOM_3                68
+#define FX_MODE_CUSTOM_4                69
+#define FX_MODE_CUSTOM_5                70
+#define FX_MODE_CUSTOM_6                71
+#define FX_MODE_CUSTOM_7                72
 
 typedef struct Mode {
   const __FlashStringHelper* name;
@@ -177,14 +185,22 @@ const char name_53[] PROGMEM = "Bicolor Chase";
 const char name_54[] PROGMEM = "Tricolor Chase";
 const char name_55[] PROGMEM = "TwinkleFOX";
 const char name_56[] PROGMEM = "Rain";
-const char name_57[] PROGMEM = "Custom 0"; // custom modes need to go at the end
-const char name_58[] PROGMEM = "Custom 1";
-const char name_59[] PROGMEM = "Custom 2";
-const char name_60[] PROGMEM = "Custom 3";
-const char name_61[] PROGMEM = "Custom 4";
-const char name_62[] PROGMEM = "Custom 5";
-const char name_63[] PROGMEM = "Custom 6";
-const char name_64[] PROGMEM = "Custom 7";
+const char name_57[] PROGMEM = "Block Dissolve";
+const char name_58[] PROGMEM = "ICU";
+const char name_59[] PROGMEM = "Dual Larson";
+const char name_60[] PROGMEM = "Running Random2";
+const char name_61[] PROGMEM = "Filler Up";
+const char name_62[] PROGMEM = "Rainbow Larson";
+const char name_63[] PROGMEM = "Rainbow Fireworks";
+const char name_64[] PROGMEM = "Trifade";
+const char name_65[] PROGMEM = "Custom 0"; // custom modes need to go at the end
+const char name_66[] PROGMEM = "Custom 1";
+const char name_67[] PROGMEM = "Custom 2";
+const char name_68[] PROGMEM = "Custom 3";
+const char name_69[] PROGMEM = "Custom 4";
+const char name_70[] PROGMEM = "Custom 5";
+const char name_71[] PROGMEM = "Custom 6";
+const char name_72[] PROGMEM = "Custom 7";
 
 // define static array of member function pointers.
 // make sure the order of the _modes array elements matches the FX_MODE_* values
@@ -246,13 +262,21 @@ __attribute__ ((unused)) static mode _modes[] = {
   { FSH(name_54), FSH(cat_wipe),    &WS2812FX::mode_tricolor_chase },
   { FSH(name_55), FSH(cat_special), &WS2812FX::mode_twinkleFOX },
   { FSH(name_56), FSH(cat_special), &WS2812FX::mode_rain },
-  { FSH(name_57), FSH(cat_custom),  &WS2812FX::mode_custom_0 },
-  { FSH(name_58), FSH(cat_custom),  &WS2812FX::mode_custom_1 },
-  { FSH(name_59), FSH(cat_custom),  &WS2812FX::mode_custom_2 },
-  { FSH(name_60), FSH(cat_custom),  &WS2812FX::mode_custom_3 },
-  { FSH(name_61), FSH(cat_custom),  &WS2812FX::mode_custom_4 },
-  { FSH(name_62), FSH(cat_custom),  &WS2812FX::mode_custom_5 },
-  { FSH(name_63), FSH(cat_custom),  &WS2812FX::mode_custom_6 },
-  { FSH(name_64), FSH(cat_custom),  &WS2812FX::mode_custom_7 }
+  { FSH(name_57), FSH(cat_simple),  &WS2812FX::mode_block_dissolve },
+  { FSH(name_58), FSH(cat_special), &WS2812FX::mode_icu },
+  { FSH(name_59), FSH(cat_sweep),   &WS2812FX::mode_dual_larson },
+  { FSH(name_60), FSH(cat_wipe),    &WS2812FX::mode_running_random2 },
+  { FSH(name_61), FSH(cat_special), &WS2812FX::mode_filler_up },
+  { FSH(name_62), FSH(cat_sweep),   &WS2812FX::mode_rainbow_larson },
+  { FSH(name_63), FSH(cat_simple),  &WS2812FX::mode_rainbow_fireworks },
+  { FSH(name_64), FSH(cat_simple),  &WS2812FX::mode_trifade },
+  { FSH(name_65), FSH(cat_custom),  &WS2812FX::mode_custom_0 },
+  { FSH(name_66), FSH(cat_custom),  &WS2812FX::mode_custom_1 },
+  { FSH(name_67), FSH(cat_custom),  &WS2812FX::mode_custom_2 },
+  { FSH(name_68), FSH(cat_custom),  &WS2812FX::mode_custom_3 },
+  { FSH(name_69), FSH(cat_custom),  &WS2812FX::mode_custom_4 },
+  { FSH(name_70), FSH(cat_custom),  &WS2812FX::mode_custom_5 },
+  { FSH(name_71), FSH(cat_custom),  &WS2812FX::mode_custom_6 },
+  { FSH(name_72), FSH(cat_custom),  &WS2812FX::mode_custom_7 }
 };
 #endif

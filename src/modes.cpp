@@ -752,17 +752,136 @@ uint16_t WS2812FX::mode_dual_larson(void) {
   return (_seg->speed / (_seg_len * 2));
 }
 
-// Random Wipe Bright effect (same as custom RandomChase effect)
-uint16_t WS2812FX::mode_random_wipe_bright(void) {
+// Running random2 effect (simplified version of the custom RandomChase effect)
+uint16_t WS2812FX::mode_running_random2(void) {
+  uint8_t size = 2 << SIZE_OPTION;
   uint32_t color = IS_REVERSE ? getPixelColor(_seg->stop): getPixelColor(_seg->start);
 
-  // periodically change each RGB component to a random value
-  uint8_t mask = random8(7);
-  color = mask & 0x1 ? color : (color & 0x00ffff) | (random8() << 16);
-  color = mask & 0x2 ? color : (color & 0xff00ff) | (random8() <<  8);
-  color = mask & 0x4 ? color : (color & 0xffff00) | (random8());
+  // periodically change the color
+  if((_seg_rt->counter_mode_step) % size == 0) {
+    color = (random8() << 16) | random16();
+  }
 
   return running(color, color);
+}
+
+// simplied version of the custom filler up mode
+uint16_t WS2812FX::mode_filler_up(void) {
+  uint8_t size = 1 << SIZE_OPTION;
+
+  if(_seg_rt->aux_param3 >= _seg_len) { // if glass is full, reset
+    _seg_rt->aux_param3 = 0; // empty the glass
+    _seg_rt->aux_param = !_seg_rt->aux_param; // swap fg and bg colors
+    SET_CYCLE;
+  }
+
+  uint32_t fgColor = _seg_rt->aux_param ? _seg->colors[0] : _seg->colors[1];
+  uint32_t bgColor = _seg_rt->aux_param ? _seg->colors[1] : _seg->colors[0];
+
+  if(IS_REVERSE) {
+    fill(bgColor, _seg->start, _seg_len); // fill with bg color
+    fill(fgColor, _seg->stop - _seg_rt->counter_mode_step, size); // drop
+    if(_seg_rt->aux_param3) fill(fgColor, _seg->start, _seg_rt->aux_param3);
+  } else {
+    fill(bgColor, _seg->start, _seg_len); // fill with bg color
+    fill(fgColor, _seg->start + _seg_rt->counter_mode_step, size); // drop
+    if(_seg_rt->aux_param3) fill(fgColor, _seg->start + _seg_len - _seg_rt->aux_param3, _seg_rt->aux_param3);
+  }
+
+  _seg_rt->counter_mode_step++; // move the drop
+
+  // when drop reaches the fill line, inc the fill line
+  if(_seg_rt->counter_mode_step >= _seg_len - _seg_rt->aux_param3) {
+    _seg_rt->aux_param3++;
+    _seg_rt->counter_mode_step = 0;
+  }
+
+  return (_seg->speed / _seg_len);
+}
+
+// Rainbow Larson effect
+uint16_t WS2812FX::mode_rainbow_larson(void) {
+  fade_out();
+
+  _seg_rt->aux_param3 += _seg_rt->aux_param ? -1 : 1; // update the LED index
+
+  if(IS_REVERSE) {
+    setPixelColor(_seg->stop - _seg_rt->aux_param3, color_wheel(_seg_rt->counter_mode_call << 4));
+    //setPixelColor(_seg->stop - _seg_rt->aux_param3, color_wheel((_seg_rt->aux_param3 << 8) / _seg_len));
+  } else {
+    setPixelColor(_seg->start + _seg_rt->aux_param3, color_wheel(_seg_rt->counter_mode_call << 4));
+    //setPixelColor(_seg->start + _seg_rt->aux_param3, color_wheel((_seg_rt->aux_param3 << 8) / _seg_len));
+  }
+
+  if(_seg_rt->aux_param3 == 0 || _seg_rt->aux_param3 >= _seg_len - 1) {
+    _seg_rt->aux_param = !_seg_rt->aux_param; // change direction
+    SET_CYCLE;
+  }
+
+  return (_seg->speed / (_seg_len * 2));
+}
+
+uint16_t WS2812FX::mode_rainbow_fireworks(void) {
+  for(uint16_t i=_seg->start; i <= _seg->stop; i++) {
+    uint32_t color = getRawPixelColor(i); // get the raw pixel color (ignore global brightness)
+    color = (color >> 1) & 0x7F7F7F7F;    // fade all pixels
+    setRawPixelColor(i, color);
+
+    // search for the fading red pixels, and create the appropriate neighboring pixels
+    if(color == 0x7F0000) {
+      setPixelColor(i-1, 0xFF7F00); // orange
+      setPixelColor(i+1, 0xFF7F00);
+    } else if(color == 0x3F0000) {
+      setPixelColor(i-2, 0xFFFF00); // yellow
+      setPixelColor(i+2, 0xFFFF00);
+    } else if(color == 0x1F0000) {
+      setPixelColor(i-3, 0x00FF00); // green
+      setPixelColor(i+3, 0x00FF00);
+    } else if(color == 0x0F0000) {
+      setPixelColor(i-4, 0x0000FF); // blue
+      setPixelColor(i+4, 0x0000FF);
+    } else if(color == 0x070000) {
+      setPixelColor(i-5, 0x4B0082); // indigo
+      setPixelColor(i+5, 0x4B0082);
+    } else if(color == 0x030000) {
+      setPixelColor(i-6, 0x9400D3); // violet
+      setPixelColor(i+6, 0x9400D3);
+    }
+  }
+
+  // occasionally create a random red pixel
+  if(random8(4) == 0) {
+    uint16_t index = _seg->start + 6 + random16(max(1, _seg_len - 12));
+    setRawPixelColor(index, RED); // set the raw pixel color (ignore global brightness)
+    SET_CYCLE;
+  }
+  return(_seg->speed / _seg_len);
+}
+
+uint16_t WS2812FX::mode_trifade(void) {
+  uint32_t colorsMain[] = { _seg->colors[0], _seg->colors[1], _seg->colors[2] };
+  uint32_t colorsAlt[]  = { _seg->colors[0], BLACK, _seg->colors[1], BLACK, _seg->colors[2], BLACK };
+
+  uint32_t* colors = colorsMain;
+  uint8_t numColors = sizeof(colorsMain) / sizeof(uint32_t);
+  if(IS_REVERSE) { // if reverse bit is set, fade to black between colors
+      colors = colorsAlt;
+      numColors = sizeof(colorsAlt) / sizeof(uint32_t);
+  }
+
+  uint32_t color1 = colors[_seg_rt->aux_param];
+  uint32_t color2 = colors[(_seg_rt->aux_param + 1) % numColors];
+
+  uint32_t color = color_blend(color1, color2, _seg_rt->aux_param3);
+  fill(color, _seg->start, _seg_len);
+
+  _seg_rt->aux_param3 = (_seg_rt->aux_param3 + 4) % 256;
+  if(_seg_rt->aux_param3 == 0) {
+    _seg_rt->aux_param = (_seg_rt->aux_param + 1) % numColors;
+    SET_CYCLE;
+  }
+
+  return (_seg->speed / 128);
 }
 
 /*

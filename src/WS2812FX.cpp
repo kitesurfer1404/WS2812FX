@@ -115,6 +115,32 @@ void WS2812FX::setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_
   }
 }
 
+// custom setPixelColor() function that bypasses the Adafruit_Neopixel global brightness rigmarole
+void WS2812FX::setRawPixelColor(uint16_t n, uint32_t c) {
+  if (n < numLEDs) {
+    uint8_t *p = (wOffset == rOffset) ? &pixels[n * 3] : &pixels[n * 4]; 
+    uint8_t w = (uint8_t)(c >> 24), r = (uint8_t)(c >> 16), g = (uint8_t)(c >> 8), b = (uint8_t)c;
+
+    p[wOffset] = w;
+    p[rOffset] = r;
+    p[gOffset] = g;
+    p[bOffset] = b;
+  }
+}
+
+// custom getPixelColor() function that bypasses the Adafruit_Neopixel global brightness rigmarole
+uint32_t WS2812FX::getRawPixelColor(uint16_t n) {
+  if (n >= numLEDs) return 0; // Out of bounds, return no color.
+
+  if(wOffset == rOffset) { // RGB
+    uint8_t *p = &pixels[n * 3]; 
+    return ((uint32_t)p[rOffset] << 16) | ((uint32_t)p[gOffset] << 8) | (uint32_t)p[bOffset];
+  } else { // RGBW
+    uint8_t *p = &pixels[n * 4];
+    return ((uint32_t)p[wOffset] << 24) | ((uint32_t)p[rOffset] << 16) | ((uint32_t)p[gOffset] << 8) | (uint32_t)p[bOffset];
+  }
+}
+
 void WS2812FX::copyPixels(uint16_t dest, uint16_t src, uint16_t count) {
   uint8_t *pixels = getPixels();
   uint8_t bytesPerPixel = getNumBytesPerPixel(); // 3=RGB, 4=RGBW

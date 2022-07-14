@@ -231,6 +231,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       setPixelColor(uint16_t n, uint32_t c),
       setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b),
       setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w),
+      setRawPixelColor(uint16_t n, uint32_t c),
       copyPixels(uint16_t d, uint16_t s, uint16_t c),
       setPixels(uint16_t, uint8_t*),
       setRandomSeed(uint16_t),
@@ -308,7 +309,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       scan(uint32_t, uint32_t, bool);
 
     uint32_t
-      color_blend(uint32_t, uint32_t, uint8_t);
+      color_blend(uint32_t, uint32_t, uint8_t),
+      getRawPixelColor(uint16_t n);
 
     // builtin modes
     uint16_t
@@ -372,7 +374,11 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_block_dissolve(void),
       mode_icu(void),
       mode_dual_larson(void),
-      mode_random_wipe_bright(void),
+      mode_running_random2(void),
+      mode_filler_up(void),
+      mode_rainbow_larson(void),
+      mode_rainbow_fireworks(void),
+      mode_trifade(void),
       mode_custom_0(void),
       mode_custom_1(void),
       mode_custom_2(void),
