@@ -884,40 +884,6 @@ uint16_t WS2812FX::mode_trifade(void) {
   return (_seg->speed / 128);
 }
 
-uint16_t WS2812FX::mode_vu_meter(void) {
-  static uint8_t randomData[] = {0, 0};
-
-  // if external data source not set, config for two channels of random data
-  _seg_rt->extDataSrc = _seg_rt->extDataSrc != NULL ? _seg_rt->extDataSrc : randomData;
-  _seg_rt->extDataCnt = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt : 2;
-
-  if(_seg_rt->extDataSrc == randomData) { // if using random data, generate some
-    for(uint8_t i=0; i<_seg_rt->extDataCnt; i++) {
-      int randomData = _seg_rt->extDataSrc[i] + random8(32) - random8(32);
-      _seg_rt->extDataSrc[i] = (randomData < 0 || randomData > 255) ? 128 : randomData;
-    }
-  }
-
-  uint16_t channelSize = _seg_len / _seg_rt->extDataCnt; // num LEDs in each channel
-
-  for(uint8_t i=0; i<_seg_rt->extDataCnt; i++) {  // for each channel
-    uint8_t scaledLevel = (_seg_rt->extDataSrc[i] * channelSize) / 256;
-    for(uint16_t j=0; j<channelSize; j++) {
-      uint16_t index = _seg->start + (i * channelSize) + j;
-      if(j <= scaledLevel) {
-        if(j < channelSize - 4)      setPixelColor(index, _seg->colors[0]); // green
-        else if(j < channelSize - 2) setPixelColor(index, _seg->colors[1]); // yellow
-        else                         setPixelColor(index, _seg->colors[2]); // red
-      } else {
-        setPixelColor(index, BLACK);
-      }
-    }
-  }
-  SET_CYCLE;
-
-  return(_seg->speed / 64);
-}
-
 // create pulses that start in the middle of the segment and move toward it's edges
 // time two pulses to mimic a heartbeat
 uint16_t WS2812FX::mode_heartbeat(void) {
@@ -953,6 +919,103 @@ uint16_t WS2812FX::mode_heartbeat(void) {
   }
 
   return(_seg->speed / 32);
+}
+
+uint16_t WS2812FX::mode_vu_meter(void) {
+  static uint8_t randomData[] = {0, 0};
+
+  // if external data source not set, config for two channels of random data
+  _seg_rt->extDataSrc = _seg_rt->extDataSrc != NULL ? _seg_rt->extDataSrc : randomData;
+  _seg_rt->extDataCnt = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt : 2;
+
+  if(_seg_rt->extDataSrc == randomData) { // if using random data, generate some
+    for(uint8_t i=0; i<_seg_rt->extDataCnt; i++) {
+      int randomData = _seg_rt->extDataSrc[i] + random8(32) - random8(32);
+      _seg_rt->extDataSrc[i] = (randomData < 0 || randomData > 255) ? 128 : randomData;
+    }
+  }
+
+  uint16_t channelSize = _seg_len / _seg_rt->extDataCnt; // num LEDs in each channel
+
+  for(uint8_t i=0; i<_seg_rt->extDataCnt; i++) {  // for each channel
+    uint8_t scaledLevel = (_seg_rt->extDataSrc[i] * channelSize) / 256;
+    for(uint16_t j=0; j<channelSize; j++) {
+      uint16_t index = _seg->start + (i * channelSize) + j;
+      if(j <= scaledLevel) {
+        if(j < channelSize - 4)      setPixelColor(index, _seg->colors[0]); // green
+        else if(j < channelSize - 2) setPixelColor(index, _seg->colors[1]); // yellow
+        else                         setPixelColor(index, _seg->colors[2]); // red
+      } else {
+        setPixelColor(index, BLACK);
+      }
+    }
+  }
+  SET_CYCLE;
+
+  return(_seg->speed / 64);
+}
+
+uint16_t WS2812FX::mode_bits(void) {
+  static uint8_t bits[] = {1};
+
+  // if external data source not set, config for one bit
+  _seg_rt->extDataSrc = _seg_rt->extDataSrc != NULL ? _seg_rt->extDataSrc : bits;
+  _seg_rt->extDataCnt = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt : 1;
+
+  // segment length must be at least twice the number of bits
+  uint8_t ledsPerBit = _seg_len / (_seg_rt->extDataCnt * 2);
+  if(ledsPerBit) {
+    uint32_t color = color_wheel(_seg_rt->aux_param++); // rainbow of colors
+
+    for(uint8_t i=0; i < _seg_rt->extDataCnt; i++) {
+      uint16_t index = _seg->start + (i * ledsPerBit * 2);
+      if(_seg_rt->extDataSrc[i]) {
+        fill(color, index, ledsPerBit);              // bit == 1
+        fill(BLACK, index + ledsPerBit, ledsPerBit); // space
+      } else {
+        fill(BLACK, index, ledsPerBit * 2); // bit == 0 + space
+      }
+    }
+  }
+
+  if(_seg_rt->aux_param == 0) SET_CYCLE;
+  return(_seg->speed / 32);
+}
+
+uint16_t WS2812FX::mode_multi_comet(void) {
+  static uint16_t comets[] = {0, 0};
+
+  // if external data source not set, config for two comets
+  // note: the comet data array is data type uint16_t (but extDataSrc is uint8_t),
+  // so be careful if you cast and count an external data source.
+  // i.e. uint16_t extData[] = {0, 0, 0, 0}; // four comets
+  //      setExtDataSrc(0, (uint8_t*)extData, sizeof(extData) / sizeof(extData[0]));
+  _seg_rt->extDataSrc = _seg_rt->extDataSrc != NULL ? _seg_rt->extDataSrc : (uint8_t*)comets;
+  _seg_rt->extDataCnt = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt : 2;
+
+  fade_out();
+
+  // cast external data array to uint16_t
+  uint16_t* cometPtr = (uint16_t*) _seg_rt->extDataSrc;
+
+  for(uint8_t i=0; i < _seg_rt->extDataCnt; i++) {
+    if(cometPtr[i] < _seg_len) { // if comet is active, move it one pixel
+      uint32_t color = i % 2 ? _seg->colors[2] : _seg->colors[0]; // alternate between color[0] and color[2]
+      if(IS_REVERSE) {
+        setPixelColor(_seg->stop - cometPtr[i],  color);
+      } else {
+        setPixelColor(_seg->start + cometPtr[i], color);
+      }
+      cometPtr[i]++;
+    } else {
+      if(random(_seg_len) == 0) {
+        cometPtr[i] = 0; // randomly start a comet
+        SET_CYCLE;
+      }
+    }
+  }
+
+  return(_seg->speed / _seg_len);
 }
 
 /*

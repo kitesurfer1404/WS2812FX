@@ -384,6 +384,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_trifade(void),
       mode_vu_meter(void),
       mode_heartbeat(void),
+      mode_bits(void),
+      mode_multi_comet(void),
       mode_custom_0(void),
       mode_custom_1(void),
       mode_custom_2(void),

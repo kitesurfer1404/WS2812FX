@@ -46,7 +46,7 @@ uint16_t multiComet(void) {
 
   ws2812fx.fade_out();
 
-  static int16_t comets[] = {UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX};
+  static uint16_t comets[] = {UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX};
   static int8_t numComets = sizeof(comets)/sizeof(comets[0]);
 
   for(uint8_t i=0; i < numComets; i++) {
