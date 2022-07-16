@@ -759,7 +759,7 @@ uint16_t WS2812FX::mode_running_random2(void) {
 
   // periodically change the color
   if((_seg_rt->counter_mode_step) % size == 0) {
-    color = (random8() << 16) | random16();
+    color = ((uint32_t)random8() << 16) | random16();
   }
 
   return running(color, color);
@@ -882,6 +882,77 @@ uint16_t WS2812FX::mode_trifade(void) {
   }
 
   return (_seg->speed / 128);
+}
+
+uint16_t WS2812FX::mode_vu_meter(void) {
+  static uint8_t randomData[] = {0, 0};
+
+  // if external data source not set, config for two channels of random data
+  _seg_rt->extDataSrc = _seg_rt->extDataSrc != NULL ? _seg_rt->extDataSrc : randomData;
+  _seg_rt->extDataCnt = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt : 2;
+
+  if(_seg_rt->extDataSrc == randomData) { // if using random data, generate some
+    for(uint8_t i=0; i<_seg_rt->extDataCnt; i++) {
+      int randomData = _seg_rt->extDataSrc[i] + random8(32) - random8(32);
+      _seg_rt->extDataSrc[i] = (randomData < 0 || randomData > 255) ? 128 : randomData;
+    }
+  }
+
+  uint16_t channelSize = _seg_len / _seg_rt->extDataCnt; // num LEDs in each channel
+
+  for(uint8_t i=0; i<_seg_rt->extDataCnt; i++) {  // for each channel
+    uint8_t scaledLevel = (_seg_rt->extDataSrc[i] * channelSize) / 256;
+    for(uint16_t j=0; j<channelSize; j++) {
+      uint16_t index = _seg->start + (i * channelSize) + j;
+      if(j <= scaledLevel) {
+        if(j < channelSize - 4)      setPixelColor(index, _seg->colors[0]); // green
+        else if(j < channelSize - 2) setPixelColor(index, _seg->colors[1]); // yellow
+        else                         setPixelColor(index, _seg->colors[2]); // red
+      } else {
+        setPixelColor(index, BLACK);
+      }
+    }
+  }
+  SET_CYCLE;
+
+  return(_seg->speed / 64);
+}
+
+// create pulses that start in the middle of the segment and move toward it's edges
+// time two pulses to mimic a heartbeat
+uint16_t WS2812FX::mode_heartbeat(void) {
+  static unsigned long then = 0;
+  unsigned long now = millis();
+
+  // Get and translate the segment's size option
+  uint8_t size = 2 << ((_seg->options >> 1) & 0x03); // 2,4,8,16
+
+  // copy pixels from the middle of the segment to the edges
+  uint16_t bytesPerPixelBlock = size * getNumBytesPerPixel();
+  uint16_t centerOffset = (_seg_len / 2) * getNumBytesPerPixel();
+  uint16_t byteCount = centerOffset - bytesPerPixelBlock;
+  memmove(getPixels(), getPixels() + bytesPerPixelBlock, byteCount);
+  memmove(getPixels() + centerOffset + bytesPerPixelBlock, getPixels() + centerOffset, byteCount);
+
+  fade_out();
+
+  int beatTimer = now - then;
+  if((beatTimer > 400) && !_seg_rt->aux_param) { // time for the second beat? (400ms after the first beat)
+    uint16_t startLed = _seg->start + (_seg_len / 2) - size;
+    fill(_seg->colors[0], startLed, size * 2); // create the second beat
+    
+    _seg_rt->aux_param = true; // is second beat
+  }
+  if(beatTimer > 1200) { // time for the first beat? (1200ms)
+    uint16_t startLed = _seg->start + (_seg_len / 2) - size;
+    fill(_seg->colors[0], startLed, size * 2); // create the first beat
+
+    _seg_rt->aux_param = false; // is first beat
+    then = now; // reset the beat timer
+    SET_CYCLE;
+  }
+
+  return(_seg->speed / 32);
 }
 
 /*

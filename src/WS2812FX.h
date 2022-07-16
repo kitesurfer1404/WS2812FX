@@ -136,13 +136,15 @@ class WS2812FX : public Adafruit_NeoPixel {
     } segment;
 
     // segment runtime parameters
-    typedef struct Segment_runtime { // 16 bytes
+    typedef struct Segment_runtime { // 20 bytes for Arduino, 24 bytes for ESP
       unsigned long next_time;
       uint32_t counter_mode_step;
       uint32_t counter_mode_call;
-      uint8_t aux_param;   // auxilary param (usually stores a color_wheel index)
-      uint8_t aux_param2;  // auxilary param (usually stores bitwise options)
-      uint16_t aux_param3; // auxilary param (usually stores a segment index)
+      uint8_t  aux_param;   // auxilary param (usually stores a color_wheel index)
+      uint8_t  aux_param2;  // auxilary param (usually stores bitwise options)
+      uint16_t aux_param3;  // auxilary param (usually stores a segment index)
+      uint8_t* extDataSrc = NULL; // external data array
+      uint16_t extDataCnt = 0;    // number of bytes in the external data array
     } segment_runtime;
 
     WS2812FX(uint16_t num_leds, uint8_t pin, neoPixelType type,
@@ -235,6 +237,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       copyPixels(uint16_t d, uint16_t s, uint16_t c),
       setPixels(uint16_t, uint8_t*),
       setRandomSeed(uint16_t),
+      setExtDataSrc(uint8_t seg, uint8_t *src, uint8_t cnt),
       show(void);
 
     bool
@@ -379,6 +382,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_rainbow_larson(void),
       mode_rainbow_fireworks(void),
       mode_trifade(void),
+      mode_vu_meter(void),
+      mode_heartbeat(void),
       mode_custom_0(void),
       mode_custom_1(void),
       mode_custom_2(void),
@@ -486,9 +491,9 @@ class WS2812FXT {
 };
 
 #if defined(ESP8266) || defined(ESP32)
-#include "modes_esp.h"
+  #include "modes_esp.h"
 #else
-#include "modes_arduino.h"
+  #include "modes_arduino.h"
 #endif
 
 #endif
