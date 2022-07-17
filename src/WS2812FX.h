@@ -49,8 +49,8 @@
 #define DEFAULT_COLORS     { RED, GREEN, BLUE }
 #define COLORS(...)        (const uint32_t[]){__VA_ARGS__}
 
-#if defined(ESP8266) || defined(ESP32)
-  //#pragma message("Compiling for ESP")
+#if defined(ESP8266) || defined(ESP32) || defined(ARDUINO_ARCH_RP2040)
+  //#pragma message("Compiling for ESP or RP2040")
   #define SPEED_MIN (uint16_t)2
 #else
   //#pragma message("Compiling for Arduino")
@@ -492,7 +492,7 @@ class WS2812FXT {
     bool transitionDirection = true;
 };
 
-#if defined(ESP8266) || defined(ESP32)
+#if defined(ESP8266) || defined(ESP32) || defined(ARDUINO_ARCH_RP2040)
   #include "modes_esp.h"
 #else
   #include "modes_arduino.h"

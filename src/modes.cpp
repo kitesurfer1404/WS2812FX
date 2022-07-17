@@ -790,7 +790,7 @@ uint16_t WS2812FX::mode_filler_up(void) {
 
   _seg_rt->counter_mode_step++; // move the drop
 
-  // when drop reaches the fill line, inc the fill line
+  // when drop reaches the fill line, incr the fill line
   if(_seg_rt->counter_mode_step >= _seg_len - _seg_rt->aux_param3) {
     _seg_rt->aux_param3++;
     _seg_rt->counter_mode_step = 0;
