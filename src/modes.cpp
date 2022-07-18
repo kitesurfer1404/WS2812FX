@@ -985,9 +985,9 @@ uint16_t WS2812FX::mode_bits(void) {
 uint16_t WS2812FX::mode_multi_comet(void) {
   static uint16_t comets[] = {0, 0};
 
-  // if external data source not set, config for two comets
-  // note: the comet data array is data type uint16_t (but extDataSrc is uint8_t),
-  // so be careful if you cast and count an external data source.
+  // if external data source not set, config for two comets.
+  // note: the multi_comet data array is data type uint16_t, but extDataSrc
+  // is uint8_t, so be careful when you cast and count an external data source.
   // i.e. uint16_t extData[] = {0, 0, 0, 0}; // four comets
   //      setExtDataSrc(0, (uint8_t*)extData, sizeof(extData) / sizeof(extData[0]));
   _seg_rt->extDataSrc = _seg_rt->extDataSrc != NULL ? _seg_rt->extDataSrc : (uint8_t*)comets;
@@ -1016,6 +1016,140 @@ uint16_t WS2812FX::mode_multi_comet(void) {
   }
 
   return(_seg->speed / _seg_len);
+}
+
+/*
+  Custom effect that works like a flipbook, by animating "pages" of a 2D matrix
+  of LEDs (similar to the matrix custom effect).
+
+  In your sketch create an array of led color data:
+  uint32_t pageColors[][3][2] = { // 2 pages each with 3 rows of 2 LEDs
+    { // page 0
+      {RED,   RED},   // row 0
+      {WHITE, WHITE}, // row 1
+      {BLUE,  BLUE}   // row 2
+    },
+    { // page 1
+      {YELLOW, YELLOW}, // row 0
+      {PINK,   PINK},   // row 1
+      {GREEN,  GREEN}   // row 2
+    }
+  };
+
+  populate the Flipbook struct:
+  Flipbook flipbook = { 2, 3, 2, (uint32_t*)pageColors }; // pages, rows, columns, color data
+
+  Then tell the flipbook effect about your flipbook struct:
+  ws2812fx.setExtDataSrc(0, (uint8_t*)&flipbook, 1);
+*/
+uint16_t WS2812FX::mode_flipbook(void) {
+  // An external data source is required for the flipbook effect, so bale if none has been setup
+  if(_seg_rt->extDataSrc) {
+    // cast external data array to Flipbook struct
+    Flipbook* _flipbook = (Flipbook*) _seg_rt->extDataSrc;
+
+    uint16_t segIndex = _seg->start;
+    uint8_t pageIndex = _seg_rt->aux_param * _flipbook->numRows * _flipbook->numCols; // aux_param will store the page index
+
+    for(int rowIndex=0; rowIndex < _flipbook->numRows; rowIndex++) {
+      uint16_t pageRowIndex = pageIndex + (rowIndex * _flipbook->numCols);
+      for(int colIndex=0; colIndex < _flipbook->numCols; colIndex++) {
+        if(segIndex <= _seg->stop) {
+          setPixelColor(segIndex, _flipbook->colors[pageRowIndex + colIndex]);
+          segIndex++;
+        }
+      }
+    }
+
+    // increment to the next page
+    _seg_rt->aux_param = (_seg_rt->aux_param + 1) % _flipbook->numPages;
+    if(_seg_rt->aux_param == 0) SET_CYCLE;
+  }
+  return _seg->speed;
+}
+
+uint16_t WS2812FX::mode_popcorn(void) {
+  // An external data source is required for the popcorn effect, so bale if none has been setup
+  if(_seg_rt->extDataSrc) {
+    // cast external data array to an array of Popcorn structs
+    Popcorn* _popcorn = (Popcorn*) _seg_rt->extDataSrc;
+    uint8_t numKernels =  _seg_rt->extDataCnt;
+
+    static float coeff = 0.0f;
+    if(coeff == 0.0f) { // calculate the velocity coeff once (the secret sauce)
+      coeff = pow((float)_seg_len, 0.5223324f) * 0.3944296f;
+    }
+
+    uint32_t bgColor = _seg->colors[1];
+    fill(bgColor, _seg->start, _seg_len); // reset all LEDs to the background color
+
+    uint32_t popcornColor = (_seg->colors[0] == bgColor) ? color_wheel(random8()) : _seg->colors[0];
+
+    for(int8_t i=0; i < numKernels; i++) {
+      if(_popcorn[i].position >= 0.0f) { // if kernel is active, update its position and slow it down
+        _popcorn[i].position += _popcorn[i].velocity;
+        _popcorn[i].velocity -= 0.1f; // gravity = -0.1
+      } else { // if kernel is inactive, randomly pop it (make it active)
+        if(random8() < 2) { // POP!!!
+          _popcorn[i].position = 0.0f;
+          _popcorn[i].velocity = coeff * ((66 + random8(34)) / 100.0f); // initial fast velocity
+          _popcorn[i].color = popcornColor;
+          SET_CYCLE;
+        }
+      }
+
+      // if kernel is active, turn on the appropriate LED
+      if(_popcorn[i].position >= 0.0f) {
+        uint16_t ledIndex = IS_REVERSE ? _seg->stop - _popcorn[i].position : _seg->start + _popcorn[i].position;
+        if(ledIndex >= _seg->start && ledIndex <= _seg->stop) setPixelColor(ledIndex, _popcorn[i].color);
+      }
+    }
+  }
+  return(_seg->speed / _seg_len);
+}
+
+uint16_t WS2812FX::mode_oscillator(void) {
+  static Oscillator oscillators[] = { // 2 default oscillators
+    {(uint8_t)(_seg_len/8),                        0,  1}, // size, pos, speed
+    {(uint8_t)(_seg_len/8),  (int16_t)(_seg_len - 1), -2}
+  };
+
+  // if external data source not set, config for two oscillators.
+  // note: the oscillator data is an array of Oscillator structs, but extDataSrc
+  // is uint8_t, so be careful when you cast and count an external data source.
+  _seg_rt->extDataSrc = _seg_rt->extDataSrc != NULL ? _seg_rt->extDataSrc : (uint8_t*)oscillators;
+  _seg_rt->extDataCnt = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt : 2;
+
+  // cast external data array to an array of Oscillator structs
+  Oscillator* _oscillators = (Oscillator*) _seg_rt->extDataSrc;
+
+  for(int8_t i=0; i < _seg_rt->extDataCnt; i++) {
+    Oscillator* osc = &_oscillators[i];
+    if(osc->size == 0) osc->size = 1; // make sure the size is at least one
+    osc->pos += osc->speed; // update the osc position
+    // check if the new poistion is within the segment bounds, and reset if not
+    if((osc->pos <= 0) || osc->pos >= (_seg_len - 1)) {
+      int8_t newSpeed = 1 + random8(3);
+      osc->pos   = (osc->speed <= 0) ? 0        : _seg_len - 1; // reset position
+      osc->speed = (osc->speed <= 0) ? newSpeed : -newSpeed;    // change direction
+      SET_CYCLE;
+    }
+  }
+
+  // update LEDs based on new positions
+  for(int16_t i=0; i < _seg_len; i++) {
+    // if the oscillators overlap, blend their colors
+    uint32_t blendedcolor = BLACK;
+    for(int8_t j=0; j < _seg_rt->extDataCnt; j++) {
+      Oscillator* osc = &_oscillators[j];
+      uint32_t oscColor = _seg->colors[j % MAX_NUM_COLORS];
+      if(i >= osc->pos && i < osc->pos + osc->size) {
+        blendedcolor = (blendedcolor == BLACK) ? oscColor : color_blend(blendedcolor, oscColor, 128);
+      }
+    }
+    setPixelColor(_seg->start + i, blendedcolor);
+  }
+  return(_seg->speed / 8);
 }
 
 /*

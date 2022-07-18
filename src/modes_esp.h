@@ -106,15 +106,18 @@
 #define FX_MODE_HEARTBEAT               66
 #define FX_MODE_BITS                    67
 #define FX_MODE_MULTI_COMET             68
-#define FX_MODE_CUSTOM                  69  // keep this for backward compatiblity
-#define FX_MODE_CUSTOM_0                69  // custom modes need to go at the end
-#define FX_MODE_CUSTOM_1                70
-#define FX_MODE_CUSTOM_2                71
-#define FX_MODE_CUSTOM_3                72
-#define FX_MODE_CUSTOM_4                73
-#define FX_MODE_CUSTOM_5                74
-#define FX_MODE_CUSTOM_6                75
-#define FX_MODE_CUSTOM_7                76
+#define FX_MODE_FLIPBOOK                69
+#define FX_MODE_POPCORN                 70
+#define FX_MODE_OSCILLATOR              71
+#define FX_MODE_CUSTOM                  72  // keep this for backward compatiblity
+#define FX_MODE_CUSTOM_0                72  // custom modes need to go at the end
+#define FX_MODE_CUSTOM_1                73
+#define FX_MODE_CUSTOM_2                74
+#define FX_MODE_CUSTOM_3                75
+#define FX_MODE_CUSTOM_4                76
+#define FX_MODE_CUSTOM_5                77
+#define FX_MODE_CUSTOM_6                78
+#define FX_MODE_CUSTOM_7                79
 
 typedef struct Mode {
   const __FlashStringHelper* name;
@@ -201,14 +204,17 @@ const char name_65[] PROGMEM = "VU Meter";
 const char name_66[] PROGMEM = "Heartbeat";
 const char name_67[] PROGMEM = "Bits";
 const char name_68[] PROGMEM = "Multi Comet";
-const char name_69[] PROGMEM = "Custom 0"; // custom modes need to go at the end
-const char name_70[] PROGMEM = "Custom 1";
-const char name_71[] PROGMEM = "Custom 2";
-const char name_72[] PROGMEM = "Custom 3";
-const char name_73[] PROGMEM = "Custom 4";
-const char name_74[] PROGMEM = "Custom 5";
-const char name_75[] PROGMEM = "Custom 6";
-const char name_76[] PROGMEM = "Custom 7";
+const char name_69[] PROGMEM = "Flipbook";
+const char name_70[] PROGMEM = "Popcorn";
+const char name_71[] PROGMEM = "Oscillator";
+const char name_72[] PROGMEM = "Custom 0"; // custom modes need to go at the end
+const char name_73[] PROGMEM = "Custom 1";
+const char name_74[] PROGMEM = "Custom 2";
+const char name_75[] PROGMEM = "Custom 3";
+const char name_76[] PROGMEM = "Custom 4";
+const char name_77[] PROGMEM = "Custom 5";
+const char name_78[] PROGMEM = "Custom 6";
+const char name_79[] PROGMEM = "Custom 7";
 
 // define static array of member function pointers.
 // make sure the order of the _modes array elements matches the FX_MODE_* values
@@ -282,13 +288,16 @@ __attribute__ ((unused)) static mode _modes[] = {
   { FSH(name_66), FSH(cat_special), &WS2812FX::mode_heartbeat},
   { FSH(name_67), FSH(cat_special), &WS2812FX::mode_bits},
   { FSH(name_68), FSH(cat_wipe),    &WS2812FX::mode_multi_comet},
-  { FSH(name_69), FSH(cat_custom),  &WS2812FX::mode_custom_0 },
-  { FSH(name_70), FSH(cat_custom),  &WS2812FX::mode_custom_1 },
-  { FSH(name_71), FSH(cat_custom),  &WS2812FX::mode_custom_2 },
-  { FSH(name_72), FSH(cat_custom),  &WS2812FX::mode_custom_3 },
-  { FSH(name_73), FSH(cat_custom),  &WS2812FX::mode_custom_4 },
-  { FSH(name_74), FSH(cat_custom),  &WS2812FX::mode_custom_5 },
-  { FSH(name_75), FSH(cat_custom),  &WS2812FX::mode_custom_6 },
-  { FSH(name_76), FSH(cat_custom),  &WS2812FX::mode_custom_7 }
+  { FSH(name_69), FSH(cat_special), &WS2812FX::mode_flipbook},
+  { FSH(name_70), FSH(cat_special), &WS2812FX::mode_popcorn},
+  { FSH(name_71), FSH(cat_special), &WS2812FX::mode_oscillator},
+  { FSH(name_72), FSH(cat_custom),  &WS2812FX::mode_custom_0 },
+  { FSH(name_73), FSH(cat_custom),  &WS2812FX::mode_custom_1 },
+  { FSH(name_74), FSH(cat_custom),  &WS2812FX::mode_custom_2 },
+  { FSH(name_75), FSH(cat_custom),  &WS2812FX::mode_custom_3 },
+  { FSH(name_76), FSH(cat_custom),  &WS2812FX::mode_custom_4 },
+  { FSH(name_77), FSH(cat_custom),  &WS2812FX::mode_custom_5 },
+  { FSH(name_78), FSH(cat_custom),  &WS2812FX::mode_custom_6 },
+  { FSH(name_79), FSH(cat_custom),  &WS2812FX::mode_custom_7 }
 };
 #endif

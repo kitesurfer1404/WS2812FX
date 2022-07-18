@@ -144,7 +144,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       uint8_t  aux_param2;  // auxilary param (usually stores bitwise options)
       uint16_t aux_param3;  // auxilary param (usually stores a segment index)
       uint8_t* extDataSrc = NULL; // external data array
-      uint16_t extDataCnt = 0;    // number of bytes in the external data array
+      uint16_t extDataCnt = 0;    // number of elements in the external data array
     } segment_runtime;
 
     WS2812FX(uint16_t num_leds, uint8_t pin, neoPixelType type,
@@ -386,6 +386,9 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_heartbeat(void),
       mode_bits(void),
       mode_multi_comet(void),
+      mode_flipbook(void),
+      mode_popcorn(void),
+      mode_oscillator(void),
       mode_custom_0(void),
       mode_custom_1(void),
       mode_custom_2(void),
@@ -490,6 +493,28 @@ class WS2812FXT {
     unsigned long transitionStartTime = MAX_MILLIS;
     uint16_t transitionDuration = 5000;
     bool transitionDirection = true;
+};
+
+// data struct used by the flipbook effect
+struct Flipbook {
+  int8_t   numPages;
+  int8_t   numRows;
+  int8_t   numCols;
+  uint32_t* colors;
+};
+
+// data struct used by the popcorn effect
+struct Popcorn {
+  float position;
+  float velocity;
+  int32_t color;
+};
+
+// data struct used by the oscillator effect
+struct Oscillator {
+  uint8_t size;
+  int16_t pos;
+  int8_t  speed;
 };
 
 #if defined(ESP8266) || defined(ESP32) || defined(ARDUINO_ARCH_RP2040)
