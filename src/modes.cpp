@@ -1110,8 +1110,8 @@ uint16_t WS2812FX::mode_popcorn(void) {
 
 uint16_t WS2812FX::mode_oscillator(void) {
   static Oscillator oscillators[] = { // 2 default oscillators
-    {(uint8_t)(_seg_len/8),                        0,  1}, // size, pos, speed
-    {(uint8_t)(_seg_len/8),  (int16_t)(_seg_len - 1), -2}
+    {(uint8_t)(_seg_len/4),                        0,  1}, // size, pos, speed
+    {(uint8_t)(_seg_len/4),  (int16_t)(_seg_len - 1), -2}
   };
 
   // if external data source not set, config for two oscillators.

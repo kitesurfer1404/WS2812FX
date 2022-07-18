@@ -81,7 +81,8 @@ wifi_sketches=(
   'ws2812fx_alexa/ws2812fx_alexa.ino',
   'ws2812fx_patterns_web/ws2812fx_patterns_web.ino',
   'ws2812fx_segments_OTA/ws2812fx_segments_OTA.ino',
-  'ws2812fx_segments_web/ws2812fx_segments_web.ino'
+  'ws2812fx_segments_web/ws2812fx_segments_web.ino',
+  'ws2812fx_extData/ws2812fx_extData.ino'
 )
 
 # run verify command for all sketches for the ESP8266 board

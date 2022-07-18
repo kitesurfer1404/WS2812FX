@@ -537,7 +537,6 @@ void WS2812FX::resetSegments() {
 }
 
 void WS2812FX::resetSegmentRuntimes() {
-  //memset(_segment_runtimes, 0, _active_segments_len * sizeof(Segment_runtime))
   for(uint8_t i=0; i<_segments_len; i++) {
     resetSegmentRuntime(i);
   };
@@ -546,7 +545,6 @@ void WS2812FX::resetSegmentRuntimes() {
 void WS2812FX::resetSegmentRuntime(uint8_t seg) {
   uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
   if(ptr == NULL) return; // segment not active
-  // memset(&_segment_runtimes[ptr - _active_segments], 0, sizeof(Segment_runtime));
   _segment_runtimes[seg].next_time = 0;
   _segment_runtimes[seg].counter_mode_step = 0;
   _segment_runtimes[seg].counter_mode_call = 0;
