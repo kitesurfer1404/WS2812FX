@@ -1074,40 +1074,46 @@ uint16_t WS2812FX::mode_flipbook(void) {
 }
 
 uint16_t WS2812FX::mode_popcorn(void) {
-  // An external data source is required for the popcorn effect, so bale if none has been setup
-  if(_seg_rt->extDataSrc) {
-    // cast external data array to an array of Popcorn structs
-    Popcorn* _popcorn = (Popcorn*) _seg_rt->extDataSrc;
-    uint8_t numKernels =  _seg_rt->extDataCnt;
+  static Popcorn popcorn[5]; // allocate space for 5 kernels of popcorn
 
-    static float coeff = 0.0f;
-    if(coeff == 0.0f) { // calculate the velocity coeff once (the secret sauce)
-      coeff = pow((float)_seg_len, 0.5223324f) * 0.3944296f;
+  // if external data source not set, config for two comets.
+  // note: the multi_comet data array is data type uint16_t, but extDataSrc
+  // is uint8_t, so be careful when you cast and count an external data source.
+  // i.e. uint16_t extData[] = {0, 0, 0, 0}; // four comets
+  //      setExtDataSrc(0, (uint8_t*)extData, sizeof(extData) / sizeof(extData[0]));
+  _seg_rt->extDataSrc = _seg_rt->extDataSrc != NULL ? _seg_rt->extDataSrc : (uint8_t*)popcorn;
+  _seg_rt->extDataCnt = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt : 5;
+
+  // cast external data array to an array of Popcorn structs
+  Popcorn* _popcorn = (Popcorn*) _seg_rt->extDataSrc;
+
+  static float coeff = 0.0f;
+  if(coeff == 0.0f) { // calculate the velocity coeff once (the secret sauce)
+    coeff = pow((float)_seg_len, 0.5223324f) * 0.3944296f;
+  }
+
+  uint32_t bgColor = _seg->colors[1];
+  fill(bgColor, _seg->start, _seg_len); // reset all LEDs to the background color
+
+  uint32_t popcornColor = (_seg->colors[0] == bgColor) ? color_wheel(random8()) : _seg->colors[0];
+
+  for(int8_t i=0; i < _seg_rt->extDataCnt; i++) { // for each kernel
+    if(_popcorn[i].position >= 0.0f) { // if kernel is active, update its position and slow it down
+      _popcorn[i].position += _popcorn[i].velocity;
+      _popcorn[i].velocity -= 0.1f; // gravity = -0.1
+    } else { // if kernel is inactive, randomly pop it (make it active)
+      if(random8() < 2) { // POP!!!
+        _popcorn[i].position = 0.0f;
+        _popcorn[i].velocity = coeff * ((66 + random8(34)) / 100.0f); // initial fast velocity
+        _popcorn[i].color = popcornColor;
+        SET_CYCLE;
+      }
     }
 
-    uint32_t bgColor = _seg->colors[1];
-    fill(bgColor, _seg->start, _seg_len); // reset all LEDs to the background color
-
-    uint32_t popcornColor = (_seg->colors[0] == bgColor) ? color_wheel(random8()) : _seg->colors[0];
-
-    for(int8_t i=0; i < numKernels; i++) {
-      if(_popcorn[i].position >= 0.0f) { // if kernel is active, update its position and slow it down
-        _popcorn[i].position += _popcorn[i].velocity;
-        _popcorn[i].velocity -= 0.1f; // gravity = -0.1
-      } else { // if kernel is inactive, randomly pop it (make it active)
-        if(random8() < 2) { // POP!!!
-          _popcorn[i].position = 0.0f;
-          _popcorn[i].velocity = coeff * ((66 + random8(34)) / 100.0f); // initial fast velocity
-          _popcorn[i].color = popcornColor;
-          SET_CYCLE;
-        }
-      }
-
-      // if kernel is active, turn on the appropriate LED
-      if(_popcorn[i].position >= 0.0f) {
-        uint16_t ledIndex = IS_REVERSE ? _seg->stop - _popcorn[i].position : _seg->start + _popcorn[i].position;
-        if(ledIndex >= _seg->start && ledIndex <= _seg->stop) setPixelColor(ledIndex, _popcorn[i].color);
-      }
+    // if kernel is active, turn on the appropriate LED
+    if(_popcorn[i].position >= 0.0f) {
+      uint16_t ledIndex = IS_REVERSE ? _seg->stop - _popcorn[i].position : _seg->start + _popcorn[i].position;
+      if(ledIndex >= _seg->start && ledIndex <= _seg->stop) setPixelColor(ledIndex, _popcorn[i].color);
     }
   }
   return(_seg->speed / _seg_len);
