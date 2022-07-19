@@ -43,7 +43,12 @@ v1.4.1 changes 07/18/2022
 	to get/set pixel data without regard to the Adafruit_NeoPixel
 	global brightness rigmarole.
 
-5) Modified the tester.zsh automated testing script to include tests
+5) Modified the rainbow_cycle effect so that it would work well with
+	very short segments of LEDs. The timing was slowed down a bit as
+	well, so you may need to adjust the speed parameter if you're
+	using that effect.
+
+6) Modified the tester.zsh automated testing script to include tests
 	for RP2040 processors. examples/tester_Jul2022.txt contains the
 	latest test results.
 

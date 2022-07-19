@@ -246,10 +246,15 @@ uint16_t WS2812FX::mode_rainbow_cycle(void) {
     setPixelColor(_seg->start, color);
   }
 
-  _seg_rt->counter_mode_step = (_seg_rt->counter_mode_step + 1) & 0xFF;
-  if(_seg_rt->counter_mode_step == 0) SET_CYCLE;
+  uint8_t colorIndexIncr =  256 / _seg_len;
+  if(colorIndexIncr == 0) colorIndexIncr = 1;
+  _seg_rt->counter_mode_step += colorIndexIncr;
+  if(_seg_rt->counter_mode_step > 255) {
+    _seg_rt->counter_mode_step &= 0xff;
+    SET_CYCLE;
+  }
 
-  return (_seg->speed / 256);
+  return (_seg->speed / 64);
 }
 
 /*
