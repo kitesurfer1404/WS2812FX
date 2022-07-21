@@ -961,24 +961,26 @@ uint16_t WS2812FX::mode_vu_meter(void) {
 }
 
 uint16_t WS2812FX::mode_bits(void) {
-  // An external data source is required for the flipbook effect, so bale if none has been setup
-  if(_seg_rt->extDataSrc) {
-    // segment length must be at least twice the number of bits
-    uint8_t ledsPerBit = _seg_len / (_seg_rt->extDataCnt * 2);
-    if(ledsPerBit) {
-      uint32_t color = color_wheel(_seg_rt->aux_param++); // rainbow of colors
+  static uint8_t bitsData[] = {1,1,1,0,1,0,1,1,1,1}; // pi=3.14
 
-      for(uint8_t i=0; i < _seg_rt->extDataCnt; i++) {
-        uint16_t index = _seg->start + (i * ledsPerBit * 2);
-        if(_seg_rt->extDataSrc[i]) {
-          fill(color, index, ledsPerBit);              // bit == 1
-          fill(BLACK, index + ledsPerBit, ledsPerBit); // space
-        } else {
-          fill(BLACK, index, ledsPerBit * 2); // bit == 0 + space
-        }
+  // if external data source not set, config for pi
+  uint8_t* src = _seg_rt->extDataSrc != NULL ? _seg_rt->extDataSrc : bitsData;
+  uint16_t cnt = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt : 10;
+
+  // segment length must be at least twice the number of bits
+  uint8_t ledsPerBit = _seg_len / (cnt * 2);
+  if(ledsPerBit) {
+    uint32_t color = color_wheel(_seg_rt->aux_param++); // rainbow of colors
+
+    for(uint8_t i=0; i < cnt; i++) {
+      uint16_t index = _seg->start + (i * ledsPerBit * 2);
+      if(src[i]) {
+        fill(color, index, ledsPerBit);              // bit == 1
+        fill(BLACK, index + ledsPerBit, ledsPerBit); // space
+      } else {
+        fill(BLACK, index, ledsPerBit * 2); // bit == 0 + space
       }
     }
-
     if(_seg_rt->aux_param == 0) SET_CYCLE;
   }
   return(_seg->speed / 32);
