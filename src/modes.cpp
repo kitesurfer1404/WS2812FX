@@ -59,7 +59,7 @@ uint16_t WS2812FX::mode_blink(void) {
  * Classic Blink effect. Cycling through the rainbow.
  */
 uint16_t WS2812FX::mode_blink_rainbow(void) {
-  return blink(color_wheel(_seg_rt->counter_mode_call & 0xFF), _seg->colors[1], false);
+  return blink(color_wheel((_seg_rt->counter_mode_call << 2) & 0xFF), _seg->colors[1], false);
 }
 
 /*
@@ -73,7 +73,7 @@ uint16_t WS2812FX::mode_strobe(void) {
  * Classic Strobe effect. Cycling through the rainbow.
  */
 uint16_t WS2812FX::mode_strobe_rainbow(void) {
-  return blink(color_wheel(_seg_rt->counter_mode_call & 0xFF), _seg->colors[1], true);
+  return blink(color_wheel((_seg_rt->counter_mode_call << 2) & 0xFF), _seg->colors[1], true);
 }
 
 /*

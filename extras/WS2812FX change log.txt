@@ -48,7 +48,10 @@ v1.4.1 changes 07/18/2022
 	well, so you may need to adjust the speed parameter if you're
 	using that effect.
 
-6) Modified the tester.zsh automated testing script to include tests
+6) Tweaked the blink_rainbow and strobe_rainbow effects, so the
+	colors would change more quickly. 
+
+7) Modified the tester.zsh automated testing script to include tests
 	for RP2040 processors. examples/tester_Jul2022.txt contains the
 	latest test results.
 
