@@ -49,8 +49,8 @@
 #define DEFAULT_COLORS     { RED, GREEN, BLUE }
 #define COLORS(...)        (const uint32_t[]){__VA_ARGS__}
 
-#if defined(ESP8266) || defined(ESP32)
-  //#pragma message("Compiling for ESP")
+#if defined(ESP8266) || defined(ESP32) || defined(ARDUINO_ARCH_RP2040)
+  //#pragma message("Compiling for ESP or RP2040")
   #define SPEED_MIN (uint16_t)2
 #else
   //#pragma message("Compiling for Arduino")
@@ -136,13 +136,15 @@ class WS2812FX : public Adafruit_NeoPixel {
     } segment;
 
     // segment runtime parameters
-    typedef struct Segment_runtime { // 16 bytes
+    typedef struct Segment_runtime { // 20 bytes for Arduino, 24 bytes for ESP
       unsigned long next_time;
       uint32_t counter_mode_step;
       uint32_t counter_mode_call;
-      uint8_t aux_param;   // auxilary param (usually stores a color_wheel index)
-      uint8_t aux_param2;  // auxilary param (usually stores bitwise options)
-      uint16_t aux_param3; // auxilary param (usually stores a segment index)
+      uint8_t  aux_param;   // auxilary param (usually stores a color_wheel index)
+      uint8_t  aux_param2;  // auxilary param (usually stores bitwise options)
+      uint16_t aux_param3;  // auxilary param (usually stores a segment index)
+      uint8_t* extDataSrc = NULL; // external data array
+      uint16_t extDataCnt = 0;    // number of elements in the external data array
     } segment_runtime;
 
     WS2812FX(uint16_t num_leds, uint8_t pin, neoPixelType type,
@@ -231,9 +233,11 @@ class WS2812FX : public Adafruit_NeoPixel {
       setPixelColor(uint16_t n, uint32_t c),
       setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b),
       setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w),
+      setRawPixelColor(uint16_t n, uint32_t c),
       copyPixels(uint16_t d, uint16_t s, uint16_t c),
       setPixels(uint16_t, uint8_t*),
       setRandomSeed(uint16_t),
+      setExtDataSrc(uint8_t seg, uint8_t *src, uint8_t cnt),
       show(void);
 
     bool
@@ -308,7 +312,8 @@ class WS2812FX : public Adafruit_NeoPixel {
       scan(uint32_t, uint32_t, bool);
 
     uint32_t
-      color_blend(uint32_t, uint32_t, uint8_t);
+      color_blend(uint32_t, uint32_t, uint8_t),
+      getRawPixelColor(uint16_t n);
 
     // builtin modes
     uint16_t
@@ -372,7 +377,18 @@ class WS2812FX : public Adafruit_NeoPixel {
       mode_block_dissolve(void),
       mode_icu(void),
       mode_dual_larson(void),
-      mode_random_wipe_bright(void),
+      mode_running_random2(void),
+      mode_filler_up(void),
+      mode_rainbow_larson(void),
+      mode_rainbow_fireworks(void),
+      mode_trifade(void),
+      mode_vu_meter(void),
+      mode_heartbeat(void),
+      mode_bits(void),
+      mode_multi_comet(void),
+      mode_flipbook(void),
+      mode_popcorn(void),
+      mode_oscillator(void),
       mode_custom_0(void),
       mode_custom_1(void),
       mode_custom_2(void),
@@ -479,10 +495,32 @@ class WS2812FXT {
     bool transitionDirection = true;
 };
 
-#if defined(ESP8266) || defined(ESP32)
-#include "modes_esp.h"
+// data struct used by the flipbook effect
+struct Flipbook {
+  int8_t   numPages;
+  int8_t   numRows;
+  int8_t   numCols;
+  uint32_t* colors;
+};
+
+// data struct used by the popcorn effect
+struct Popcorn {
+  float position;
+  float velocity;
+  int32_t color;
+};
+
+// data struct used by the oscillator effect
+struct Oscillator {
+  uint8_t size;
+  int16_t pos;
+  int8_t  speed;
+};
+
+#if defined(ESP8266) || defined(ESP32) || defined(ARDUINO_ARCH_RP2040)
+  #include "modes_esp.h"
 #else
-#include "modes_arduino.h"
+  #include "modes_arduino.h"
 #endif
 
 #endif

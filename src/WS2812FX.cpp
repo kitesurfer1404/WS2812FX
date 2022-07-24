@@ -115,6 +115,32 @@ void WS2812FX::setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_
   }
 }
 
+// custom setPixelColor() function that bypasses the Adafruit_Neopixel global brightness rigmarole
+void WS2812FX::setRawPixelColor(uint16_t n, uint32_t c) {
+  if (n < numLEDs) {
+    uint8_t *p = (wOffset == rOffset) ? &pixels[n * 3] : &pixels[n * 4]; 
+    uint8_t w = (uint8_t)(c >> 24), r = (uint8_t)(c >> 16), g = (uint8_t)(c >> 8), b = (uint8_t)c;
+
+    p[wOffset] = w;
+    p[rOffset] = r;
+    p[gOffset] = g;
+    p[bOffset] = b;
+  }
+}
+
+// custom getPixelColor() function that bypasses the Adafruit_Neopixel global brightness rigmarole
+uint32_t WS2812FX::getRawPixelColor(uint16_t n) {
+  if (n >= numLEDs) return 0; // Out of bounds, return no color.
+
+  if(wOffset == rOffset) { // RGB
+    uint8_t *p = &pixels[n * 3]; 
+    return ((uint32_t)p[rOffset] << 16) | ((uint32_t)p[gOffset] << 8) | (uint32_t)p[bOffset];
+  } else { // RGBW
+    uint8_t *p = &pixels[n * 4];
+    return ((uint32_t)p[wOffset] << 24) | ((uint32_t)p[rOffset] << 16) | ((uint32_t)p[gOffset] << 8) | (uint32_t)p[bOffset];
+  }
+}
+
 void WS2812FX::copyPixels(uint16_t dest, uint16_t src, uint16_t count) {
   uint8_t *pixels = getPixels();
   uint8_t bytesPerPixel = getNumBytesPerPixel(); // 3=RGB, 4=RGBW
@@ -511,13 +537,21 @@ void WS2812FX::resetSegments() {
 }
 
 void WS2812FX::resetSegmentRuntimes() {
-  memset(_segment_runtimes, 0, _active_segments_len * sizeof(Segment_runtime));
+  for(uint8_t i=0; i<_segments_len; i++) {
+    resetSegmentRuntime(i);
+  };
 }
 
 void WS2812FX::resetSegmentRuntime(uint8_t seg) {
   uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
   if(ptr == NULL) return; // segment not active
-  memset(&_segment_runtimes[ptr - _active_segments], 0, sizeof(Segment_runtime));
+  _segment_runtimes[seg].next_time = 0;
+  _segment_runtimes[seg].counter_mode_step = 0;
+  _segment_runtimes[seg].counter_mode_call = 0;
+  _segment_runtimes[seg].aux_param = 0;
+  _segment_runtimes[seg].aux_param2 = 0;
+  _segment_runtimes[seg].aux_param3 = 0;
+  // don't reset any external data source
 }
 
 /*
@@ -650,4 +684,12 @@ uint8_t WS2812FX::setCustomMode(uint8_t index, const __FlashStringHelper* name, 
  */
 void WS2812FX::setCustomShow(void (*p)()) {
   customShow = p;
+}
+
+/*
+ * set a segment runtime's external data source
+ */
+void WS2812FX::setExtDataSrc(uint8_t seg, uint8_t *src, uint8_t cnt) {
+  _segment_runtimes[seg].extDataSrc = src;
+  _segment_runtimes[seg].extDataCnt = cnt;
 }

@@ -1,0 +1,388 @@
+
+Verifing auto_mode_cycle/auto_mode_cycle.ino, for Arduino Leonardo
+Sketch uses 19878 bytes (69%) of program storage space. Maximum is 28672 bytes.
+Global variables use 506 bytes (19%) of dynamic memory, leaving 2054 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing external_trigger/external_trigger.ino, for Arduino Leonardo
+Sketch uses 19896 bytes (69%) of program storage space. Maximum is 28672 bytes.
+Global variables use 506 bytes (19%) of dynamic memory, leaving 2054 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing serial_control/serial_control.ino, for Arduino Leonardo
+Sketch uses 23840 bytes (83%) of program storage space. Maximum is 28672 bytes.
+Global variables use 690 bytes (26%) of dynamic memory, leaving 1870 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing ws2812fx_audio_reactive/ws2812fx_audio_reactive.ino, for Arduino Leonardo
+Sketch uses 20540 bytes (71%) of program storage space. Maximum is 28672 bytes.
+Global variables use 526 bytes (20%) of dynamic memory, leaving 2034 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing ws2812fx_custom_effect/ws2812fx_custom_effect.ino, for Arduino Leonardo
+Sketch uses 20340 bytes (70%) of program storage space. Maximum is 28672 bytes.
+Global variables use 498 bytes (19%) of dynamic memory, leaving 2062 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing ws2812fx_custom_effect2/ws2812fx_custom_effect2.ino, for Arduino Leonardo
+Sketch uses 20220 bytes (70%) of program storage space. Maximum is 28672 bytes.
+Global variables use 513 bytes (20%) of dynamic memory, leaving 2047 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing ws2812fx_custom_FastLED/ws2812fx_custom_FastLED.ino, for Arduino Leonardo
+Sketch uses 20108 bytes (70%) of program storage space. Maximum is 28672 bytes.
+Global variables use 543 bytes (21%) of dynamic memory, leaving 2017 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing ws2812fx_limit_current/ws2812fx_limit_current.ino, for Arduino Leonardo
+Sketch uses 23524 bytes (82%) of program storage space. Maximum is 28672 bytes.
+Global variables use 790 bytes (30%) of dynamic memory, leaving 1770 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing ws2812fx_matrix/ws2812fx_matrix.ino, for Arduino Leonardo
+Sketch uses 12466 bytes (43%) of program storage space. Maximum is 28672 bytes.
+Global variables use 434 bytes (16%) of dynamic memory, leaving 2126 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing ws2812fx_msgeq7/ws2812fx_msgeq7.ino, for Arduino Leonardo
+Sketch uses 20560 bytes (71%) of program storage space. Maximum is 28672 bytes.
+Global variables use 522 bytes (20%) of dynamic memory, leaving 2038 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing ws2812fx_overlay/ws2812fx_overlay.ino, for Arduino Leonardo
+Sketch uses 19922 bytes (69%) of program storage space. Maximum is 28672 bytes.
+Global variables use 616 bytes (24%) of dynamic memory, leaving 1944 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing ws2812fx_segment_sequence/ws2812fx_segment_sequence.ino, for Arduino Leonardo
+Sketch uses 20638 bytes (71%) of program storage space. Maximum is 28672 bytes.
+Global variables use 528 bytes (20%) of dynamic memory, leaving 2032 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing ws2812fx_segments/ws2812fx_segments.ino, for Arduino Leonardo
+Sketch uses 19928 bytes (69%) of program storage space. Maximum is 28672 bytes.
+Global variables use 498 bytes (19%) of dynamic memory, leaving 2062 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing ws2812fx_spi/ws2812fx_spi.ino, for Arduino Leonardo
+Sketch uses 20146 bytes (70%) of program storage space. Maximum is 28672 bytes.
+Global variables use 499 bytes (19%) of dynamic memory, leaving 2061 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing ws2812fx_transitions/ws2812fx_transitions.ino, for Arduino Leonardo
+Sketch uses 20378 bytes (71%) of program storage space. Maximum is 28672 bytes.
+Global variables use 456 bytes (17%) of dynamic memory, leaving 2104 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing ws2812fx_virtual_strip/ws2812fx_virtual_strip.ino for Arduino Leonardo
+Sketch uses 20240 bytes (70%) of program storage space. Maximum is 28672 bytes.
+Global variables use 616 bytes (24%) of dynamic memory, leaving 1944 bytes for local variables. Maximum is 2560 bytes.
+exit status 0
+
+Verifing auto_mode_cycle/auto_mode_cycle.ino, for ESP8266
+Sketch uses 281625 bytes (26%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29580 bytes (36%) of dynamic memory, leaving 52340 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing external_trigger/external_trigger.ino, for ESP8266
+Sketch uses 281657 bytes (26%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29580 bytes (36%) of dynamic memory, leaving 52340 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing serial_control/serial_control.ino, for ESP8266
+Sketch uses 289017 bytes (27%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29716 bytes (36%) of dynamic memory, leaving 52204 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_audio_reactive/ws2812fx_audio_reactive.ino, for ESP8266
+Sketch uses 286857 bytes (27%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29676 bytes (36%) of dynamic memory, leaving 52244 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_custom_effect/ws2812fx_custom_effect.ino, for ESP8266
+Sketch uses 286373 bytes (27%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29648 bytes (36%) of dynamic memory, leaving 52272 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_custom_effect2/ws2812fx_custom_effect2.ino, for ESP8266
+Sketch uses 286465 bytes (27%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29656 bytes (36%) of dynamic memory, leaving 52264 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_custom_FastLED/ws2812fx_custom_FastLED.ino, for ESP8266
+Sketch uses 286685 bytes (27%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29696 bytes (36%) of dynamic memory, leaving 52224 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_limit_current/ws2812fx_limit_current.ino, for ESP8266
+Sketch uses 288909 bytes (27%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29800 bytes (36%) of dynamic memory, leaving 52120 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_matrix/ws2812fx_matrix.ino, for ESP8266
+Sketch uses 269097 bytes (25%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 28556 bytes (34%) of dynamic memory, leaving 53364 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_msgeq7/ws2812fx_msgeq7.ino, for ESP8266
+Sketch uses 286785 bytes (27%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29664 bytes (36%) of dynamic memory, leaving 52256 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_overlay/ws2812fx_overlay.ino, for ESP8266
+Sketch uses 281705 bytes (26%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29764 bytes (36%) of dynamic memory, leaving 52156 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_segment_sequence/ws2812fx_segment_sequence.ino, for ESP8266
+Sketch uses 286661 bytes (27%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29688 bytes (36%) of dynamic memory, leaving 52232 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_segments/ws2812fx_segments.ino, for ESP8266
+Sketch uses 286165 bytes (27%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29648 bytes (36%) of dynamic memory, leaving 52272 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_spi/ws2812fx_spi.ino, for ESP8266
+Sketch uses 282781 bytes (27%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29592 bytes (36%) of dynamic memory, leaving 52328 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_transitions/ws2812fx_transitions.ino, for ESP8266
+Sketch uses 281981 bytes (26%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29496 bytes (36%) of dynamic memory, leaving 52424 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_virtual_strip/ws2812fx_virtual_strip.ino for ESP8266
+Sketch uses 281705 bytes (26%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29764 bytes (36%) of dynamic memory, leaving 52156 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing auto_mode_cycle/auto_mode_cycle.ino, for ESP32
+Sketch uses 253741 bytes (19%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 17740 bytes (5%) of dynamic memory, leaving 309940 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing external_trigger/external_trigger.ino, for ESP32
+Sketch uses 258381 bytes (19%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 17916 bytes (5%) of dynamic memory, leaving 309764 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing serial_control/serial_control.ino, for ESP32
+Sketch uses 274309 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 18052 bytes (5%) of dynamic memory, leaving 309628 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_audio_reactive/ws2812fx_audio_reactive.ino, for ESP32
+Sketch uses 276565 bytes (21%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 18220 bytes (5%) of dynamic memory, leaving 309460 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_custom_effect/ws2812fx_custom_effect.ino, for ESP32
+Sketch uses 271649 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 18028 bytes (5%) of dynamic memory, leaving 309652 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_custom_effect2/ws2812fx_custom_effect2.ino, for ESP32
+Sketch uses 271737 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 18036 bytes (5%) of dynamic memory, leaving 309644 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_custom_FastLED/ws2812fx_custom_FastLED.ino, for ESP32
+Sketch uses 272657 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 18084 bytes (5%) of dynamic memory, leaving 309596 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_limit_current/ws2812fx_limit_current.ino, for ESP32
+Sketch uses 274237 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 18052 bytes (5%) of dynamic memory, leaving 309628 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_matrix/ws2812fx_matrix.ino, for ESP32
+Sketch uses 247609 bytes (18%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 17184 bytes (5%) of dynamic memory, leaving 310496 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_msgeq7/ws2812fx_msgeq7.ino, for ESP32
+Sketch uses 276673 bytes (21%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 18220 bytes (5%) of dynamic memory, leaving 309460 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_overlay/ws2812fx_overlay.ino, for ESP32
+Sketch uses 253849 bytes (19%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 17924 bytes (5%) of dynamic memory, leaving 309756 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_segment_sequence/ws2812fx_segment_sequence.ino, for ESP32
+Sketch uses 272221 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 18052 bytes (5%) of dynamic memory, leaving 309628 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_segments/ws2812fx_segments.ino, for ESP32
+Sketch uses 271433 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 18028 bytes (5%) of dynamic memory, leaving 309652 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_spi/ws2812fx_spi.ino, for ESP32
+Sketch uses 257845 bytes (19%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 17812 bytes (5%) of dynamic memory, leaving 309868 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_transitions/ws2812fx_transitions.ino, for ESP32
+Sketch uses 254177 bytes (19%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 17676 bytes (5%) of dynamic memory, leaving 310004 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_virtual_strip/ws2812fx_virtual_strip.ino for ESP32
+Sketch uses 253829 bytes (19%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 17924 bytes (5%) of dynamic memory, leaving 309756 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing auto_mode_cycle/auto_mode_cycle.ino, for RP2040
+Sketch uses 110274 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44288 bytes (16%) of dynamic memory, leaving 226048 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing external_trigger/external_trigger.ino, for RP2040
+Sketch uses 110999 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44376 bytes (16%) of dynamic memory, leaving 225960 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing serial_control/serial_control.ino, for RP2040
+Sketch uses 112889 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44300 bytes (16%) of dynamic memory, leaving 226036 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing ws2812fx_audio_reactive/ws2812fx_audio_reactive.ino, for RP2040
+Sketch uses 111282 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44380 bytes (16%) of dynamic memory, leaving 225956 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing ws2812fx_custom_effect/ws2812fx_custom_effect.ino, for RP2040
+Sketch uses 110414 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44280 bytes (16%) of dynamic memory, leaving 226056 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing ws2812fx_custom_effect2/ws2812fx_custom_effect2.ino, for RP2040
+Sketch uses 110456 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44284 bytes (16%) of dynamic memory, leaving 226052 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing ws2812fx_custom_FastLED/ws2812fx_custom_FastLED.ino, for RP2040
+exit status 1 (note: the FastLED library doesn't yet support RP2040)
+
+Verifing ws2812fx_limit_current/ws2812fx_limit_current.ino, for RP2040
+Sketch uses 112722 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44304 bytes (16%) of dynamic memory, leaving 226032 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing ws2812fx_matrix/ws2812fx_matrix.ino, for RP2040
+Sketch uses 104988 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 43828 bytes (16%) of dynamic memory, leaving 226508 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing ws2812fx_msgeq7/ws2812fx_msgeq7.ino, for RP2040
+Sketch uses 111398 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44380 bytes (16%) of dynamic memory, leaving 225956 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing ws2812fx_overlay/ws2812fx_overlay.ino, for RP2040
+Sketch uses 110408 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44488 bytes (16%) of dynamic memory, leaving 225848 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing ws2812fx_segment_sequence/ws2812fx_segment_sequence.ino, for RP2040
+Sketch uses 110690 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44292 bytes (16%) of dynamic memory, leaving 226044 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing ws2812fx_segments/ws2812fx_segments.ino, for RP2040
+Sketch uses 110244 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44280 bytes (16%) of dynamic memory, leaving 226056 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing ws2812fx_spi/ws2812fx_spi.ino, for RP2040
+Sketch uses 113028 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44444 bytes (16%) of dynamic memory, leaving 225892 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing ws2812fx_transitions/ws2812fx_transitions.ino, for RP2040
+Sketch uses 110548 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44212 bytes (16%) of dynamic memory, leaving 226124 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing ws2812fx_virtual_strip/ws2812fx_virtual_strip.ino for RP2040
+Sketch uses 110376 bytes (5%) of program storage space. Maximum is 2097152 bytes.
+Global variables use 44488 bytes (16%) of dynamic memory, leaving 225848 bytes for local variables. Maximum is 270336 bytes.
+exit status 0
+
+Verifing esp8266_webinterface/esp8266_webinterface.ino, for ESP8266
+Sketch uses 327677 bytes (31%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 30444 bytes (37%) of dynamic memory, leaving 51476 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_alexa/ws2812fx_alexa.ino, for ESP8266
+Sketch uses 338665 bytes (32%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 31472 bytes (38%) of dynamic memory, leaving 50448 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_patterns_web/ws2812fx_patterns_web.ino, for ESP8266
+Sketch uses 373377 bytes (35%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 34720 bytes (42%) of dynamic memory, leaving 47200 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_segments_OTA/ws2812fx_segments_OTA.ino, for ESP8266
+Sketch uses 334589 bytes (32%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 30460 bytes (37%) of dynamic memory, leaving 51460 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_segments_web/ws2812fx_segments_web.ino, for ESP8266
+Sketch uses 457921 bytes (43%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 36836 bytes (44%) of dynamic memory, leaving 45084 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_extData/ws2812fx_extData.ino for ESP8266
+Sketch uses 281529 bytes (26%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29596 bytes (36%) of dynamic memory, leaving 52324 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing esp8266_webinterface/esp8266_webinterface.ino, for ESP32
+Sketch uses 752557 bytes (57%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 45436 bytes (13%) of dynamic memory, leaving 282244 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_alexa/ws2812fx_alexa.ino, for ESP32
+Sketch uses 771437 bytes (58%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 40500 bytes (12%) of dynamic memory, leaving 287180 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_patterns_web/ws2812fx_patterns_web.ino, for ESP32
+Sketch uses 823937 bytes (62%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 45280 bytes (13%) of dynamic memory, leaving 282400 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_segments_OTA/ws2812fx_segments_OTA.ino, for ESP32
+Sketch uses 754469 bytes (57%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 43212 bytes (13%) of dynamic memory, leaving 284468 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_segments_web/ws2812fx_segments_web.ino, for ESP32
+Sketch uses 891109 bytes (67%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 45848 bytes (13%) of dynamic memory, leaving 281832 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_extData/ws2812fx_extData.ino for ESP32
+Sketch uses 253681 bytes (19%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 17748 bytes (5%) of dynamic memory, leaving 309932 bytes for local variables. Maximum is 327680 bytes.
+exit status 0
+
+Verifing ws2812fx_soundfx/ws2812fx_soundfx.ino for ESP8266
+Sketch uses 388817 bytes (37%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 34956 bytes (42%) of dynamic memory, leaving 46964 bytes for local variables. Maximum is 81920 bytes.
+exit status 0
+
+Verifing ws2812fx_dma/ws2812fx_dma.ino for ESP8266
+Sketch uses 287805 bytes (27%) of program storage space. Maximum is 1044464 bytes.
+Global variables use 29724 bytes (36%) of dynamic memory, leaving 52196 bytes for local variables. Maximum is 81920 bytes.
+exit status 0

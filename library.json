@@ -6,7 +6,7 @@
     "name": "Harm Aldick",
     "url": "https://github.com/kitesurfer1404/WS2812FX"
   },
-  "version": "1.4.0",
+  "version": "1.4.1",
   "frameworks": "arduino",
   "platforms": "*",
   "repository": {

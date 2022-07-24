@@ -59,7 +59,7 @@ uint16_t WS2812FX::mode_blink(void) {
  * Classic Blink effect. Cycling through the rainbow.
  */
 uint16_t WS2812FX::mode_blink_rainbow(void) {
-  return blink(color_wheel(_seg_rt->counter_mode_call & 0xFF), _seg->colors[1], false);
+  return blink(color_wheel((_seg_rt->counter_mode_call << 2) & 0xFF), _seg->colors[1], false);
 }
 
 /*
@@ -73,7 +73,7 @@ uint16_t WS2812FX::mode_strobe(void) {
  * Classic Strobe effect. Cycling through the rainbow.
  */
 uint16_t WS2812FX::mode_strobe_rainbow(void) {
-  return blink(color_wheel(_seg_rt->counter_mode_call & 0xFF), _seg->colors[1], true);
+  return blink(color_wheel((_seg_rt->counter_mode_call << 2) & 0xFF), _seg->colors[1], true);
 }
 
 /*
@@ -246,10 +246,15 @@ uint16_t WS2812FX::mode_rainbow_cycle(void) {
     setPixelColor(_seg->start, color);
   }
 
-  _seg_rt->counter_mode_step = (_seg_rt->counter_mode_step + 1) & 0xFF;
-  if(_seg_rt->counter_mode_step == 0) SET_CYCLE;
+  uint8_t colorIndexIncr =  256 / _seg_len;
+  if(colorIndexIncr == 0) colorIndexIncr = 1;
+  _seg_rt->counter_mode_step += colorIndexIncr;
+  if(_seg_rt->counter_mode_step > 255) {
+    _seg_rt->counter_mode_step &= 0xff;
+    SET_CYCLE;
+  }
 
-  return (_seg->speed / 256);
+  return (_seg->speed / 64);
 }
 
 /*
@@ -752,17 +757,394 @@ uint16_t WS2812FX::mode_dual_larson(void) {
   return (_seg->speed / (_seg_len * 2));
 }
 
-// Random Wipe Bright effect (same as custom RandomChase effect)
-uint16_t WS2812FX::mode_random_wipe_bright(void) {
+// Running random2 effect (simplified version of the custom RandomChase effect)
+uint16_t WS2812FX::mode_running_random2(void) {
+  uint8_t size = 2 << SIZE_OPTION;
   uint32_t color = IS_REVERSE ? getPixelColor(_seg->stop): getPixelColor(_seg->start);
 
-  // periodically change each RGB component to a random value
-  uint8_t mask = random8(7);
-  color = mask & 0x1 ? color : (color & 0x00ffff) | (random8() << 16);
-  color = mask & 0x2 ? color : (color & 0xff00ff) | (random8() <<  8);
-  color = mask & 0x4 ? color : (color & 0xffff00) | (random8());
+  // periodically change the color
+  if((_seg_rt->counter_mode_step) % size == 0) {
+    color = ((uint32_t)random8() << 16) | random16();
+  }
 
   return running(color, color);
+}
+
+// simplied version of the custom filler up mode
+uint16_t WS2812FX::mode_filler_up(void) {
+  uint8_t size = 1 << SIZE_OPTION;
+
+  if(_seg_rt->aux_param3 >= _seg_len) { // if glass is full, reset
+    _seg_rt->aux_param3 = 0; // empty the glass
+    _seg_rt->aux_param = !_seg_rt->aux_param; // swap fg and bg colors
+    SET_CYCLE;
+  }
+
+  uint32_t fgColor = _seg_rt->aux_param ? _seg->colors[0] : _seg->colors[1];
+  uint32_t bgColor = _seg_rt->aux_param ? _seg->colors[1] : _seg->colors[0];
+
+  if(IS_REVERSE) {
+    fill(bgColor, _seg->start, _seg_len); // fill with bg color
+    fill(fgColor, _seg->stop - _seg_rt->counter_mode_step, size); // drop
+    if(_seg_rt->aux_param3) fill(fgColor, _seg->start, _seg_rt->aux_param3);
+  } else {
+    fill(bgColor, _seg->start, _seg_len); // fill with bg color
+    fill(fgColor, _seg->start + _seg_rt->counter_mode_step, size); // drop
+    if(_seg_rt->aux_param3) fill(fgColor, _seg->start + _seg_len - _seg_rt->aux_param3, _seg_rt->aux_param3);
+  }
+
+  _seg_rt->counter_mode_step++; // move the drop
+
+  // when drop reaches the fill line, incr the fill line
+  if(_seg_rt->counter_mode_step >= _seg_len - _seg_rt->aux_param3) {
+    _seg_rt->aux_param3++;
+    _seg_rt->counter_mode_step = 0;
+  }
+
+  return (_seg->speed / _seg_len);
+}
+
+// Rainbow Larson effect
+uint16_t WS2812FX::mode_rainbow_larson(void) {
+  fade_out();
+
+  _seg_rt->aux_param3 += _seg_rt->aux_param ? -1 : 1; // update the LED index
+
+  if(IS_REVERSE) {
+    setPixelColor(_seg->stop - _seg_rt->aux_param3, color_wheel(_seg_rt->counter_mode_call << 4));
+    //setPixelColor(_seg->stop - _seg_rt->aux_param3, color_wheel((_seg_rt->aux_param3 << 8) / _seg_len));
+  } else {
+    setPixelColor(_seg->start + _seg_rt->aux_param3, color_wheel(_seg_rt->counter_mode_call << 4));
+    //setPixelColor(_seg->start + _seg_rt->aux_param3, color_wheel((_seg_rt->aux_param3 << 8) / _seg_len));
+  }
+
+  if(_seg_rt->aux_param3 == 0 || _seg_rt->aux_param3 >= _seg_len - 1) {
+    _seg_rt->aux_param = !_seg_rt->aux_param; // change direction
+    SET_CYCLE;
+  }
+
+  return (_seg->speed / (_seg_len * 2));
+}
+
+uint16_t WS2812FX::mode_rainbow_fireworks(void) {
+  for(uint16_t i=_seg->start; i <= _seg->stop; i++) {
+    uint32_t color = getRawPixelColor(i); // get the raw pixel color (ignore global brightness)
+    color = (color >> 1) & 0x7F7F7F7F;    // fade all pixels
+    setRawPixelColor(i, color);
+
+    // search for the fading red pixels, and create the appropriate neighboring pixels
+    if(color == 0x7F0000) {
+      setPixelColor(i-1, 0xFF7F00); // orange
+      setPixelColor(i+1, 0xFF7F00);
+    } else if(color == 0x3F0000) {
+      setPixelColor(i-2, 0xFFFF00); // yellow
+      setPixelColor(i+2, 0xFFFF00);
+    } else if(color == 0x1F0000) {
+      setPixelColor(i-3, 0x00FF00); // green
+      setPixelColor(i+3, 0x00FF00);
+    } else if(color == 0x0F0000) {
+      setPixelColor(i-4, 0x0000FF); // blue
+      setPixelColor(i+4, 0x0000FF);
+    } else if(color == 0x070000) {
+      setPixelColor(i-5, 0x4B0082); // indigo
+      setPixelColor(i+5, 0x4B0082);
+    } else if(color == 0x030000) {
+      setPixelColor(i-6, 0x9400D3); // violet
+      setPixelColor(i+6, 0x9400D3);
+    }
+  }
+
+  // occasionally create a random red pixel
+  if(random8(4) == 0) {
+    uint16_t index = _seg->start + 6 + random16(max(1, _seg_len - 12));
+    setRawPixelColor(index, RED); // set the raw pixel color (ignore global brightness)
+    SET_CYCLE;
+  }
+  return(_seg->speed / _seg_len);
+}
+
+uint16_t WS2812FX::mode_trifade(void) {
+  uint32_t colorsMain[] = { _seg->colors[0], _seg->colors[1], _seg->colors[2] };
+  uint32_t colorsAlt[]  = { _seg->colors[0], BLACK, _seg->colors[1], BLACK, _seg->colors[2], BLACK };
+
+  uint32_t* colors = colorsMain;
+  uint8_t numColors = sizeof(colorsMain) / sizeof(uint32_t);
+  if(IS_REVERSE) { // if reverse bit is set, fade to black between colors
+      colors = colorsAlt;
+      numColors = sizeof(colorsAlt) / sizeof(uint32_t);
+  }
+
+  uint32_t color1 = colors[_seg_rt->aux_param];
+  uint32_t color2 = colors[(_seg_rt->aux_param + 1) % numColors];
+
+  uint32_t color = color_blend(color1, color2, _seg_rt->aux_param3);
+  fill(color, _seg->start, _seg_len);
+
+  _seg_rt->aux_param3 = (_seg_rt->aux_param3 + 4) % 256;
+  if(_seg_rt->aux_param3 == 0) {
+    _seg_rt->aux_param = (_seg_rt->aux_param + 1) % numColors;
+    SET_CYCLE;
+  }
+
+  return (_seg->speed / 128);
+}
+
+// create pulses that start in the middle of the segment and move toward it's edges
+// time two pulses to mimic a heartbeat
+uint16_t WS2812FX::mode_heartbeat(void) {
+  static unsigned long then = 0;
+  unsigned long now = millis();
+
+  // Get and translate the segment's size option
+  uint8_t size = 2 << ((_seg->options >> 1) & 0x03); // 2,4,8,16
+
+  // copy pixels from the middle of the segment to the edges
+  uint16_t bytesPerPixelBlock = size * getNumBytesPerPixel();
+  uint16_t centerOffset = (_seg_len / 2) * getNumBytesPerPixel();
+  uint16_t byteCount = centerOffset - bytesPerPixelBlock;
+  memmove(getPixels(), getPixels() + bytesPerPixelBlock, byteCount);
+  memmove(getPixels() + centerOffset + bytesPerPixelBlock, getPixels() + centerOffset, byteCount);
+
+  fade_out();
+
+  int beatTimer = now - then;
+  if((beatTimer > 400) && !_seg_rt->aux_param) { // time for the second beat? (400ms after the first beat)
+    uint16_t startLed = _seg->start + (_seg_len / 2) - size;
+    fill(_seg->colors[0], startLed, size * 2); // create the second beat
+    
+    _seg_rt->aux_param = true; // is second beat
+  }
+  if(beatTimer > 1200) { // time for the first beat? (1200ms)
+    uint16_t startLed = _seg->start + (_seg_len / 2) - size;
+    fill(_seg->colors[0], startLed, size * 2); // create the first beat
+
+    _seg_rt->aux_param = false; // is first beat
+    then = now; // reset the beat timer
+    SET_CYCLE;
+  }
+
+  return(_seg->speed / 32);
+}
+
+uint16_t WS2812FX::mode_vu_meter(void) {
+  static uint8_t randomData[1]; // default: one channel of random data
+
+  // if external data source not set, config for one channel of random data
+  uint8_t* src = _seg_rt->extDataSrc != NULL ? _seg_rt->extDataSrc : randomData;
+  uint16_t cnt = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt : 1;
+
+  if(src == randomData) { // if using random data, generate some
+    for(uint8_t i=0; i<cnt; i++) {
+      int randomData = src[i] + random8(32) - random8(32);
+      src[i] = (randomData < 0 || randomData > 255) ? 128 : randomData;
+    }
+  }
+
+  uint16_t channelSize = _seg_len / cnt; // num LEDs in each channel
+
+  for(uint8_t i=0; i<cnt; i++) {  // for each channel
+    uint8_t scaledLevel = (src[i] * channelSize) / 256;
+    for(uint16_t j=0; j<channelSize; j++) {
+      uint16_t index = _seg->start + (i * channelSize) + j;
+      if(j <= scaledLevel) {
+        if(j < channelSize - 4)      setPixelColor(index, _seg->colors[0]); // green
+        else if(j < channelSize - 2) setPixelColor(index, _seg->colors[1]); // yellow
+        else                         setPixelColor(index, _seg->colors[2]); // red
+      } else {
+        setPixelColor(index, BLACK);
+      }
+    }
+  }
+  SET_CYCLE;
+
+  return(_seg->speed / 64);
+}
+
+uint16_t WS2812FX::mode_bits(void) {
+  static uint8_t bitsData[] = {1,1,1,0,1,0,1,1,1,1}; // pi=3.14
+
+  // if external data source not set, config for pi
+  uint8_t* src = _seg_rt->extDataSrc != NULL ? _seg_rt->extDataSrc : bitsData;
+  uint16_t cnt = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt : 10;
+
+  // segment length must be at least twice the number of bits
+  uint8_t ledsPerBit = _seg_len / (cnt * 2);
+  if(ledsPerBit) {
+    uint32_t color = color_wheel(_seg_rt->aux_param++); // rainbow of colors
+
+    for(uint8_t i=0; i < cnt; i++) {
+      uint16_t index = _seg->start + (i * ledsPerBit * 2);
+      if(src[i]) {
+        fill(color, index, ledsPerBit);              // bit == 1
+        fill(BLACK, index + ledsPerBit, ledsPerBit); // space
+      } else {
+        fill(BLACK, index, ledsPerBit * 2); // bit == 0 + space
+      }
+    }
+    if(_seg_rt->aux_param == 0) SET_CYCLE;
+  }
+  return(_seg->speed / 32);
+}
+
+uint16_t WS2812FX::mode_multi_comet(void) {
+  static uint16_t comets[6];
+
+  // if external data source not set, config for two comets.
+  // note: the multi_comet data array is data type uint16_t, but extDataSrc
+  // is uint8_t, so be careful when you cast and count an external data source.
+  // i.e. uint16_t cometData[4]; // four comets
+  //      setExtDataSrc(0, (uint8_t*)cometData, sizeof(cometData) / sizeof(cometData[0]));
+  uint16_t* src = _seg_rt->extDataSrc != NULL ? (uint16_t*)_seg_rt->extDataSrc : comets;
+  uint16_t  cnt = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt            : 6;
+
+  fade_out();
+
+  for(uint8_t i=0; i < cnt; i++) {
+    if(src[i] < _seg_len) { // if comet is active, move it one pixel
+      uint32_t color = i % 2 ? _seg->colors[2] : _seg->colors[0]; // alternate between color[0] and color[2]
+      if(IS_REVERSE) {
+        setPixelColor(_seg->stop - src[i],  color);
+      } else {
+        setPixelColor(_seg->start + src[i], color);
+      }
+      src[i]++;
+    } else {
+      if(random(_seg_len) == 0) {
+        src[i] = 0; // randomly start a comet
+        SET_CYCLE;
+      }
+    }
+  }
+
+  return(_seg->speed / _seg_len);
+}
+
+/*
+  Custom effect that works like a flipbook, by animating "pages" of a 2D matrix
+  of LEDs (similar to the matrix custom effect).
+
+  In your sketch create an array of led color data:
+  uint32_t pageColors[][3][2] = { // 2 pages each with 3 rows of 2 LEDs
+    { // page 0
+      {RED,   RED},   // row 0
+      {WHITE, WHITE}, // row 1
+      {BLUE,  BLUE}   // row 2
+    },
+    { // page 1
+      {YELLOW, YELLOW}, // row 0
+      {PINK,   PINK},   // row 1
+      {GREEN,  GREEN}   // row 2
+    }
+  };
+
+  populate the Flipbook struct:
+  Flipbook flipbook = { 2, 3, 2, (uint32_t*)pageColors }; // pages, rows, columns, color data
+
+  Then tell the flipbook effect about your flipbook struct:
+  ws2812fx.setExtDataSrc(0, (uint8_t*)&flipbook, 1);
+*/
+uint16_t WS2812FX::mode_flipbook(void) {
+  // An external data source is required for the flipbook effect, so bale if none has been setup
+  if(_seg_rt->extDataSrc) {
+    // cast external data array to Flipbook struct
+    Flipbook* _flipbook = (Flipbook*) _seg_rt->extDataSrc;
+
+    uint16_t segIndex = _seg->start;
+    uint8_t pageIndex = _seg_rt->aux_param * _flipbook->numRows * _flipbook->numCols; // aux_param will store the page index
+
+    for(int rowIndex=0; rowIndex < _flipbook->numRows; rowIndex++) {
+      uint16_t pageRowIndex = pageIndex + (rowIndex * _flipbook->numCols);
+      for(int colIndex=0; colIndex < _flipbook->numCols; colIndex++) {
+        if(segIndex <= _seg->stop) {
+          setPixelColor(segIndex, _flipbook->colors[pageRowIndex + colIndex]);
+          segIndex++;
+        }
+      }
+    }
+
+    // increment to the next page
+    _seg_rt->aux_param = (_seg_rt->aux_param + 1) % _flipbook->numPages;
+    if(_seg_rt->aux_param == 0) SET_CYCLE;
+  }
+  return _seg->speed;
+}
+
+uint16_t WS2812FX::mode_popcorn(void) {
+  static Popcorn popcorn[5]; // allocate space for 5 kernels of popcorn
+
+  // if external data source not set, config for five popcorn kernels
+  Popcorn* src = _seg_rt->extDataSrc != NULL ? (Popcorn*)_seg_rt->extDataSrc : popcorn;
+  uint16_t cnt = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt           : 5;
+
+  static float coeff = 0.0f;
+  if(coeff == 0.0f) { // calculate the velocity coeff once (the secret sauce)
+    coeff = pow((float)_seg_len, 0.5223324f) * 0.3944296f;
+  }
+
+  uint32_t bgColor = _seg->colors[1];
+  fill(bgColor, _seg->start, _seg_len); // reset all LEDs to the background color
+
+  uint32_t popcornColor = (_seg->colors[0] == bgColor) ? color_wheel(random8()) : _seg->colors[0];
+
+  for(int8_t i=0; i < cnt; i++) { // for each kernel
+    if(src[i].position >= 0.0f) { // if kernel is active, update its position and slow it down
+      src[i].position += src[i].velocity;
+      src[i].velocity -= 0.1f; // gravity = -0.1
+    } else { // if kernel is inactive, randomly pop it (make it active)
+      if(random8() < 2) { // POP!!!
+        src[i].position = 0.0f;
+        src[i].velocity = coeff * ((66 + random8(34)) / 100.0f); // initial fast velocity
+        src[i].color = popcornColor;
+        SET_CYCLE;
+      }
+    }
+
+    // if kernel is active, turn on the appropriate LED
+    if(src[i].position >= 0.0f) {
+      uint16_t ledIndex = IS_REVERSE ? _seg->stop - src[i].position : _seg->start + src[i].position;
+      if(ledIndex >= _seg->start && ledIndex <= _seg->stop) setPixelColor(ledIndex, src[i].color);
+    }
+  }
+  return(_seg->speed / _seg_len);
+}
+
+uint16_t WS2812FX::mode_oscillator(void) {
+  static Oscillator oscillators[] = { // 2 default oscillators
+    {(uint8_t)(_seg_len/4),                        0,  1}, // size, pos, speed
+    {(uint8_t)(_seg_len/4),  (int16_t)(_seg_len - 1), -2}
+  };
+
+  // if external data source not set, config for two oscillators.
+  Oscillator* src = _seg_rt->extDataSrc != NULL ? (Oscillator*)_seg_rt->extDataSrc : oscillators;
+  uint16_t cnt    = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt              : 2;
+
+  for(int8_t i=0; i < cnt; i++) {
+    Oscillator* osc = &src[i];
+    if(osc->size == 0) osc->size = 1; // make sure the size is at least one
+    osc->pos += osc->speed; // update the osc position
+    // check if the new poistion is within the segment bounds, and reset if not
+    if((osc->pos <= 0) || osc->pos >= (_seg_len - 1)) {
+      int8_t newSpeed = 1 + random8(2);
+      osc->pos   = (osc->speed <= 0) ? 0        : _seg_len - 1; // reset position
+      osc->speed = (osc->speed <= 0) ? newSpeed : -newSpeed;    // change direction
+      SET_CYCLE;
+    }
+  }
+
+  // update LEDs based on new positions
+  for(int16_t i=0; i < _seg_len; i++) {
+    // if the oscillators overlap, blend their colors
+    uint32_t blendedcolor = BLACK;
+    for(int8_t j=0; j < cnt; j++) {
+      Oscillator* osc = &src[j];
+      uint32_t oscColor = _seg->colors[j % MAX_NUM_COLORS];
+      if(i >= osc->pos && i < osc->pos + osc->size) {
+        blendedcolor = (blendedcolor == BLACK) ? oscColor : color_blend(blendedcolor, oscColor, 128);
+      }
+    }
+    setPixelColor(_seg->start + i, blendedcolor);
+  }
+  return(_seg->speed / 8);
 }
 
 /*

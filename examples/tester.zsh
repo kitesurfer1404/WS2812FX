@@ -3,7 +3,9 @@
 # simple test script that verifies all the WS2812FX example sketches.
 # note: behind the scenes this script runs the Arduino IDE, so you will see
 # the IDE's splash screen displayed during each individual test.
-# also note: ths script takes a long time to run.
+# also note: this script takes a long time to run. better to pip the output
+# a file and go get a cup of coffee:
+#   ./tester.zsh > tester.txt
 
 # add the Arduino application to $PATH
 export PATH=$PATH:/Applications/Arduino.app/Contents/MacOS
@@ -11,15 +13,17 @@ export PATH=$PATH:/Applications/Arduino.app/Contents/MacOS
 # test that we can execute the Arduino command
 #Arduino --version
 
-# board aliases
+# board aliases (fully qualified board name)
 alias -g leonardo-board="arduino:avr:leonardo"
 alias -g esp8266-board="esp8266:esp8266:nodemcuv2"
 alias -g esp32-board="esp32:esp32:esp32doit-devkit-v1"
+alias -g rp2040-board="arduino:mbed_rp2040:pico"
 
 # port aliases
-alias -g leonardo-port="/dev/cu.usbmodem14101"
+alias -g leonardo-port="/dev/cu.usbmodem14101 (Arduino Leonardo)"
 alias -g esp8266-port="/dev/cu.usbserial-0001"
 alias -g esp32-port="/dev/cu.usbserial-0001"
+alias -g rp2040-port="/dev/cu.usbmodem14101 (Raspberry Pi Pico)"
 
 # example verify command:
 # arduino --board leonardo-board --verify ws2812fx_segments/ws2812fx_segments.ino
@@ -27,7 +31,7 @@ alias -g esp32-port="/dev/cu.usbserial-0001"
 # example upload command:
 #arduino --board leonardo-board --port leonardo-port --upload ws2812fx_segments/ws2812fx_segments.ino
 
-# create an list of basic example sketches that can be verified for all boards
+# create a list of basic example sketches that can be verified for all boards
 basic_sketches=(
   'auto_mode_cycle/auto_mode_cycle.ino',
   'external_trigger/external_trigger.ino',
@@ -65,13 +69,20 @@ for ((i = 1; i <= $#basic_sketches; i++)) {
   arduino --board esp32-board --verify $basic_sketches[i] 2>/dev/null; echo "exit status" $?
 }
 
-# create an list of example sketches that use WiFi to be verified only on ESP boards
+# run verify command for all sketches for the RP2040 board
+for ((i = 1; i <= $#basic_sketches; i++)) {
+  echo "\nVerifing" $basic_sketches[i] for RP2040
+  arduino --board rp2040-board --verify $basic_sketches[i] 2>/dev/null; echo "exit status" $?
+}
+
+# create a list of example sketches that use WiFi to be verified only on ESP boards
 wifi_sketches=(
   'esp8266_webinterface/esp8266_webinterface.ino',
   'ws2812fx_alexa/ws2812fx_alexa.ino',
   'ws2812fx_patterns_web/ws2812fx_patterns_web.ino',
   'ws2812fx_segments_OTA/ws2812fx_segments_OTA.ino',
-  'ws2812fx_segments_web/ws2812fx_segments_web.ino'
+  'ws2812fx_segments_web/ws2812fx_segments_web.ino',
+  'ws2812fx_extData/ws2812fx_extData.ino'
 )
 
 # run verify command for all sketches for the ESP8266 board

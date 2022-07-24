@@ -1,6 +1,61 @@
 WS2182FX Change Log
 
 
+v1.4.1 changes 07/18/2022
+-------------------------
+
+1) Since ESP and Arduino microprocessors now have separate header
+	files (see v1.4.0 change log notes), the 15 custom effects were
+	added as built-in effects for ESP (and RP2040) devices. The
+	mechanism to add custom effects is still available for Arduino
+	projects (see the ws2812fx_custom_effect2 example sketch), but
+	with limited memory, you'll need to pick and choose the custom
+	effects that you want included in Arduino projects.
+	The following effects are now built-in for ESP and RP2040 devices:
+		Block Dissolve
+		ICU
+		Dual Larson
+		Running Random2
+		Filler Up
+		Rainbow Larson
+		Rainbow Fireworks
+		Trifade
+		VU Meter
+		Heartbeat
+		Bits
+		Multi Comet
+		Flipbook (same as the matrix custom effect)
+		Popcorn
+		Oscillator
+
+2) The ability to inject external data into some of the "new"
+	built-in effects was added. This allows potentially very large
+	arrays or data structs to be used by effects and control how
+	they behave. The new ws2812fx_extData example sketch demonstrates
+	how this can be done. Probably not something for a novice
+	developer, but can be a very powerful feature if you know what
+	you're doing.
+
+3) renamed the "random_wipe_bright" effect to "running_random2", since
+	it's really just a variant of the running_random effect.
+
+4) added getRawPixelColor() and setRawPixelColor() utility functions
+	to get/set pixel data without regard to the Adafruit_NeoPixel
+	global brightness rigmarole.
+
+5) Modified the rainbow_cycle effect so that it would work well with
+	very short segments of LEDs. The timing was slowed down a bit as
+	well, so you may need to adjust the speed parameter if you're
+	using that effect.
+
+6) Tweaked the blink_rainbow and strobe_rainbow effects, so the
+	colors would change more quickly. 
+
+7) Modified the tester.zsh automated testing script to include tests
+	for RP2040 processors. examples/tester_Jul2022.txt contains the
+	latest test results.
+
+
 v1.4.0 changes 03/23/2022
 -------------------------
 
