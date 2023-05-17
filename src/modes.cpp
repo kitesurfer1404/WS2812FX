@@ -137,7 +137,7 @@ uint16_t WS2812FX::mode_random_color(void) {
 uint16_t WS2812FX::mode_single_dynamic(void) {
   uint8_t size = 1 << SIZE_OPTION;
   if(_seg_rt->counter_mode_call == 0) {
-    for(uint16_t i=_seg->start; i <= _seg->stop-size; i+=size) {
+    for(uint16_t i=_seg->start; i <= _seg->stop; i+=size) {
       fill(color_wheel(random8()), i, size);
     }
   }
@@ -152,7 +152,7 @@ uint16_t WS2812FX::mode_single_dynamic(void) {
  */
 uint16_t WS2812FX::mode_multi_dynamic(void) {
   uint8_t size = 1 << SIZE_OPTION;
-  for(uint16_t i=_seg->start; i <= _seg->stop-size; i+=size) {
+  for(uint16_t i=_seg->start; i <= _seg->stop; i+=size) {
     fill(color_wheel(random8()), i, size);
   }
   SET_CYCLE;
