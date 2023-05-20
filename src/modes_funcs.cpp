@@ -335,8 +335,8 @@ uint16_t WS2812FX::running(uint32_t color1, uint32_t color2) {
     setPixelColor(_seg->start, color);
   }
 
-  _seg_rt->counter_mode_step = (_seg_rt->counter_mode_step + 1) % _seg_len;
-  if(_seg_rt->counter_mode_step == 0) SET_CYCLE;
+  _seg_rt->counter_mode_step++;
+  if((_seg_rt->counter_mode_step % _seg_len) == 0) SET_CYCLE;
   return (_seg->speed / 16);
 }
 
