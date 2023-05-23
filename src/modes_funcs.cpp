@@ -33,6 +33,32 @@
 #include "WS2812FX.h"
 
 /*
+  overload Adafruit_NeoPixel fill() function to respect segment boundaries
+*/
+void WS2812FX::fill(uint32_t c, uint16_t first, uint16_t count) {
+  uint16_t i, end;
+
+  // If first LED is past end of strip or outside segment boundaries, nothing to do
+  if (first >= numLEDs || first < _seg->start || first > _seg->stop) {
+    return;
+  }
+
+  // Calculate the index ONE AFTER the last pixel to fill
+  if (count == 0) {
+    end = _seg->stop + 1; // Fill to end of segment
+  } else {
+    end = first + count;
+    if(end > (_seg->stop + 1)) end = _seg->stop + 1;
+  }
+
+  if (end > numLEDs) end = numLEDs;
+
+  for (i = first; i < end; i++) {
+    setPixelColor(i, c);
+  }
+}
+
+/*
  * Blink/strobe function
  * Alternate between color1 and color2
  * if(strobe == true) then create a strobe effect

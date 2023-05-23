@@ -1,6 +1,29 @@
 WS2182FX Change Log
 
 
+v1.4.2 changes 05/11/2023
+-------------------------
+
+1) Fixed a bug in the ICU effect that caused bad behavior when a
+	strip was divided into segments and ICU was assigned to one
+	of the segments.
+
+2) updated tester.zsh to work with Arduino IDE 2.0
+
+3) Overloaded the Adafruit_NeoPixel fill() function to respect
+	segment boundaries.
+
+4) refactored single_dynamic and multi_dynamic effects to use
+	SIZE option (as proposed by @BlockThor in PR #334)
+
+5) Switched from the ESPAsyncWebServer lib to the ESPAsyncWebSrv
+	lib in some of the ESP examples, since ESPAsyncWebSrv is
+	functionally equivalent and is available from the library
+	manager.
+
+6) fixed a bunch of typos.
+
+
 v1.4.1 changes 07/18/2022
 -------------------------
 
@@ -61,11 +84,11 @@ v1.4.0 changes 03/23/2022
 
 1) The source files were getting very big, so I split the .h and .cpp
 	files into three .h files and three .cpp files. The files are
-	still pretty big, but are now a little more managable.
+	still pretty big, but are now a little more manageable.
 
 2) The Arduino's memory limitations are starting to really hinder
 	expanding the library's feature set, so I split the header file into
-	seperate files for ESP (modes_esp.h) and Arduino (modes_arduino.h).
+	separate files for ESP (modes_esp.h) and Arduino (modes_arduino.h).
 	Hopefully this will make it easer to add new features/effects for
 	ESP devices, and not blow up the memory footprint for Arduino devices.
 
@@ -73,7 +96,7 @@ v1.4.0 changes 03/23/2022
 	async web server (ESPAsyncWebServer) instead of ESP8266WebServer,
 	so the sketch now supports ESP8266 and ESP32.
 
-4) removed support for the lagacy AduinoJson v5 library in the
+4) removed support for the legacy ArduinoJson v5 library in the
 	ws2812fx_patterns_web example sketch. You must use the
 	ArduinoJson v6 library.
 
@@ -93,7 +116,7 @@ v1.4.0 changes 03/23/2022
 	and Fireworks effects to make them more consistent with the other
 	effects. A speed setting of 1000 should give reasonable results
 	for all effects. While this isn't strictly a breaking change,
-	your speed settings for these effects might need to be tweeked
+	your speed settings for these effects might need to be tweaked
 	to get the same animation rate you had before.
 
 8) Refactored the rainbow_chase effect to be more efficient.
@@ -134,7 +157,7 @@ v1.3.5 changes 11/18/2021
     a segment to always be off. See issue #299. Thanks @DanielWeigl
 	for catching that.
 
-7) moved the rain effect from a custon effect to a built-in effect.
+7) moved the rain effect from a custom effect to a built-in effect.
 
 8) Added "headers": "WS2812FX.h" to the library.json file as
     suggested by @ivankravets in PR #300.
@@ -281,7 +304,7 @@ v1.2.4 changes 5/8/2020
     responsive to mode changes.
     See https://github.com/kitesurfer1404/WS2812FX/issues/220.
 
-2) Fixed Random Chase custom effect to work when brigtness < 255.
+2) Fixed Random Chase custom effect to work when brightness < 255.
     See https://github.com/kitesurfer1404/WS2812FX/issues/217.
 
 3) Updated the Running Lights effect to use two colors instead of just one.

@@ -173,7 +173,7 @@ The *ws2812fx_segment_sequence* example sketch demonstrates this technique.
 
 ---
 **LED strip functions**
-- setPixels(numPixels, ptr) - frees the underlaying Adafruit_Neopixel pixels array, and swaps it out for a user created pixels array. Used carefully, it can allow greater access to the raw pixel data. The _ws2812fx_virtual_strip_ example sketch uses this technique to drive two physical strips with one virtual strip.
+- setPixels(numPixels, ptr) - frees the underlying Adafruit_Neopixel pixels array, and swaps it out for a user created pixels array. Used carefully, it can allow greater access to the raw pixel data. The _ws2812fx_virtual_strip_ example sketch uses this technique to drive two physical strips with one virtual strip.
 ```c++
 uint8_t myPixels[LED_COUNT * 3]; // 3 bytes per LED for RGB LEDs
 setPixels(LED_COUNT, myPixels);
