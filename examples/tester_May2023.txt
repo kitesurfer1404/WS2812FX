@@ -1,0 +1,974 @@
+
+Compiling auto_mode_cycle/auto_mode_cycle.ino for Arduino Leonardo
+Sketch uses 19810 bytes (69%) of program storage space. Maximum is 28672 bytes.
+Global variables use 506 bytes (19%) of dynamic memory, leaving 2054 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling external_trigger/external_trigger.ino for Arduino Leonardo
+Sketch uses 19828 bytes (69%) of program storage space. Maximum is 28672 bytes.
+Global variables use 506 bytes (19%) of dynamic memory, leaving 2054 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling serial_control/serial_control.ino for Arduino Leonardo
+Sketch uses 23772 bytes (82%) of program storage space. Maximum is 28672 bytes.
+Global variables use 690 bytes (26%) of dynamic memory, leaving 1870 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling ws2812fx_audio_reactive/ws2812fx_audio_reactive.ino for Arduino Leonardo
+Sketch uses 20472 bytes (71%) of program storage space. Maximum is 28672 bytes.
+Global variables use 526 bytes (20%) of dynamic memory, leaving 2034 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling ws2812fx_custom_effect/ws2812fx_custom_effect.ino for Arduino Leonardo
+Sketch uses 20272 bytes (70%) of program storage space. Maximum is 28672 bytes.
+Global variables use 498 bytes (19%) of dynamic memory, leaving 2062 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling ws2812fx_custom_effect2/ws2812fx_custom_effect2.ino for Arduino Leonardo
+Sketch uses 20152 bytes (70%) of program storage space. Maximum is 28672 bytes.
+Global variables use 513 bytes (20%) of dynamic memory, leaving 2047 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling ws2812fx_custom_FastLED/ws2812fx_custom_FastLED.ino for Arduino Leonardo
+Sketch uses 20040 bytes (69%) of program storage space. Maximum is 28672 bytes.
+Global variables use 543 bytes (21%) of dynamic memory, leaving 2017 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+FastLED           3.5.0   /Users/klord/Desktop/Arduino/libraries/FastLED          
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling ws2812fx_limit_current/ws2812fx_limit_current.ino for Arduino Leonardo
+Sketch uses 23456 bytes (81%) of program storage space. Maximum is 28672 bytes.
+Global variables use 790 bytes (30%) of dynamic memory, leaving 1770 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling ws2812fx_matrix/ws2812fx_matrix.ino for Arduino Leonardo
+Sketch uses 12466 bytes (43%) of program storage space. Maximum is 28672 bytes.
+Global variables use 434 bytes (16%) of dynamic memory, leaving 2126 bytes for local variables. Maximum is 2560 bytes.
+
+Used library         Version Path                                                                             
+Adafruit GFX Library 1.11.5  /Users/klord/Desktop/Arduino/libraries/Adafruit_GFX_Library                      
+Adafruit BusIO       1.14.1  /Users/klord/Desktop/Arduino/libraries/Adafruit_BusIO                            
+Wire                 1.0     /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6/libraries/Wire
+SPI                  1.0     /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6/libraries/SPI 
+Adafruit NeoMatrix   1.3.0   /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoMatrix                        
+Adafruit NeoPixel    1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                         
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling ws2812fx_msgeq7/ws2812fx_msgeq7.ino for Arduino Leonardo
+Sketch uses 20492 bytes (71%) of program storage space. Maximum is 28672 bytes.
+Global variables use 522 bytes (20%) of dynamic memory, leaving 2038 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling ws2812fx_overlay/ws2812fx_overlay.ino for Arduino Leonardo
+Sketch uses 19854 bytes (69%) of program storage space. Maximum is 28672 bytes.
+Global variables use 616 bytes (24%) of dynamic memory, leaving 1944 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling ws2812fx_segment_sequence/ws2812fx_segment_sequence.ino for Arduino Leonardo
+Sketch uses 20570 bytes (71%) of program storage space. Maximum is 28672 bytes.
+Global variables use 528 bytes (20%) of dynamic memory, leaving 2032 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling ws2812fx_segments/ws2812fx_segments.ino for Arduino Leonardo
+Sketch uses 19860 bytes (69%) of program storage space. Maximum is 28672 bytes.
+Global variables use 498 bytes (19%) of dynamic memory, leaving 2062 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling ws2812fx_spi/ws2812fx_spi.ino for Arduino Leonardo
+Sketch uses 20078 bytes (70%) of program storage space. Maximum is 28672 bytes.
+Global variables use 499 bytes (19%) of dynamic memory, leaving 2061 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                                            
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                 
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                        
+SPI               1.0     /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6/libraries/SPI
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling ws2812fx_transitions/ws2812fx_transitions.ino for Arduino Leonardo
+Sketch uses 20310 bytes (70%) of program storage space. Maximum is 28672 bytes.
+Global variables use 456 bytes (17%) of dynamic memory, leaving 2104 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling ws2812fx_virtual_strip/ws2812fx_virtual_strip.ino for Arduino Leonardo
+Sketch uses 20172 bytes (70%) of program storage space. Maximum is 28672 bytes.
+Global variables use 616 bytes (24%) of dynamic memory, leaving 1944 bytes for local variables. Maximum is 2560 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+arduino:avr   1.8.6   /Users/klord/Library/Arduino15/packages/arduino/hardware/avr/1.8.6
+exit status 0
+
+Compiling auto_mode_cycle/auto_mode_cycle.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling external_trigger/external_trigger.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling serial_control/serial_control.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_audio_reactive/ws2812fx_audio_reactive.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_custom_effect/ws2812fx_custom_effect.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_custom_effect2/ws2812fx_custom_effect2.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_custom_FastLED/ws2812fx_custom_FastLED.ino for ESP8266
+
+Used library      Version Path                                                    
+FastLED           3.5.0   /Users/klord/Desktop/Arduino/libraries/FastLED          
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_limit_current/ws2812fx_limit_current.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_matrix/ws2812fx_matrix.ino for ESP8266
+
+Used library         Version Path                                                                                 
+Adafruit GFX Library 1.11.5  /Users/klord/Desktop/Arduino/libraries/Adafruit_GFX_Library                          
+Adafruit BusIO       1.14.1  /Users/klord/Desktop/Arduino/libraries/Adafruit_BusIO                                
+Wire                 1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/Wire
+SPI                  1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/SPI 
+Adafruit NeoMatrix   1.3.0   /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoMatrix                            
+Adafruit NeoPixel    1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                             
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_msgeq7/ws2812fx_msgeq7.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_overlay/ws2812fx_overlay.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_segment_sequence/ws2812fx_segment_sequence.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_segments/ws2812fx_segments.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_spi/ws2812fx_spi.ino for ESP8266
+
+Used library      Version Path                                                                                
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                     
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                            
+SPI               1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/SPI
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_transitions/ws2812fx_transitions.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_virtual_strip/ws2812fx_virtual_strip.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling auto_mode_cycle/auto_mode_cycle.ino for ESP32
+Sketch uses 270825 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 23836 bytes (7%) of dynamic memory, leaving 303844 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling external_trigger/external_trigger.ino for ESP32
+Sketch uses 275465 bytes (21%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 24012 bytes (7%) of dynamic memory, leaving 303668 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling serial_control/serial_control.ino for ESP32
+Sketch uses 292877 bytes (22%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 24164 bytes (7%) of dynamic memory, leaving 303516 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_audio_reactive/ws2812fx_audio_reactive.ino for ESP32
+Sketch uses 295145 bytes (22%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 24332 bytes (7%) of dynamic memory, leaving 303348 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_custom_effect/ws2812fx_custom_effect.ino for ESP32
+Sketch uses 290229 bytes (22%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 24140 bytes (7%) of dynamic memory, leaving 303540 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_custom_effect2/ws2812fx_custom_effect2.ino for ESP32
+Sketch uses 290301 bytes (22%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 24148 bytes (7%) of dynamic memory, leaving 303532 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_custom_FastLED/ws2812fx_custom_FastLED.ino for ESP32
+Sketch uses 291237 bytes (22%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 24196 bytes (7%) of dynamic memory, leaving 303484 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+FastLED           3.5.0   /Users/klord/Desktop/Arduino/libraries/FastLED          
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_limit_current/ws2812fx_limit_current.ino for ESP32
+Sketch uses 292757 bytes (22%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 24164 bytes (7%) of dynamic memory, leaving 303516 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_matrix/ws2812fx_matrix.ino for ESP32
+Sketch uses 264425 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 22656 bytes (6%) of dynamic memory, leaving 305024 bytes for local variables. Maximum is 327680 bytes.
+
+Used library         Version Path                                                                             
+Adafruit GFX Library 1.11.5  /Users/klord/Desktop/Arduino/libraries/Adafruit_GFX_Library                      
+Adafruit BusIO       1.14.1  /Users/klord/Desktop/Arduino/libraries/Adafruit_BusIO                            
+Wire                 2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/Wire
+SPI                  2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/SPI 
+Adafruit NeoMatrix   1.3.0   /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoMatrix                        
+Adafruit NeoPixel    1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                         
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_msgeq7/ws2812fx_msgeq7.ino for ESP32
+Sketch uses 295237 bytes (22%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 24332 bytes (7%) of dynamic memory, leaving 303348 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_overlay/ws2812fx_overlay.ino for ESP32
+Sketch uses 270933 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 24020 bytes (7%) of dynamic memory, leaving 303660 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_segment_sequence/ws2812fx_segment_sequence.ino for ESP32
+Sketch uses 290801 bytes (22%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 24164 bytes (7%) of dynamic memory, leaving 303516 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_segments/ws2812fx_segments.ino for ESP32
+Sketch uses 290013 bytes (22%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 24140 bytes (7%) of dynamic memory, leaving 303540 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_spi/ws2812fx_spi.ino for ESP32
+Sketch uses 274929 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 23908 bytes (7%) of dynamic memory, leaving 303772 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                                            
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                 
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                        
+SPI               2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/SPI
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_transitions/ws2812fx_transitions.ino for ESP32
+Sketch uses 271261 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 23772 bytes (7%) of dynamic memory, leaving 303908 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_virtual_strip/ws2812fx_virtual_strip.ino for ESP32
+Sketch uses 270913 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 24020 bytes (7%) of dynamic memory, leaving 303660 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling auto_mode_cycle/auto_mode_cycle.ino for RP2040
+Sketch uses 67372 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10456 bytes (3%) of dynamic memory, leaving 251688 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling external_trigger/external_trigger.ino for RP2040
+Sketch uses 67620 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10476 bytes (3%) of dynamic memory, leaving 251668 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling serial_control/serial_control.ino for RP2040
+Sketch uses 69524 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10468 bytes (3%) of dynamic memory, leaving 251676 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling ws2812fx_audio_reactive/ws2812fx_audio_reactive.ino for RP2040
+Sketch uses 68012 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10460 bytes (3%) of dynamic memory, leaving 251684 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling ws2812fx_custom_effect/ws2812fx_custom_effect.ino for RP2040
+Sketch uses 67516 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10448 bytes (3%) of dynamic memory, leaving 251696 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling ws2812fx_custom_effect2/ws2812fx_custom_effect2.ino for RP2040
+Sketch uses 67572 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10452 bytes (3%) of dynamic memory, leaving 251692 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling ws2812fx_custom_FastLED/ws2812fx_custom_FastLED.ino for RP2040
+
+Used library      Version Path                                                    
+FastLED           3.5.0   /Users/klord/Desktop/Arduino/libraries/FastLED          
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 1
+
+Compiling ws2812fx_limit_current/ws2812fx_limit_current.ino for RP2040
+Sketch uses 69428 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10472 bytes (3%) of dynamic memory, leaving 251672 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling ws2812fx_matrix/ws2812fx_matrix.ino for RP2040
+Sketch uses 60044 bytes (2%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 9400 bytes (3%) of dynamic memory, leaving 252744 bytes for local variables. Maximum is 262144 bytes.
+
+Used library         Version Path                                                                               
+Adafruit GFX Library 1.11.5  /Users/klord/Desktop/Arduino/libraries/Adafruit_GFX_Library                        
+Adafruit BusIO       1.14.1  /Users/klord/Desktop/Arduino/libraries/Adafruit_BusIO                              
+Wire                 1.0     /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0/libraries/Wire
+SPI                  1.0     /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0/libraries/SPI 
+Adafruit NeoMatrix   1.3.0   /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoMatrix                          
+Adafruit NeoPixel    1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                           
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling ws2812fx_msgeq7/ws2812fx_msgeq7.ino for RP2040
+Sketch uses 68052 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10464 bytes (3%) of dynamic memory, leaving 251680 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling ws2812fx_overlay/ws2812fx_overlay.ino for RP2040
+Sketch uses 67468 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10656 bytes (4%) of dynamic memory, leaving 251488 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling ws2812fx_segment_sequence/ws2812fx_segment_sequence.ino for RP2040
+Sketch uses 67788 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10460 bytes (3%) of dynamic memory, leaving 251684 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling ws2812fx_segments/ws2812fx_segments.ino for RP2040
+Sketch uses 67340 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10448 bytes (3%) of dynamic memory, leaving 251696 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling ws2812fx_spi/ws2812fx_spi.ino for RP2040
+Sketch uses 68684 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10772 bytes (4%) of dynamic memory, leaving 251372 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                                              
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                   
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                          
+SPI               1.0     /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0/libraries/SPI
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling ws2812fx_transitions/ws2812fx_transitions.ino for RP2040
+Sketch uses 67676 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10380 bytes (3%) of dynamic memory, leaving 251764 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling ws2812fx_virtual_strip/ws2812fx_virtual_strip.ino for RP2040
+Sketch uses 67436 bytes (3%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 10656 bytes (4%) of dynamic memory, leaving 251488 bytes for local variables. Maximum is 262144 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                                
+rp2040:rp2040 3.2.0   /Users/klord/Library/Arduino15/packages/rp2040/hardware/rp2040/3.2.0
+exit status 0
+
+Compiling esp8266_webinterface/esp8266_webinterface.ino for ESP8266
+
+Used library      Version Path                                                                                             
+ESP8266WiFi       1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266WiFi     
+ESP8266WebServer  1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266WebServer
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                                  
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                                         
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_alexa/ws2812fx_alexa.ino for ESP8266
+
+Used library      Version Path                                                                                             
+ESP8266WiFi       1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266WiFi     
+Espalexa          2.7.0   /Users/klord/Desktop/Arduino/libraries/Espalexa                                                  
+ESP8266WebServer  1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266WebServer
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                                  
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                                         
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_patterns_web/ws2812fx_patterns_web.ino for ESP8266
+
+Used library      Version Path                                                                                        
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                             
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                                    
+ESPAsyncWebSrv    1.2.6   /Users/klord/Desktop/Arduino/libraries/ESPAsyncWebSrv                                       
+ESP8266WiFi       1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266WiFi
+ESPAsyncTCP       1.2.4   /Users/klord/Desktop/Arduino/libraries/ESPAsyncTCP                                          
+Hash              1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/Hash       
+ArduinoJson       6.21.2  /Users/klord/Desktop/Arduino/libraries/ArduinoJson                                          
+EEPROM            1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/EEPROM     
+ArduinoOTA        1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ArduinoOTA 
+ESP8266mDNS       1.2     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266mDNS
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_segments_OTA/ws2812fx_segments_OTA.ino for ESP8266
+
+Used library      Version Path                                                                                        
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                             
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                                    
+ArduinoOTA        1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ArduinoOTA 
+ESP8266WiFi       1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266WiFi
+ESP8266mDNS       1.2     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266mDNS
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_segments_web/ws2812fx_segments_web.ino for ESP8266
+
+Used library      Version Path                                                                                        
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                             
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                                    
+ESPAsyncWebSrv    1.2.6   /Users/klord/Desktop/Arduino/libraries/ESPAsyncWebSrv                                       
+ESP8266WiFi       1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266WiFi
+ESPAsyncTCP       1.2.4   /Users/klord/Desktop/Arduino/libraries/ESPAsyncTCP                                          
+Hash              1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/Hash       
+ArduinoJson       6.21.2  /Users/klord/Desktop/Arduino/libraries/ArduinoJson                                          
+ArduinoOTA        1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ArduinoOTA 
+EEPROM            1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/EEPROM     
+ESP8266mDNS       1.2     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266mDNS
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_extData/ws2812fx_extData.ino for ESP8266
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling esp8266_webinterface/esp8266_webinterface.ino for ESP32
+Sketch uses 781717 bytes (59%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 52032 bytes (15%) of dynamic memory, leaving 275648 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                                                  
+WiFi              2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/WiFi     
+WebServer         2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/WebServer
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                       
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                              
+FS                2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/FS       
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_alexa/ws2812fx_alexa.ino for ESP32
+Sketch uses 800345 bytes (61%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 47080 bytes (14%) of dynamic memory, leaving 280600 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                                                  
+WiFi              2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/WiFi     
+Espalexa          2.7.0   /Users/klord/Desktop/Arduino/libraries/Espalexa                                       
+WebServer         2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/WebServer
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                       
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                              
+FS                2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/FS       
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_patterns_web/ws2812fx_patterns_web.ino for ESP32
+Sketch uses 853133 bytes (65%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 51732 bytes (15%) of dynamic memory, leaving 275948 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                                                   
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                        
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                               
+ESPAsyncWebSrv    1.2.6   /Users/klord/Desktop/Arduino/libraries/ESPAsyncWebSrv                                  
+FS                2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/FS        
+WiFi              2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/WiFi      
+AsyncTCP          1.1.4   /Users/klord/Desktop/Arduino/libraries/AsyncTCP                                        
+ArduinoJson       6.21.2  /Users/klord/Desktop/Arduino/libraries/ArduinoJson                                     
+EEPROM            2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/EEPROM    
+ArduinoOTA        2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/ArduinoOTA
+Update            2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/Update    
+ESPmDNS           2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/ESPmDNS   
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_segments_OTA/ws2812fx_segments_OTA.ino for ESP32
+Sketch uses 783737 bytes (59%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 49800 bytes (15%) of dynamic memory, leaving 277880 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                                                   
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                        
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                               
+ArduinoOTA        2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/ArduinoOTA
+WiFi              2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/WiFi      
+Update            2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/Update    
+ESPmDNS           2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/ESPmDNS   
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_segments_web/ws2812fx_segments_web.ino for ESP32
+Sketch uses 919913 bytes (70%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 52292 bytes (15%) of dynamic memory, leaving 275388 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                                                   
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                        
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                               
+ESPAsyncWebSrv    1.2.6   /Users/klord/Desktop/Arduino/libraries/ESPAsyncWebSrv                                  
+FS                2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/FS        
+WiFi              2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/WiFi      
+AsyncTCP          1.1.4   /Users/klord/Desktop/Arduino/libraries/AsyncTCP                                        
+ArduinoJson       6.21.2  /Users/klord/Desktop/Arduino/libraries/ArduinoJson                                     
+ArduinoOTA        2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/ArduinoOTA
+Update            2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/Update    
+EEPROM            2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/EEPROM    
+ESPmDNS           2.0.0   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9/libraries/ESPmDNS   
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_extData/ws2812fx_extData.ino for ESP32
+Sketch uses 270765 bytes (20%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 23844 bytes (7%) of dynamic memory, leaving 303836 bytes for local variables. Maximum is 327680 bytes.
+
+Used library      Version Path                                                    
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX         
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel
+
+Used platform Version Path                                                              
+esp32:esp32   2.0.9   /Users/klord/Library/Arduino15/packages/esp32/hardware/esp32/2.0.9
+exit status 0
+
+Compiling ws2812fx_soundfx/ws2812fx_soundfx.ino for ESP8266
+
+Used library      Version Path                                                                                              
+WS2812FX          1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                                   
+Adafruit NeoPixel 1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                                          
+ESP8266Audio      1.9.7   /Users/klord/Desktop/Arduino/libraries/ESP8266Audio                                               
+LittleFS          0.1.0   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/LittleFS         
+ESP8266HTTPClient 1.2     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266HTTPClient
+ESP8266WiFi       1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266WiFi      
+SD                2.0.0   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/SD               
+SDFS              0.1.0   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/SDFS             
+SPI               1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/SPI              
+ESP8266SdFat      2.1.1   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266SdFat     
+I2S               1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/I2S              
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0
+
+Compiling ws2812fx_dma/ws2812fx_dma.ino for ESP8266
+
+Used library          Version Path                                                                                
+WS2812FX              1.4.2   /Users/klord/Desktop/Arduino/libraries/WS2812FX                                     
+Adafruit NeoPixel     1.11.0  /Users/klord/Desktop/Arduino/libraries/Adafruit_NeoPixel                            
+NeoPixelBus by Makuna 2.7.5   /Users/klord/Desktop/Arduino/libraries/NeoPixelBus_by_Makuna                        
+SPI                   1.0     /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/SPI
+
+Used platform   Version Path                                                                  
+esp8266:esp8266 3.1.2   /Users/klord/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2
+exit status 0

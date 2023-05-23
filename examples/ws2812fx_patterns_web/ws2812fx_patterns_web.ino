@@ -40,7 +40,7 @@
 #define DYNAMIC_JSON_DOCUMENT_SIZE 4096 /* used by AsyncJson. Default 1024 bytes is too small */
 
 #include <WS2812FX.h>
-#include <ESPAsyncWebServer.h>
+#include <ESPAsyncWebSrv.h>
 #include <AsyncJson.h>
 #include <ArduinoJson.h>
 #include <EEPROM.h>
