@@ -73,7 +73,7 @@ uint16_t twinkleFox(void) {
     // Use the counter_mode_call var as a clock "tick" counter and calc the blend index
     uint8_t blendIndex = (initValue + (segrt->counter_mode_call * incrValue)) & 0xff; // 0-255
     // Index into the built-in Adafruit_NeoPixel sine table to lookup the blend amount
-    uint8_t blendAmt = Adafruit_NeoPixel::sine8(blendIndex); // 0-255
+    uint8_t blendAmt = sine8(blendIndex); // 0-255
 
     // If colors[0] is BLACK, blend random colors
     if(color0 == BLACK) {

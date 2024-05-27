@@ -1,6 +1,20 @@
 WS2182FX Change Log
 
 
+v1.4.3 changes 05/127/2024
+-------------------------
+
+1) Added support for ATtiny processors using the tinyNeoPixel
+	library from megaTinyCore.
+	https://github.com/SpenceKonde/megaTinyCore
+
+2) Overriding the parent library's show() function was becoming
+	problematic, so WS2812FX's show() function has been renamed
+	execShow(). User sketches shouldn't call show(),
+	but if you do, show() will now execute the parent classes 
+	show() function and skip any customShow code.
+
+
 v1.4.2 changes 05/11/2023
 -------------------------
 
