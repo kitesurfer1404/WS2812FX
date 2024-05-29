@@ -16,8 +16,12 @@
         FX_MODE_COLOR_WIPE_REV
         FX_MODE_TRICOLOR_CHASE
         FX_MODE_SPARKLE
+      Also note, processors with only 4k of flash do not have enough
+      memory to include the Serial library. Adding Serial statements
+      to print debug info will lead to strange behavior.
+
       Processors with only 256 bytes of RAM can support a maximum of
-      about 40 LEDs.
+      about 40 RGB LEDs.
 
 
   LICENSE
