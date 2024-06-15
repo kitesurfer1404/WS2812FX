@@ -386,7 +386,7 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
 
   uint8_t size = 2 << SIZE_OPTION;
   if(!_triggered) {
-    for(uint16_t i=0; i<max(1, _seg_len/20); i++) {
+    for(uint16_t i=0; i<max((uint8_t)1, _seg_len/20); i++) {
       if(random8(10) == 0) {
         uint16_t index = _seg->start + random16(_seg_len - size + 1);
         fill(color, index, size);
@@ -394,7 +394,7 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
       }
     }
   } else {
-    for(uint16_t i=0; i<max(1, _seg_len/10); i++) {
+    for(uint16_t i=0; i<max((uint8_t)1, _seg_len/10); i++) {
       uint16_t index = _seg->start + random16(_seg_len - size + 1);
       fill(color, index, size);
       SET_CYCLE;

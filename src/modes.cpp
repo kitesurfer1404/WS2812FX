@@ -302,7 +302,7 @@ uint16_t WS2812FX::mode_theater_chase_rainbow(void) {
  */
 uint16_t WS2812FX::mode_running_lights(void) {
   uint8_t size = 1 << SIZE_OPTION;
-  uint8_t sineIncr = max(1, (256 / _seg_len) * size);
+  uint8_t sineIncr = max((uint8_t)1, (256 / _seg_len) * size);
   for(uint16_t i=0; i < _seg_len; i++) {
     int lum = (int)sine8(((i + _seg_rt->counter_mode_step) * sineIncr));
     uint32_t color = color_blend(_seg->colors[0], _seg->colors[1], lum);
@@ -644,7 +644,7 @@ uint16_t WS2812FX::mode_twinkleFOX(void) {
     // Use the counter_mode_call var as a clock "tick" counter and calc the blend index
     uint8_t blendIndex = (initValue + (_seg_rt->counter_mode_call * incrValue)) & 0xff; // 0-255
     // Index into the built-in Adafruit_NeoPixel sine table to lookup the blend amount
-    uint8_t blendAmt = Adafruit_NeoPixel::sine8(blendIndex); // 0-255
+    uint8_t blendAmt = sine8(blendIndex); // 0-255
 
     // If colors[0] is BLACK, blend random colors
     if(color0 == BLACK) {
@@ -865,7 +865,7 @@ uint16_t WS2812FX::mode_rainbow_fireworks(void) {
 
   // occasionally create a random red pixel
   if(random8(4) == 0) {
-    uint16_t index = _seg->start + 6 + random16(max(1, _seg_len - 12));
+    uint16_t index = _seg->start + 6 + random16(max((uint8_t)1, _seg_len - 12));
     setRawPixelColor(index, RED); // set the raw pixel color (ignore global brightness)
     SET_CYCLE;
   }
@@ -1095,7 +1095,7 @@ uint16_t WS2812FX::mode_popcorn(void) {
 
   uint32_t popcornColor = (_seg->colors[0] == bgColor) ? color_wheel(random8()) : _seg->colors[0];
 
-  for(int8_t i=0; i < cnt; i++) { // for each kernel
+  for(uint8_t i=0; i < cnt; i++) { // for each kernel
     if(src[i].position >= 0.0f) { // if kernel is active, update its position and slow it down
       src[i].position += src[i].velocity;
       src[i].velocity -= 0.1f; // gravity = -0.1
@@ -1120,14 +1120,14 @@ uint16_t WS2812FX::mode_popcorn(void) {
 uint16_t WS2812FX::mode_oscillator(void) {
   static Oscillator oscillators[] = { // 2 default oscillators
     {(uint8_t)(_seg_len/4),                        0,  1}, // size, pos, speed
-    {(uint8_t)(_seg_len/4),  (int16_t)(_seg_len - 1), -2}
+    {(uint8_t)(_seg_len/4),  (uint16_t)(_seg_len - 1), -2}
   };
 
   // if external data source not set, config for two oscillators.
   Oscillator* src = _seg_rt->extDataSrc != NULL ? (Oscillator*)_seg_rt->extDataSrc : oscillators;
   uint16_t cnt    = _seg_rt->extDataCnt != 0    ? _seg_rt->extDataCnt              : 2;
 
-  for(int8_t i=0; i < cnt; i++) {
+  for(uint16_t i=0; i < cnt; i++) {
     Oscillator* osc = &src[i];
     if(osc->size == 0) osc->size = 1; // make sure the size is at least one
     osc->pos += osc->speed; // update the osc position
@@ -1141,10 +1141,10 @@ uint16_t WS2812FX::mode_oscillator(void) {
   }
 
   // update LEDs based on new positions
-  for(int16_t i=0; i < _seg_len; i++) {
+  for(uint16_t i=0; i < _seg_len; i++) {
     // if the oscillators overlap, blend their colors
     uint32_t blendedcolor = BLACK;
-    for(int8_t j=0; j < cnt; j++) {
+    for(uint8_t j=0; j < cnt; j++) {
       Oscillator* osc = &src[j];
       uint32_t oscColor = _seg->colors[j % MAX_NUM_COLORS];
       if(i >= osc->pos && i < osc->pos + osc->size) {

@@ -56,7 +56,7 @@
 
 void WS2812FX::init() {
   resetSegmentRuntimes();
-  Adafruit_NeoPixel::begin();
+  begin();
 }
 
 // void WS2812FX::timer() {
@@ -86,7 +86,7 @@ bool WS2812FX::service() {
     }
     if(doShow) {
       delay(1); // for ESP32 (see https://forums.adafruit.com/viewtopic.php?f=47&t=117327)
-      show();
+      execShow();
     }
     _triggered = false;
   }
@@ -108,17 +108,21 @@ void WS2812FX::setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b) {
 }
 
 void WS2812FX::setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w) {
+#if defined(MEGATINYCORE)  // if compiling for an ATtiny device (to conserve memory, no gamma correction)
+  tinyNeoPixel::setPixelColor(n, r, g, b, w);
+#else
   if(IS_GAMMA) {
     Adafruit_NeoPixel::setPixelColor(n, gamma8(r), gamma8(g), gamma8(b), gamma8(w));
   } else {
     Adafruit_NeoPixel::setPixelColor(n, r, g, b, w);
   }
+#endif
 }
 
 // custom setPixelColor() function that bypasses the Adafruit_Neopixel global brightness rigmarole
 void WS2812FX::setRawPixelColor(uint16_t n, uint32_t c) {
   if (n < numLEDs) {
-    uint8_t *p = (wOffset == rOffset) ? &pixels[n * 3] : &pixels[n * 4]; 
+    uint8_t *p = (wOffset == rOffset) ? &pixels[n * 3] : &pixels[n * 4];
     uint8_t w = (uint8_t)(c >> 24), r = (uint8_t)(c >> 16), g = (uint8_t)(c >> 8), b = (uint8_t)c;
 
     p[wOffset] = w;
@@ -133,7 +137,7 @@ uint32_t WS2812FX::getRawPixelColor(uint16_t n) {
   if (n >= numLEDs) return 0; // Out of bounds, return no color.
 
   if(wOffset == rOffset) { // RGB
-    uint8_t *p = &pixels[n * 3]; 
+    uint8_t *p = &pixels[n * 3];
     return ((uint32_t)p[rOffset] << 16) | ((uint32_t)p[gOffset] << 8) | (uint32_t)p[bOffset];
   } else { // RGBW
     uint8_t *p = &pixels[n * 4];
@@ -150,15 +154,15 @@ void WS2812FX::copyPixels(uint16_t dest, uint16_t src, uint16_t count) {
 
 // change the underlying Adafruit_NeoPixel pixels pointer (use with care)
 void WS2812FX::setPixels(uint16_t num_leds, uint8_t* ptr) {
-  free(Adafruit_NeoPixel::pixels); // free existing data (if any)
-  Adafruit_NeoPixel::pixels = ptr;
-  Adafruit_NeoPixel::numLEDs = num_leds;
-  Adafruit_NeoPixel::numBytes = num_leds * ((wOffset == rOffset) ? 3 : 4);
+  free(pixels); // free existing data (if any)
+  pixels = ptr;
+  numLEDs = num_leds;
+  numBytes = num_leds * ((wOffset == rOffset) ? 3 : 4);
 }
 
-// overload show() functions so we can use custom show()
-void WS2812FX::show(void) {
-  customShow == NULL ? Adafruit_NeoPixel::show() : customShow();
+// run the default or custom show() function
+void WS2812FX::execShow(void) {
+  customShow == NULL ? show() : customShow();
 }
 
 void WS2812FX::start() {
@@ -238,8 +242,8 @@ void WS2812FX::setColors(uint8_t seg, uint32_t* c) {
 
 void WS2812FX::setBrightness(uint8_t b) {
 //b = constrain(b, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
-  Adafruit_NeoPixel::setBrightness(b);
-  show();
+  brightness = b;
+  execShow();
 }
 
 void WS2812FX::increaseBrightness(uint8_t s) {
@@ -258,12 +262,12 @@ void WS2812FX::setLength(uint16_t b) {
 
   // Decrease numLEDs to maximum available memory
   do {
-      Adafruit_NeoPixel::updateLength(b);
+      updateLength(b);
       b--;
-  } while(!Adafruit_NeoPixel::numLEDs && b > 1);
+  } while(!(numLEDs && b > 1));
 
   _segments[0].start = 0;
-  _segments[0].stop = Adafruit_NeoPixel::numLEDs - 1;
+  _segments[0].stop = numLEDs - 1;
 }
 
 void WS2812FX::increaseLength(uint16_t s) {
@@ -274,7 +278,7 @@ void WS2812FX::increaseLength(uint16_t s) {
 void WS2812FX::decreaseLength(uint16_t s) {
   uint16_t seglen = _segments[0].stop - _segments[0].start + 1;
   fill(BLACK, _segments[0].start, seglen);
-  show();
+  execShow();
 
   if (s < seglen) setLength(seglen - s);
 }
@@ -558,8 +562,8 @@ void WS2812FX::resetSegmentRuntime(uint8_t seg) {
  * Turns everything off. Doh.
  */
 void WS2812FX::strip_off() {
-  Adafruit_NeoPixel::clear();
-  show();
+  clear();
+  execShow();
 }
 
 /*
