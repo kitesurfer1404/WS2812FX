@@ -5,7 +5,24 @@
   
   FEATURES
     * example of WS2812FX using an ATtiny processor.
-      Note the ATtiny is extremely memory constrained. Consequently
+
+      ATtiny support is provided by Spence Konde's megaTinyCore package.
+      Install it with Board Manager by following the instructions here:
+      https://github.com/SpenceKonde/megaTinyCore/blob/master/Installation.md
+
+      Note, we're using megaTinyCore's tinyNeoPixel_Static library under the
+      hood, which currently requires a tweak in order to make it compatible
+      with WS2812FX. Without this tweak you'll get compile errors about
+      variables being "private within this context".
+      The tweak involves editing the library's tinyNeoPixel_Static.h file
+      (Arduino15/packages/megaTinyCore/hardware/megaavr/2.6.10/libraries/tinyNeoPixel_Static/tinyNeoPixel_Static.h)
+      and change line 308 from "private:" to "protected:". This allows WS2812FX
+      to access inherited variables from the tinyNeoPixel_Static lib.
+      A Github PR has been submitted to fix this issue in the megaTinyCore
+      source code, which will hopefully be accepted soon and eliminate the
+      need for this hack.
+
+      Also note, the ATtiny is extremely memory constrained. Consequently
       processors with less than 4k of flash memory are not supported.
       Processors with 4k of flash memory only support the following
       seven effects:
