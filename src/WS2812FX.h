@@ -840,7 +840,7 @@ struct Popcorn {
 // data struct used by the oscillator effect
 struct Oscillator {
   uint8_t size;
-  int16_t pos;
+  uint16_t pos;
   int8_t  speed;
 };
 
