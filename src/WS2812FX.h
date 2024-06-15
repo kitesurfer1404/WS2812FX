@@ -415,7 +415,7 @@ class WS2812FX : public tinyNeoPixel {
 
   private:
     uint16_t _rand16seed;
-    uint16_t (*customModes[1])(void) {  // to save space, only one custom mode allowed for ATtiny devicess
+    uint16_t (*customModes[1])(void) {  // to save space, only one custom mode allowed for ATtiny devices
       // []{ return (uint16_t)1000; },
       // []{ return (uint16_t)1000; },
       // []{ return (uint16_t)1000; },
