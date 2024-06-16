@@ -46,6 +46,14 @@
   #include <Adafruit_NeoPixel.h>
 #endif
 
+// include max macro for ESP boards
+#ifndef max
+#define max(a,b) \
+  ({ __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+    _a > _b ? _a : _b; })
+#endif
+
 #define DEFAULT_BRIGHTNESS (uint8_t)50
 #define DEFAULT_MODE       (uint8_t)0
 #define DEFAULT_SPEED      (uint16_t)1000

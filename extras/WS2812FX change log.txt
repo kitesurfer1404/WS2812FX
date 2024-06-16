@@ -1,5 +1,13 @@
 WS2182FX Change Log
 
+v1.4.4 changes 06/16/2024
+-------------------------
+
+1) Fixed a bug with the "max" macro that prevented compiling on
+    ESP boards.
+
+2) fixed the tester.zsh script.
+
 
 v1.4.3 changes 05/12/2024
 -------------------------
