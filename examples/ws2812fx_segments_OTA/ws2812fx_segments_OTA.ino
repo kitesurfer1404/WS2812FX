@@ -39,6 +39,9 @@
 
 #include <WS2812FX.h>
 #include <ArduinoOTA.h>
+#ifdef ESP32
+#include <WiFi.h>
+#endif
 
 #define LED_PIN   14  // digital pin used to drive the LED strip
 #define LED_COUNT 30  // number of LEDs on the strip
