@@ -386,7 +386,7 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
 
   uint8_t size = 2 << SIZE_OPTION;
   if(!_triggered) {
-    for(uint16_t i=0; i<max((uint8_t)1, _seg_len/20); i++) {
+    for(uint16_t i=0; i<ws2812fx_max((uint8_t)1, _seg_len/20); i++) {
       if(random8(10) == 0) {
         uint16_t index = _seg->start + random16(_seg_len - size + 1);
         fill(color, index, size);
@@ -394,7 +394,7 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
       }
     }
   } else {
-    for(uint16_t i=0; i<max((uint8_t)1, _seg_len/10); i++) {
+    for(uint16_t i=0; i<ws2812fx_max((uint8_t)1, _seg_len/10); i++) {
       uint16_t index = _seg->start + random16(_seg_len - size + 1);
       fill(color, index, size);
       SET_CYCLE;
@@ -412,10 +412,10 @@ uint16_t WS2812FX::fire_flicker(int rev_intensity) {
   byte r = (_seg->colors[0] >> 16) & 0xFF;
   byte g = (_seg->colors[0] >>  8) & 0xFF;
   byte b = (_seg->colors[0]        & 0xFF);
-  byte lum = max(w, max(r, max(g, b))) / rev_intensity;
+  byte lum = ws2812fx_max(w, ws2812fx_max(r, ws2812fx_max(g, b))) / rev_intensity;
   for(uint16_t i=_seg->start; i <= _seg->stop; i++) {
     int flicker = random8(lum);
-    setPixelColor(i, max(r - flicker, 0), max(g - flicker, 0), max(b - flicker, 0), max(w - flicker, 0));
+    setPixelColor(i, ws2812fx_max(r - flicker, 0), ws2812fx_max(g - flicker, 0), ws2812fx_max(b - flicker, 0), ws2812fx_max(w - flicker, 0));
   }
 
   SET_CYCLE;

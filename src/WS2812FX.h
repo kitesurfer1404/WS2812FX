@@ -46,12 +46,8 @@
   #include <Adafruit_NeoPixel.h>
 #endif
 
-// include max macro for ESP boards
-#ifndef max
-#define max(a,b) \
-  ({ __typeof__ (a) _a = (a); \
-    __typeof__ (b) _b = (b); \
-    _a > _b ? _a : _b; })
+#ifndef ws2812fx_max
+#define ws2812fx_max(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
 #define DEFAULT_BRIGHTNESS (uint8_t)50
