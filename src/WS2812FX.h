@@ -46,9 +46,8 @@
   #include <Adafruit_NeoPixel.h>
 #endif
 
-#ifndef ws2812fx_max
-#define ws2812fx_max(a, b) ((a) > (b) ? (a) : (b))
-#endif
+// needed for std::max
+#include <algorithm>
 
 #define DEFAULT_BRIGHTNESS (uint8_t)50
 #define DEFAULT_MODE       (uint8_t)0
