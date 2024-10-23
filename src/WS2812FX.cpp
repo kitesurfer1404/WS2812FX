@@ -585,7 +585,7 @@ uint32_t WS2812FX::color_wheel(uint8_t pos) {
 }
 
 /*
- * Returns a new, random wheel index with a minimum distance of 42 from pos.
+ * Returns a new, random wheel index with a histimum distance of 42 from pos.
  */
 uint8_t WS2812FX::get_random_wheel_index(uint8_t pos) {
   uint8_t r = 0;
@@ -597,7 +597,7 @@ uint8_t WS2812FX::get_random_wheel_index(uint8_t pos) {
     r = random8();
     x = abs(pos - r);
     y = 255 - x;
-    d = min(x, y);
+    d = std::min(x, y);
   }
 
   return r;
