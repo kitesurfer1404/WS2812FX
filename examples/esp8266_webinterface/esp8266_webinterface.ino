@@ -39,6 +39,11 @@
   2018-01-06 added custom effects list option and auto-cycle feature
   
 */
+
+
+// needed for std::max and std::min
+#include <algorithm>
+
 #ifdef ARDUINO_ARCH_ESP32
   #include <WiFi.h>
   #include <WebServer.h>
@@ -65,10 +70,6 @@ extern const char main_js[];
   IPAddress gateway(192,168,0,1);
   IPAddress subnet(255,255,255,0);
 #endif
-
-// QUICKFIX...See https://github.com/esp8266/Arduino/issues/263
-#define min(a,b) ((a)<(b)?(a):(b))
-#define max(a,b) ((a)>(b)?(a):(b))
 
 #define LED_PIN 2                       // 0 = GPIO0, 2=GPIO2
 #define LED_COUNT 24
@@ -243,7 +244,7 @@ void srv_handle_set() {
       if(server.arg(i)[0] == '-') {
         ws2812fx.setBrightness(ws2812fx.getBrightness() * 0.8);
       } else if(server.arg(i)[0] == ' ') {
-        ws2812fx.setBrightness(min(max(ws2812fx.getBrightness(), 5) * 1.2, 255));
+        ws2812fx.setBrightness(std::min(std::max(ws2812fx.getBrightness(), 5) * 1.2, 255));
       } else { // set brightness directly
         uint8_t tmp = (uint8_t) strtol(server.arg(i).c_str(), NULL, 10);
         ws2812fx.setBrightness(tmp);
@@ -253,7 +254,7 @@ void srv_handle_set() {
 
     if(server.argName(i) == "s") {
       if(server.arg(i)[0] == '-') {
-        ws2812fx.setSpeed(max(ws2812fx.getSpeed(), 5) * 1.2);
+        ws2812fx.setSpeed(std::max(ws2812fx.getSpeed(), 5) * 1.2);
       } else if(server.arg(i)[0] == ' ') {
         ws2812fx.setSpeed(ws2812fx.getSpeed() * 0.8);
       } else {
