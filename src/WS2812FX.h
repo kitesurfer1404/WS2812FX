@@ -46,15 +46,7 @@
   #include <Adafruit_NeoPixel.h>
 #endif
 
-// include max macro for ESP boards
-#ifndef max
-#define max(a,b) \
-  ({ __typeof__ (a) _a = (a); \
-    __typeof__ (b) _b = (b); \
-    _a > _b ? _a : _b; })
-#endif
-
-#define DEFAULT_BRIGHTNESS (uint8_t)50
+#define DEFAULT_BRIGHTNESS (uint8_t)16 /* set default brightness quite low to minimize current draw on startup */
 #define DEFAULT_MODE       (uint8_t)0
 #define DEFAULT_SPEED      (uint16_t)1000
 #define DEFAULT_COLOR      (uint32_t)0xFF0000
@@ -163,7 +155,7 @@ class WS2812FX : public tinyNeoPixel {
     WS2812FX(uint16_t num_leds, uint8_t pin, neoPixelType type, byte* pixelPtr)
       : tinyNeoPixel(num_leds, pin, type, pixelPtr) {
 
-      brightness = 16;  // default the brightness quite low to limit the current draw
+      brightness = 8;  // default the brightness quite low to limit the current draw
 
 /* since an ATtiny is so memory constrained, we only allow one LED segment. Since the
    number of segments is fixed, we can initialize the segment variable in the class

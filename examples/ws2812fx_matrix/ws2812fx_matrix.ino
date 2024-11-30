@@ -64,7 +64,7 @@ void loop() {
     color_index = 0; // reset the rainbow color index
   }
   matrix.setTextColor(color_wheel(color_index));
-  color_index += max(1, 256 / scroll_limit);
+  color_index += (256 / scroll_limit) > 1 ? (256 / scroll_limit) : 1;
   matrix.show();
   delay(100);
 }

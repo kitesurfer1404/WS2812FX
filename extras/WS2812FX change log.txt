@@ -1,5 +1,14 @@
 WS2182FX Change Log
 
+
+v1.4.5 changes 12/01/2024
+-------------------------
+
+1) Removed use of min and max preprocessor macros, which were causing
+    compile issues for various board cores (notably ESP32 v2.0.x and
+	ESP32 v3.0.x). Goodbye, Farewell and Amen!
+
+
 v1.4.4 changes 06/16/2024
 -------------------------
 

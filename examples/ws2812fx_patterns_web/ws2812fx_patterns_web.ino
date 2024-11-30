@@ -40,11 +40,22 @@
 #define DYNAMIC_JSON_DOCUMENT_SIZE 4096 /* used by AsyncJson. Default 1024 bytes is too small */
 
 #include <WS2812FX.h>
-#include <ESPAsyncWebSrv.h>
-#include <AsyncJson.h>
-#include <ArduinoJson.h>
 #include <EEPROM.h>
 #include <ArduinoOTA.h>
+
+#ifdef ESP32
+  #include <AsyncTCP.h>
+  #include <WiFi.h>
+#elif defined(ESP8266)
+  #include <ESP8266WiFi.h>
+  #include <ESPAsyncTCP.h>
+#elif defined(TARGET_RP2040)
+  #include <WebServer.h>
+  #include <WiFi.h>
+#endif
+#include <ESPAsyncWebServer.h>
+#include <ArduinoJson.h>
+#include <AsyncJson.h>
 
 #define VERSION "2.4.0"
 
@@ -188,14 +199,14 @@ void configServer() {
   // optionally set the running state or run custom auxiliary functions
   server.on("/status", [](AsyncWebServerRequest * request) {
     if (request->hasParam("running")) {
-      AsyncWebParameter* p = request->getParam("running");
+      const AsyncWebParameter* p = request->getParam("running");
       const char* running = p->value().c_str();
       if (strcmp(running, "true") == 0) ws2812fx.start();
       else ws2812fx.stop();
     }
 
     if (request->hasParam("auxFunc")) {
-      AsyncWebParameter* p = request->getParam("auxFunc");
+      const AsyncWebParameter* p = request->getParam("auxFunc");
       int auxFuncIndex = atoi(p->value().c_str());
       size_t customAuxFuncSize = sizeof(customAuxFunc) / sizeof(customAuxFunc[0]);
       if (auxFuncIndex >= 0 && (size_t)auxFuncIndex < customAuxFuncSize) {
@@ -301,7 +312,6 @@ int modeName2Index(const char* name) {
   return 0;
 }
 
-#if ARDUINOJSON_VERSION_MAJOR == 6
 //#pragma message("Compiling for ArduinoJson v6")
 bool json2patterns(JsonObject deviceJson) {
   ws2812fx.setPin(deviceJson["dataPin"]);
@@ -372,4 +382,3 @@ bool json2patterns(JsonObject deviceJson) {
   }
   return true;
 }
-#endif

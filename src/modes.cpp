@@ -302,7 +302,8 @@ uint16_t WS2812FX::mode_theater_chase_rainbow(void) {
  */
 uint16_t WS2812FX::mode_running_lights(void) {
   uint8_t size = 1 << SIZE_OPTION;
-  uint8_t sineIncr = max((uint8_t)1, (256 / _seg_len) * size);
+  uint8_t sineIncr = (256 / _seg_len) * size;
+  sineIncr = sineIncr > 1 ? sineIncr : 1;
   for(uint16_t i=0; i < _seg_len; i++) {
     int lum = (int)sine8(((i + _seg_rt->counter_mode_step) * sineIncr));
     uint32_t color = color_blend(_seg->colors[0], _seg->colors[1], lum);
@@ -865,7 +866,8 @@ uint16_t WS2812FX::mode_rainbow_fireworks(void) {
 
   // occasionally create a random red pixel
   if(random8(4) == 0) {
-    uint16_t index = _seg->start + 6 + random16(max((uint8_t)1, _seg_len - 12));
+    uint16_t rand16 = random16(_seg_len - 12 > 1 ? _seg_len - 12 : 1);
+    uint16_t index = _seg->start + 6 + rand16;
     setRawPixelColor(index, RED); // set the raw pixel color (ignore global brightness)
     SET_CYCLE;
   }
