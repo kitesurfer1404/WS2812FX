@@ -76,7 +76,8 @@ uint16_t rainbowFireworks(void) {
   }
 
   // randomly create a red pixel
-  for(uint16_t i=0; i<max(1, seglen/20); i++) {
+  uint16_t numPixels = seglen/20 > 1 ? seglen/20 : 1;
+  for(uint16_t i=0; i<numPixels; i++) {
     if(ws2812fx.random8(10) == 0) {
       uint16_t index = seg->start + 6 + ws2812fx.random16(seglen - 12);
       ws2812fx.setPixelColor(index, RED);

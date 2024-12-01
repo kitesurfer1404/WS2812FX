@@ -66,10 +66,6 @@ extern const char main_js[];
   IPAddress subnet(255,255,255,0);
 #endif
 
-// QUICKFIX...See https://github.com/esp8266/Arduino/issues/263
-#define min(a,b) ((a)<(b)?(a):(b))
-#define max(a,b) ((a)>(b)?(a):(b))
-
 #define LED_PIN 2                       // 0 = GPIO0, 2=GPIO2
 #define LED_COUNT 24
 
@@ -243,7 +239,8 @@ void srv_handle_set() {
       if(server.arg(i)[0] == '-') {
         ws2812fx.setBrightness(ws2812fx.getBrightness() * 0.8);
       } else if(server.arg(i)[0] == ' ') {
-        ws2812fx.setBrightness(min(max(ws2812fx.getBrightness(), 5) * 1.2, 255));
+        int newBrightness = constrain(ws2812fx.getBrightness() * 1.2, 6, 255);
+        ws2812fx.setBrightness(newBrightness);
       } else { // set brightness directly
         uint8_t tmp = (uint8_t) strtol(server.arg(i).c_str(), NULL, 10);
         ws2812fx.setBrightness(tmp);
@@ -253,7 +250,8 @@ void srv_handle_set() {
 
     if(server.argName(i) == "s") {
       if(server.arg(i)[0] == '-') {
-        ws2812fx.setSpeed(max(ws2812fx.getSpeed(), 5) * 1.2);
+        int newSpeed = constrain(ws2812fx.getSpeed() * 1.2, 6, 65535);
+        ws2812fx.setSpeed(newSpeed);
       } else if(server.arg(i)[0] == ' ') {
         ws2812fx.setSpeed(ws2812fx.getSpeed() * 0.8);
       } else {

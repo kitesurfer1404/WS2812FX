@@ -386,7 +386,8 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
 
   uint8_t size = 2 << SIZE_OPTION;
   if(!_triggered) {
-    for(uint16_t i=0; i<max((uint8_t)1, _seg_len/20); i++) {
+    uint16_t numBursts = _seg_len/20 > 1 ? _seg_len/20 : 1;
+    for(uint16_t i=0; i<numBursts; i++) {
       if(random8(10) == 0) {
         uint16_t index = _seg->start + random16(_seg_len - size + 1);
         fill(color, index, size);
@@ -394,7 +395,8 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
       }
     }
   } else {
-    for(uint16_t i=0; i<max((uint8_t)1, _seg_len/10); i++) {
+    uint16_t numBursts = _seg_len/10 > 1 ? _seg_len/10 : 1;
+    for(uint16_t i=0; i<numBursts; i++) {
       uint16_t index = _seg->start + random16(_seg_len - size + 1);
       fill(color, index, size);
       SET_CYCLE;
@@ -408,14 +410,21 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
  * Fire flicker function
  */
 uint16_t WS2812FX::fire_flicker(int rev_intensity) {
-  byte w = (_seg->colors[0] >> 24) & 0xFF;
-  byte r = (_seg->colors[0] >> 16) & 0xFF;
-  byte g = (_seg->colors[0] >>  8) & 0xFF;
-  byte b = (_seg->colors[0]        & 0xFF);
-  byte lum = max(w, max(r, max(g, b))) / rev_intensity;
+  uint8_t w = (_seg->colors[0] >> 24) & 0xFF;
+  uint8_t r = (_seg->colors[0] >> 16) & 0xFF;
+  uint8_t g = (_seg->colors[0] >>  8) & 0xFF;
+  uint8_t b = (_seg->colors[0]        & 0xFF);
+  uint8_t maxLum = g > b ? g : b;
+  maxLum = maxLum > r ? maxLum : r;
+  maxLum = maxLum > w ? maxLum : w;
+  uint8_t lum = maxLum / rev_intensity;
   for(uint16_t i=_seg->start; i <= _seg->stop; i++) {
-    int flicker = random8(lum);
-    setPixelColor(i, max(r - flicker, 0), max(g - flicker, 0), max(b - flicker, 0), max(w - flicker, 0));
+    uint8_t flicker = random8(lum);
+    uint8_t r2 = (r - flicker) > 0 ? (r - flicker) : 0;
+    uint8_t g2 = (g - flicker) > 0 ? (g - flicker) : 0;
+    uint8_t b2 = (b - flicker) > 0 ? (b - flicker) : 0;
+    uint8_t w2 = (w - flicker) > 0 ? (w - flicker) : 0;
+    setPixelColor(i, r2, g2, b2, w2);
   }
 
   SET_CYCLE;

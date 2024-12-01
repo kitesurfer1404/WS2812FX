@@ -79,7 +79,7 @@ bool WS2812FX::service() {
           SET_FRAME;
           doShow = true;
           uint16_t delay = (MODE_PTR(_seg->mode))();
-          _seg_rt->next_time = now + max(delay, SPEED_MIN);
+          _seg_rt->next_time = now + (delay > SPEED_MIN ? delay : SPEED_MIN);
           _seg_rt->counter_mode_call++;
         }
       }

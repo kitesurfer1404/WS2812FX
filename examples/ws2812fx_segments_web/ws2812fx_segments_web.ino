@@ -41,11 +41,22 @@
 #define DYNAMIC_JSON_DOCUMENT_SIZE  2048 /* used by AsyncJson. Default is 1024, which is a little too small */
 
 #include <WS2812FX.h>
-#include <ESPAsyncWebSrv.h> /* https://github.com/me-no-dev/ESPAsyncWebServer */
-#include <AsyncJson.h>
-#include <ArduinoJson.h>
-#include <ArduinoOTA.h>
 #include <EEPROM.h>
+#include <ArduinoOTA.h>
+
+#ifdef ESP32
+  #include <AsyncTCP.h>
+  #include <WiFi.h>
+#elif defined(ESP8266)
+  #include <ESP8266WiFi.h>
+  #include <ESPAsyncTCP.h>
+#elif defined(TARGET_RP2040)
+  #include <WebServer.h>
+  #include <WiFi.h>
+#endif
+#include <ESPAsyncWebServer.h>
+#include <ArduinoJson.h>
+#include <AsyncJson.h>
 
 #include "bundle.css.h"
 #include "bundle.js.h"
@@ -262,7 +273,7 @@ void showReqParams(AsyncWebServerRequest * request) {
   Serial.println("HTTP request parameters:");
   int params = request->params();
   for (int i = 0; i < params; i++) {
-    AsyncWebParameter* p = request->getParam(i);
+    const AsyncWebParameter* p = request->getParam(i);
     if (p->isFile()) { //p->isPost() is also true
       Serial.printf("FILE[%s]: %s, size: %u\n", p->name().c_str(), p->value().c_str(), p->size());
     } else if (p->isPost()) {
