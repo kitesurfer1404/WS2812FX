@@ -42,6 +42,7 @@
 #include <WS2812FX.h>
 #include <EEPROM.h>
 #include <ArduinoOTA.h>
+#include <ArduinoJson.h>
 
 #ifdef ESP32
   #include <AsyncTCP.h>
@@ -54,7 +55,6 @@
   #include <WiFi.h>
 #endif
 #include <ESPAsyncWebServer.h>
-#include <ArduinoJson.h>
 #include <AsyncJson.h>
 
 #define VERSION "2.4.0"

@@ -1,6 +1,13 @@
 WS2182FX Change Log
 
 
+v1.4.6 changes 04/27/2026
+-------------------------
+
+1) Fixed a bug that affected active/idle segment updates.
+   See https://github.com/kitesurfer1404/WS2812FX/issues/373
+
+
 v1.4.5 changes 12/01/2024
 -------------------------
 

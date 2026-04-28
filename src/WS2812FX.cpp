@@ -549,12 +549,12 @@ void WS2812FX::resetSegmentRuntimes() {
 void WS2812FX::resetSegmentRuntime(uint8_t seg) {
   uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
   if(ptr == NULL) return; // segment not active
-  _segment_runtimes[seg].next_time = 0;
-  _segment_runtimes[seg].counter_mode_step = 0;
-  _segment_runtimes[seg].counter_mode_call = 0;
-  _segment_runtimes[seg].aux_param = 0;
-  _segment_runtimes[seg].aux_param2 = 0;
-  _segment_runtimes[seg].aux_param3 = 0;
+  _segment_runtimes[ptr - _active_segments].next_time = 0;
+  _segment_runtimes[ptr - _active_segments].counter_mode_step = 0;
+  _segment_runtimes[ptr - _active_segments].counter_mode_call = 0;
+  _segment_runtimes[ptr - _active_segments].aux_param = 0;
+  _segment_runtimes[ptr - _active_segments].aux_param2 = 0;
+  _segment_runtimes[ptr - _active_segments].aux_param3 = 0;
   // don't reset any external data source
 }
 
@@ -694,6 +694,8 @@ void WS2812FX::setCustomShow(void (*p)()) {
  * set a segment runtime's external data source
  */
 void WS2812FX::setExtDataSrc(uint8_t seg, uint8_t *src, uint8_t cnt) {
-  _segment_runtimes[seg].extDataSrc = src;
-  _segment_runtimes[seg].extDataCnt = cnt;
+  uint8_t* ptr = (uint8_t*)memchr(_active_segments, seg, _active_segments_len);
+  if(ptr == NULL) return; // segment not active
+  _segment_runtimes[ptr - _active_segments].extDataSrc = src;
+  _segment_runtimes[ptr - _active_segments].extDataCnt = cnt;
 }
