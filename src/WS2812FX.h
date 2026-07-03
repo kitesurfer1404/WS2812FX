@@ -137,7 +137,6 @@ class WS2812FX : public tinyNeoPixel {
       uint16_t speed = DEFAULT_SPEED;
       uint8_t  mode = DEFAULT_MODE;
       uint8_t  options = 0;
-      uint32_t then = 0;
       uint32_t colors[MAX_NUM_COLORS] = DEFAULT_COLORS;
     } segment;
 
@@ -458,7 +457,6 @@ class WS2812FX : public Adafruit_NeoPixel {
       uint16_t speed;
       uint8_t  mode;
       uint8_t  options;
-      uint32_t then;
       uint32_t colors[MAX_NUM_COLORS];
     } segment;
 

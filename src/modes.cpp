@@ -909,20 +909,21 @@ uint16_t WS2812FX::mode_heartbeat(void) {
   uint8_t size = 2 << ((_seg->options >> 1) & 0x03); // 2,4,8,16
 
   // copy pixels from the middle of the segment to the edges
-  uint8_t BytesPerPixel = getNumBytesPerPixel();
-  uint16_t bytesPerPixelBlock = size * BytesPerPixel;
-  uint16_t centerOffset = (_seg_len / 2) * BytesPerPixel;
+  uint8_t bytesPerPixel = getNumBytesPerPixel();
+  uint16_t bytesPerPixelBlock = size * bytesPerPixel;
+  uint16_t centerOffset = (_seg_len / 2) * bytesPerPixel;
   uint16_t byteCount = centerOffset - bytesPerPixelBlock;
-  uint8_t *dist_pixels = getPixels() + _seg->start * BytesPerPixel;
-  memmove(dist_pixels, getPixels() + bytesPerPixelBlock, byteCount);
-  memmove(dist_pixels + centerOffset + bytesPerPixelBlock, getPixels() + centerOffset, byteCount);
+  uint8_t *dest_pixels = getPixels() + _seg->start * bytesPerPixel;
+  memmove(dest_pixels, dest_pixels + bytesPerPixelBlock, byteCount);
+  memmove(dest_pixels + centerOffset + bytesPerPixelBlock, dest_pixels + centerOffset, byteCount);
 
   fade_out();
 
-  int beatTimer = now - _seg->then;
+  int beatTimer = now - _seg_rt->counter_mode_step;
   if((beatTimer > 400) && !_seg_rt->aux_param) { // time for the second beat? (400ms after the first beat)
     uint16_t startLed = _seg->start + (_seg_len / 2) - size;
     fill(_seg->colors[0], startLed, size * 2); // create the second beat
+
     _seg_rt->aux_param = true; // is second beat
   }
   if(beatTimer > 1200) { // time for the first beat? (1200ms)
@@ -930,7 +931,7 @@ uint16_t WS2812FX::mode_heartbeat(void) {
     fill(_seg->colors[0], startLed, size * 2); // create the first beat
 
     _seg_rt->aux_param = false; // is first beat
-    _seg->then = now;           // reset the beat timer
+    _seg_rt->counter_mode_step = now; // reset the beat timer
     SET_CYCLE;
   }
 
