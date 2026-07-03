@@ -1,6 +1,13 @@
 WS2182FX Change Log
 
 
+v1.4.7 changes 07/03/2026
+-------------------------
+
+1) Fixed a bug that affected the heartbeat effect when it is used
+   in more than one segment.
+
+
 v1.4.6 changes 04/27/2026
 -------------------------
 
